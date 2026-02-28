@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  # Main trading bot
+  coinmaker-bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: coinmaker-bot
+    restart: unless-stopped
+
+    # Environment variables from .env file
+    env_file:
+      - .env
+
+    # Volumes for persistent data
+    volumes:
+      - ./logs:/app/logs:rw
+      - ./data:/app/data:rw
+      # Optional: mount config for hot-reload during development
+      # - ./src:/app/src:ro
+
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    # Resource limits (adjust based on your needs)
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+
+    networks:
+      - coinmaker-network
+
+    # DNS Configuration (Fix for name resolution errors)
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+
+    # Health check
+    healthcheck:
+      test: ["CMD", "python", "-c", "import sys; sys.exit(0)"]
+      interval: 5m
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+networks:
+  coinmaker-network:
+    driver: bridge
+
+volumes:
+  logs:
+    driver: local
+  data:
+    driver: local

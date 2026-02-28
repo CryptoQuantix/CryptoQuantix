@@ -1,0 +1,127 @@
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © TradeTravelChill
+// credits @creengrack 
+
+//@version=5
+indicator(title = "PVSRA Candles Auto Override", shorttitle="PVSRA Auto")
+// Release Version 8
+
+//   Situation "Peak"
+//   Bars with volume >= 200% of the average volume of the 10 previous chart TFs, and bars
+//   where the product of candle spread x candle volume is >= the highest for the 10 previous
+
+//   Situation "Volume Rising Above Average"
+//   Bars with volume >= 150% of the average volume of the 10 previous chart TFs.
+//   Default Colors:  Bull bars are blue and bear are blue-violet.
+
+var settingsGroupTitleOverride = "Instrument Override Settings"
+
+
+var bool automaticallyDetermineOverideTicker = input.bool(defval=true, title="Use Vol of the equivalent BINANCE PERP Chart (If Available)", tooltip="This will only apply to Crypto Symbols and will revert to the actual charts volume if the Binance Perp Chart does not exist.", group=settingsGroupTitleOverride, display = display.none)
+
+var bool override_imnt = input.bool(defval=false, title="Force Overide Symbol", inline="0", group=settingsGroupTitleOverride, display = display.none)
+var string pvsra_sym = input.symbol(title="", defval="BINANCE:BTCUSDT.P", inline="0", tooltip="If checked, this will force the volume profile to be used from the selected symbol and will ignore setting above.", group=settingsGroupTitleOverride, display = display.none)
+
+var settingsGroupCandles = "Candle Colours"
+bool overideCandleColours = input(true,title="Set PVSRA candle colours on chart", group=settingsGroupCandles, tooltip="To help improve display uncheck the candle borders in the chart settings.")
+var Bull200CandleColor = input.color(color.new(color.lime, 0), title="200% Volume", group=settingsGroupCandles, inline="1", display = display.none)  
+var Bear200CandleColor = input.color(color.new(color.red, 0), title="", group=settingsGroupCandles, inline = "1", display = display.none) 
+var Bull150CandleColor = input.color(color.new(color.blue, 0), title="150% Volume", group=settingsGroupCandles, inline="2", display = display.none)   
+var Bear150CandleColor = input.color(color.new(color.fuchsia, 0), title="", group=settingsGroupCandles, inline="2", display = display.none)  
+var BullNormCandleColor = input.color(color.new(color.white, 0), title="Norm Volume", group=settingsGroupCandles, inline="3", display = display.none)
+var BearNormCandleColor = input.color(color.new(color.gray, 0), title="", group=settingsGroupCandles, inline="3", display = display.none)
+
+
+var color candleColor = na
+
+var string binancePerpSymbol = na
+binancePerpSymbol := "BINANCE:"+syminfo.basecurrency + syminfo.currency+".P"
+var bool isCrypto = (syminfo.type == "crypto")
+
+pvsra_imntAll(sresolution) => request.security(override_imnt ? pvsra_sym : (automaticallyDetermineOverideTicker and isCrypto)? binancePerpSymbol : syminfo.tickerid ,sresolution,[volume,high,low,close,open], barmerge.gaps_off,barmerge.lookahead_off,ignore_invalid_symbol=true)
+
+[volume_imnt,high_imnt,low_imnt,close_imnt,open_imnt] = pvsra_imntAll("")
+
+if (override_imnt == true or automaticallyDetermineOverideTicker == true ) and na(volume_imnt) 
+    volume_imnt := volume
+    high_imnt := high
+    low_imnt := low
+    close_imnt := close
+    open_imnt := open
+
+var float highest10_hl_weightedVolume = na
+var float hl_weightedVolume = na 
+var float averageVolume = na 
+
+// PVSRA Calculation 
+averageVolume := ta.sma(volume_imnt[1], 10)
+hl_weightedVolume := volume_imnt * (high_imnt - low_imnt) 
+highest10_hl_weightedVolume := ta.highest(hl_weightedVolume[1], 10)
+
+imnt_override_pvsra_calc_part2 = volume_imnt >= averageVolume * 1.5 ? 150 : 0
+va = volume_imnt >= averageVolume * 2 or hl_weightedVolume >= highest10_hl_weightedVolume ? 200 : imnt_override_pvsra_calc_part2
+
+// Bull or bear Candle Colors
+isBull =  close_imnt > open_imnt 
+
+// Bullish or bearish coloring
+
+var bool is200Bull = na
+var bool is150Bull = na
+var bool is100Bull = na
+var bool is200Bear = na
+var bool is150Bear = na
+var bool is100Bear = na
+var bool isVector = na
+
+is200Bull := false
+is150Bull := false
+is100Bull := false
+is200Bear := false
+is150Bear := false
+is100Bear := false
+isVector := false
+
+
+if isBull
+    if va == 200
+        candleColor := Bull200CandleColor
+        is200Bull := true
+        isVector :=true
+    else if va == 150 
+        candleColor := Bull150CandleColor
+        is150Bull := true
+        isVector :=true
+    else 
+        is100Bull := true
+        isVector :=false
+        candleColor := BullNormCandleColor
+else
+    if va == 200
+        candleColor := Bear200CandleColor 
+        is200Bear := true
+        isVector :=true
+    else if va == 150
+        candleColor := Bear150CandleColor
+        is150Bear := true
+        isVector :=true
+    else 
+        is100Bear := true
+        candleColor := BearNormCandleColor
+        isVector :=false
+ 
+var color NO_COLOR = na
+
+barcolor(overideCandleColours ? candleColor : NO_COLOR)
+
+
+plot(volume_imnt, style=plot.style_columns, linewidth=1, color = candleColor)
+
+alertcondition(isVector, title="Any Vector Candle", message="{{ticker}} Vector Candle on the {{interval}}")// 
+alertcondition((is200Bull or is200Bear), title="Any Volume Peak(200%) Vector Candle", message="{{ticker}} 200% Peak Vector Candle on the {{interval}}")
+alertcondition((is150Bull or is150Bear), title="Any Volume Rising(150%) Vector Candle", message="{{ticker}} 150% Vector Candle on the {{interval}}")
+
+alertcondition(is200Bear, title="Volume Peak(200%) Bearish Vector Candle", message="{{ticker}} 200% Peak Bearish Vector Candle on the {{interval}}")
+alertcondition(is200Bull, title="Volume Peak(200%) Bullish Vector Candle", message="{{ticker}} 200% Peak Bullish Vector Candle on the {{interval}}")
+alertcondition(is150Bear, title="Volume Rising(150%) Bearish Vector Candle", message="{{ticker}} 150% Bearish Vector Candle on the {{interval}}")
+alertcondition(is150Bull, title="Volume Rising(150%) Bullish Vector Candle", message="{{ticker}} 150% Vector Candle on the {{interval}}")

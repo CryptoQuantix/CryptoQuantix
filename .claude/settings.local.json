@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \":*)",
+      "Bash(python scripts/dry_run_strategies.py)",
+      "Bash(set PYTHONIOENCODING=utf-8)",
+      "Bash(python scripts/dry_run_strategies.py --backtest)",
+      "Bash(python -c \"import numpy; print\\(''numpy:'', numpy.__version__\\)\")",
+      "Bash(python -c \"import streamlit; print\\(''streamlit:'', streamlit.__version__\\)\")",
+      "Bash(pip install duckdb --quiet)",
+      "Bash(python -c \"import duckdb; print\\(''duckdb:'', duckdb.__version__\\)\")",
+      "Bash(timeout 35 python scripts/dry_run_data.py --duration 30)"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\hp\\.claude\\projects\\c--Users-hp-Documents-GitHub-coinmaker-quant"
+    ]
+  }
+}

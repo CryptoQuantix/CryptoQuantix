@@ -1,0 +1,127 @@
+==========================================
+Bot started successfully!
+==========================================
+
+Commands:
+  View logs:     docker compose logs -f
+  Stop bot:      docker compose stop
+  Restart bot:   docker compose restart
+  View status:   docker compose ps
+
+Following logs (Ctrl+C to exit, bot keeps running)...
+
+WARN[0000] /home/antonio/progetti/coinmaker/docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion
+coinmaker-bot  | 2025-11-27 10:44:39,953 - __main__ - INFO - Initializing trading bot...
+coinmaker-bot  | 2025-11-27 10:44:39,954 - __main__ - INFO - Bot initialized for test environment
+coinmaker-bot  | 2025-11-27 10:44:39,954 - __main__ - INFO - Currencies: BTC, ETH
+coinmaker-bot  | 2025-11-27 10:44:39,954 - __main__ - INFO - Risk per condor: 1.0%
+coinmaker-bot  | 2025-11-27 10:44:39,954 - __main__ - INFO - Max portfolio risk: 3.0%
+coinmaker-bot  | 2025-11-27 10:44:39,954 - __main__ - INFO - ============================================================
+coinmaker-bot  | 2025-11-27 10:44:39,954 - __main__ - INFO - STARTING TRADING BOT
+coinmaker-bot  | 2025-11-27 10:44:39,954 - __main__ - INFO - ============================================================
+coinmaker-bot  | 2025-11-27 10:44:39,954 - __main__ - INFO - Authenticating with Deribit...
+coinmaker-bot  | 2025-11-27 10:44:40,147 - src.core.deribit_client - INFO - Successfully authenticated with Deribit
+coinmaker-bot  | 2025-11-27 10:44:40,151 - __main__ - INFO - Bot started. Schedules:
+coinmaker-bot  | 2025-11-27 10:44:40,151 - __main__ - INFO -   - Daily scan: 10:00 AM
+coinmaker-bot  | 2025-11-27 10:44:40,151 - __main__ - INFO -   - Position monitoring: Every 5 minutes
+coinmaker-bot  | 2025-11-27 10:44:40,151 - __main__ - INFO -
+coinmaker-bot  | Running initial scan...
+coinmaker-bot  | 2025-11-27 10:44:40,151 - __main__ - INFO -
+coinmaker-bot  | ============================================================
+coinmaker-bot  | 2025-11-27 10:44:40,151 - __main__ - INFO - DAILY ROUTINE - 2025-11-27 10:44:40
+coinmaker-bot  | 2025-11-27 10:44:40,151 - __main__ - INFO - ============================================================
+coinmaker-bot  | 2025-11-27 10:44:40,152 - __main__ - INFO - ============================================================
+coinmaker-bot  | 2025-11-27 10:44:40,152 - __main__ - INFO - SCANNING FOR NEW POSITIONS
+coinmaker-bot  | 2025-11-27 10:44:40,152 - __main__ - INFO - ============================================================
+coinmaker-bot  | 2025-11-27 10:44:40,548 - src.core.risk_manager - INFO - Current equity for BTC: $9,180,371.44
+coinmaker-bot  | 2025-11-27 10:44:40,810 - src.core.risk_manager - INFO - Current equity for ETH: $3,036,280.00
+coinmaker-bot  | 2025-11-27 10:44:40,810 - src.core.risk_manager - INFO - Total equity: $12,216,651.44 (BTC: $9,180,371.44, ETH: $3,036,280.00)
+coinmaker-bot  | 2025-11-27 10:44:40,810 - src.core.risk_manager - INFO - Risk per condor: $122166.51 (1.0% of $12,216,651.44)
+coinmaker-bot  | 2025-11-27 10:44:41,075 - src.core.risk_manager - INFO - Current equity for BTC: $9,180,371.44
+coinmaker-bot  | 2025-11-27 10:44:41,452 - src.core.risk_manager - INFO - Current equity for ETH: $3,036,280.00
+coinmaker-bot  | 2025-11-27 10:44:41,452 - src.core.risk_manager - INFO - Total equity: $12,216,651.44 (BTC: $9,180,371.44, ETH: $3,036,280.00)
+coinmaker-bot  | 2025-11-27 10:44:41,452 - __main__ - INFO - Equity: $12,216,651.44
+coinmaker-bot  | 2025-11-27 10:44:41,452 - __main__ - INFO - Risk utilization: 0.0%
+coinmaker-bot  | 2025-11-27 10:44:41,452 - __main__ - INFO - Open condors: 0/3
+coinmaker-bot  | 2025-11-27 10:44:41,747 - src.core.risk_manager - INFO - Current equity for BTC: $9,180,168.47
+coinmaker-bot  | 2025-11-27 10:44:41,971 - src.core.risk_manager - INFO - Current equity for ETH: $3,035,790.00
+coinmaker-bot  | 2025-11-27 10:44:41,972 - src.core.risk_manager - INFO - Total equity: $12,215,958.47 (BTC: $9,180,168.47, ETH: $3,035,790.00)
+coinmaker-bot  | 2025-11-27 10:44:41,972 - src.core.risk_manager - INFO - Risk per condor: $122159.58 (1.0% of $12,215,958.47)
+coinmaker-bot  | 2025-11-27 10:44:41,972 - src.core.risk_manager - INFO - Can open new position: $366478.75 available of $366478.75 max risk
+coinmaker-bot  | 2025-11-27 10:44:41,972 - __main__ - INFO -
+coinmaker-bot  | Checking BTC...
+coinmaker-bot  | 2025-11-27 10:44:42,082 - __main__ - INFO - Spot price: $91,813.85
+coinmaker-bot  | 2025-11-27 10:44:42,272 - __main__ - INFO - Selected expiration for BTC: 05DEC25 (7 DTE)
+coinmaker-bot  | 2025-11-27 10:45:01,265 - __main__ - INFO - Retrieved 110 options for BTC 05DEC25
+coinmaker-bot  | 2025-11-27 10:45:01,266 - __main__ - INFO - ATM IV: 4284.33%
+coinmaker-bot  | 2025-11-27 10:45:01,267 - __main__ - INFO - IV conditions met: IV 4284.33% above threshold (building history (1/5))
+coinmaker-bot  | 2025-11-27 10:45:01,473 - src.core.risk_manager - INFO - Current equity for BTC: $9,179,700.53
+coinmaker-bot  | 2025-11-27 10:45:01,722 - src.core.risk_manager - INFO - Current equity for ETH: $3,035,720.00
+coinmaker-bot  | 2025-11-27 10:45:01,722 - src.core.risk_manager - INFO - Total equity: $12,215,420.53 (BTC: $9,179,700.53, ETH: $3,035,720.00)
+coinmaker-bot  | 2025-11-27 10:45:01,722 - src.core.risk_manager - INFO - Risk per condor: $122154.21 (1.0% of $12,215,420.53)
+coinmaker-bot  | 2025-11-27 10:45:01,723 - src.strategies.iron_condor - INFO - Built Iron Condor: BTC_05DEC25_20251127_104501
+coinmaker-bot  | 2025-11-27 10:45:01,723 - src.strategies.iron_condor - INFO -   Spot: $91,814
+coinmaker-bot  | 2025-11-27 10:45:01,723 - src.strategies.iron_condor - INFO -   Put spread: 80000/85000
+coinmaker-bot  | 2025-11-27 10:45:01,723 - src.strategies.iron_condor - INFO -   Call spread: 100000/105000
+coinmaker-bot  | 2025-11-27 10:45:01,723 - src.strategies.iron_condor - INFO -   Credit: $4866.13, Max loss: $45133.87
+coinmaker-bot  | 2025-11-27 10:45:01,723 - src.strategies.iron_condor - INFO -   Size: 10.000 contracts
+coinmaker-bot  | 2025-11-27 10:45:01,953 - src.core.risk_manager - INFO - Current equity for BTC: $9,179,700.53
+coinmaker-bot  | 2025-11-27 10:45:02,156 - src.core.risk_manager - INFO - Current equity for ETH: $3,035,610.00
+coinmaker-bot  | 2025-11-27 10:45:02,157 - src.core.risk_manager - INFO - Total equity: $12,215,310.53 (BTC: $9,179,700.53, ETH: $3,035,610.00)
+coinmaker-bot  | 2025-11-27 10:45:02,158 - src.core.risk_manager - INFO - Risk per condor: $122153.11 (1.0% of $12,215,310.53)
+coinmaker-bot  | 2025-11-27 10:45:02,382 - src.core.risk_manager - INFO - Current equity for BTC: $9,179,700.53
+coinmaker-bot  | 2025-11-27 10:45:02,603 - src.core.risk_manager - INFO - Current equity for ETH: $3,035,610.00
+coinmaker-bot  | 2025-11-27 10:45:02,603 - src.core.risk_manager - INFO - Total equity: $12,215,310.53 (BTC: $9,179,700.53, ETH: $3,035,610.00)
+coinmaker-bot  | 2025-11-27 10:45:02,603 - src.core.risk_manager - INFO - Risk per condor: $122153.11 (1.0% of $12,215,310.53)
+coinmaker-bot  | 2025-11-27 10:45:02,604 - src.core.risk_manager - INFO - Can open new position: $366459.32 available of $366459.32 max risk
+coinmaker-bot  | 2025-11-27 10:45:02,604 - __main__ - INFO - Opening Iron Condor for BTC...
+coinmaker-bot  | 2025-11-27 10:45:02,604 - src.core.order_manager - INFO - Opening Iron Condor: BTC_05DEC25_20251127_104501
+coinmaker-bot  | 2025-11-27 10:45:02,604 - src.core.order_manager - INFO - Executing leg: BUY put @ 80000.0 (BTC-5DEC25-80000-P)
+coinmaker-bot  | 2025-11-27 10:45:02,815 - src.core.order_manager - INFO -   ✓ BUY put @ 80000.0 - FILLED
+coinmaker-bot  | 2025-11-27 10:45:03,316 - src.core.order_manager - INFO - Executing leg: SELL put @ 85000.0 (BTC-5DEC25-85000-P)
+coinmaker-bot  | 2025-11-27 10:45:13,510 - src.core.order_manager - ERROR - Order 72385033706 for BTC-5DEC25-85000-P not filled after 10s
+coinmaker-bot  | 2025-11-27 10:45:13,511 - src.core.order_manager - WARNING - Order not filled, attempt 1/3
+coinmaker-bot  | 2025-11-27 10:45:24,843 - src.core.order_manager - ERROR - Order 72385048592 for BTC-5DEC25-85000-P not filled after 10s
+coinmaker-bot  | 2025-11-27 10:45:24,843 - src.core.order_manager - WARNING - Order not filled, attempt 2/3
+coinmaker-bot  | 2025-11-27 10:45:36,156 - src.core.order_manager - ERROR - Order 72385064119 for BTC-5DEC25-85000-P not filled after 10s
+coinmaker-bot  | 2025-11-27 10:45:36,157 - src.core.order_manager - WARNING - Order not filled, attempt 3/3
+coinmaker-bot  | 2025-11-27 10:45:36,157 - src.core.order_manager - ERROR -   ✗ Failed to sell put @ 85000.0 - NOT FILLED
+coinmaker-bot  | 2025-11-27 10:45:36,157 - src.core.order_manager - WARNING - Rolling back 1 opened legs...
+coinmaker-bot  | 2025-11-27 10:45:36,157 - src.core.order_manager - WARNING - Rolling back 1 opened orders
+coinmaker-bot  | 2025-11-27 10:45:36,273 - __main__ - ERROR - ✗ Failed to open condor
+coinmaker-bot  | 2025-11-27 10:45:36,478 - src.core.risk_manager - INFO - Current equity for BTC: $9,173,943.16
+coinmaker-bot  | 2025-11-27 10:45:36,667 - src.core.risk_manager - INFO - Current equity for ETH: $3,033,420.00
+coinmaker-bot  | 2025-11-27 10:45:36,668 - src.core.risk_manager - INFO - Total equity: $12,207,363.16 (BTC: $9,173,943.16, ETH: $3,033,420.00)
+coinmaker-bot  | 2025-11-27 10:45:36,668 - src.core.risk_manager - INFO - Risk per condor: $122073.63 (1.0% of $12,207,363.16)
+coinmaker-bot  | 2025-11-27 10:45:36,668 - src.core.risk_manager - INFO - Can open new position: $366220.89 available of $366220.89 max risk
+coinmaker-bot  | 2025-11-27 10:45:36,668 - __main__ - INFO -
+coinmaker-bot  | Checking ETH...
+coinmaker-bot  | 2025-11-27 10:45:36,771 - __main__ - INFO - Spot price: $3,033.42
+coinmaker-bot  | 2025-11-27 10:45:36,923 - __main__ - INFO - Selected expiration for ETH: 05DEC25 (7 DTE)
+coinmaker-bot  | 2025-11-27 10:46:39,444 - src.core.deribit_client - WARNING - Timeout on /public/get_order_book (attempt 1/3), retrying in 1s...
+coinmaker-bot  | 2025-11-27 10:46:48,218 - __main__ - INFO - Retrieved 56 options for ETH 05DEC25
+coinmaker-bot  | 2025-11-27 10:46:48,219 - __main__ - INFO - ATM IV: 6626.33%
+coinmaker-bot  | 2025-11-27 10:46:48,219 - __main__ - INFO - IV conditions met: IV 6626.33% above threshold (building history (1/5))
+coinmaker-bot  | 2025-11-27 10:46:48,434 - src.core.risk_manager - INFO - Current equity for BTC: $9,174,472.66
+coinmaker-bot  | 2025-11-27 10:46:48,663 - src.core.risk_manager - INFO - Current equity for ETH: $3,033,300.00
+coinmaker-bot  | 2025-11-27 10:46:48,663 - src.core.risk_manager - INFO - Total equity: $12,207,772.66 (BTC: $9,174,472.66, ETH: $3,033,300.00)
+coinmaker-bot  | 2025-11-27 10:46:48,663 - src.core.risk_manager - INFO - Risk per condor: $122077.73 (1.0% of $12,207,772.66)
+coinmaker-bot  | 2025-11-27 10:46:48,664 - src.strategies.iron_condor - INFO - Built Iron Condor: ETH_05DEC25_20251127_104648
+coinmaker-bot  | 2025-11-27 10:46:48,664 - src.strategies.iron_condor - INFO -   Spot: $3,033
+coinmaker-bot  | 2025-11-27 10:46:48,664 - src.strategies.iron_condor - INFO -   Put spread: 2400/2600
+coinmaker-bot  | 2025-11-27 10:46:48,664 - src.strategies.iron_condor - INFO -   Call spread: 3400/3600
+coinmaker-bot  | 2025-11-27 10:46:48,664 - src.strategies.iron_condor - INFO -   Credit: $194.14, Max loss: $1805.86
+coinmaker-bot  | 2025-11-27 10:46:48,664 - src.strategies.iron_condor - INFO -   Size: 10.000 contracts
+coinmaker-bot  | 2025-11-27 10:46:48,877 - src.core.risk_manager - INFO - Current equity for BTC: $9,174,472.66
+coinmaker-bot  | 2025-11-27 10:46:49,107 - src.core.risk_manager - INFO - Current equity for ETH: $3,033,340.00
+coinmaker-bot  | 2025-11-27 10:46:49,107 - src.core.risk_manager - INFO - Total equity: $12,207,812.66 (BTC: $9,174,472.66, ETH: $3,033,340.00)
+coinmaker-bot  | 2025-11-27 10:46:49,107 - src.core.risk_manager - INFO - Risk per condor: $122078.13 (1.0% of $12,207,812.66)
+coinmaker-bot  | 2025-11-27 10:46:49,107 - __main__ - WARNING - Trade validation failed: Trade risk $1805.86 too low (target: $122078.13, minimum 20%)
+coinmaker-bot  | 2025-11-27 10:46:49,108 - __main__ - INFO - ============================================================
+coinmaker-bot  | 2025-11-27 10:46:49,108 - __main__ - INFO - MANAGING OPEN POSITIONS
+coinmaker-bot  | 2025-11-27 10:46:49,108 - __main__ - INFO - ============================================================
+coinmaker-bot  | 2025-11-27 10:46:49,108 - __main__ - INFO - Open condors: 0
+coinmaker-bot  | 2025-11-27 10:46:49,108 - __main__ - INFO - Total P&L: $0.00
+coinmaker-bot  | 2025-11-27 10:46:49,108 - __main__ - INFO - No open positions to manage
+coinmaker-bot  | 2025-11-27 10:46:49,108 - __main__ - INFO -
+coinmaker-bot  | Entering main loop...
