@@ -135,6 +135,12 @@ class ImbalanceScalpStrategy(BaseStrategy):
                 take_profit=signal["take_profit"],
                 label=f"is_{signal['direction'].lower()}",
             )
+            if success:
+                self._log_executed(
+                    signal["direction"], signal["price"],
+                    signal["stop_loss"], signal["take_profit"],
+                    signal.get("regime", "UNKNOWN"),
+                )
             return success
         except Exception as e:
             self.logger.error(f"[ImbalanceScalp] execute error: {e}", exc_info=True)

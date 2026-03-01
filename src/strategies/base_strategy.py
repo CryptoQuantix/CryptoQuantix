@@ -10,7 +10,7 @@ class BaseStrategy(ABC):
     def __init__(self, client, config, dependencies: Dict[str, Any]):
         """
         Initialize the strategy
-        
+
         Args:
             client: The exchange client (e.g., DeribitClient)
             config: Strategy-specific configuration object
@@ -20,10 +20,54 @@ class BaseStrategy(ABC):
         self.config = config
         self.name = config.name
         self.logger = logging.getLogger(f"strategy.{self.name.lower().replace(' ', '_')}")
-        
+
         self.order_manager = dependencies.get('order_manager')
         self.position_monitor = dependencies.get('position_monitor')
         self.risk_manager = dependencies.get('risk_manager')
+        self.signal_log = dependencies.get('signal_log')
+
+    def _log_blocked(
+        self,
+        reason: str,
+        direction: str,
+        price: float,
+        sl: float,
+        tp: float,
+        regime: str = "UNKNOWN",
+    ):
+        """Registra un segnale bloccato nel SignalLog per analisi post-hoc."""
+        if self.signal_log and price > 0 and sl > 0 and tp > 0:
+            self.signal_log.log_signal(
+                strategy=self.name,
+                direction=direction,
+                price=price,
+                sl=sl,
+                tp=tp,
+                regime=regime,
+                executed=False,
+                block_reason=reason,
+            )
+
+    def _log_executed(
+        self,
+        direction: str,
+        price: float,
+        sl: float,
+        tp: float,
+        regime: str = "UNKNOWN",
+    ):
+        """Registra un segnale eseguito nel SignalLog."""
+        if self.signal_log and price > 0 and sl > 0 and tp > 0:
+            self.signal_log.log_signal(
+                strategy=self.name,
+                direction=direction,
+                price=price,
+                sl=sl,
+                tp=tp,
+                regime=regime,
+                executed=True,
+                block_reason=None,
+            )
 
     @abstractmethod
     def scan(self) -> List[Dict[str, Any]]:

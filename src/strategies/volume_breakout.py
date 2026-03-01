@@ -97,6 +97,13 @@ class VolumeBreakoutStrategy(BaseStrategy):
                 regime = self.regime_detector.get_last_regime(self.symbol)
                 if regime and regime.regime.value in ("RANGE", "TREND_UP"):
                     self.logger.debug(f"Regime {regime.regime.value} — skipping breakout")
+                    # Log opportunita' persa (SL/TP stimati dal config)
+                    price = snap.price
+                    direction = "BUY" if snap.cvd_1m >= 0 else "SELL"
+                    rough_sl = price * (1 - 0.008) if direction == "BUY" else price * (1 + 0.008)
+                    rough_risk = abs(price - rough_sl)
+                    rough_tp = price + rough_risk * self.rr_ratio if direction == "BUY" else price - rough_risk * self.rr_ratio
+                    self._log_blocked(f"regime_{regime.regime.value}", direction, price, rough_sl, rough_tp, regime.regime.value)
                     return []
 
             # Get candle history for breakout level
@@ -175,6 +182,12 @@ class VolumeBreakoutStrategy(BaseStrategy):
             if not self.order_manager:
                 self.logger.error("No order_manager")
                 return False
+
+            self._log_executed(
+                signal["direction"], signal["price"],
+                signal["stop_loss"], signal["take_profit"],
+                signal.get("regime", "UNKNOWN"),
+            )
 
             # Dynamic position sizing
             sl_distance = abs(signal["price"] - signal["stop_loss"])

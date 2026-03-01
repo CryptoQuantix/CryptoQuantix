@@ -81,6 +81,12 @@ try:
 except ImportError:
     HAS_JOURNAL = False
 
+try:
+    from src.journal.signal_log import SignalLog
+    HAS_SIGNAL_LOG = True
+except ImportError:
+    HAS_SIGNAL_LOG = False
+
 # New strategy config dataclasses — added dynamically
 try:
     from config import VolumeBreakoutConfig, MeanReversionConfig, LiqSqueezeConfig, ImbalanceScalpConfig
@@ -180,6 +186,12 @@ class AsyncTradingBot:
                 db_path=os.getenv("JOURNAL_DB_PATH", "data/journal.db")
             )
 
+        self.signal_log = None
+        if HAS_SIGNAL_LOG:
+            self.signal_log = SignalLog(
+                db_path=os.getenv("SIGNAL_LOG_DB_PATH", "data/signal_log.db")
+            )
+
         # --- Build dependencies dict for strategies ---
         self.dependencies = {
             "order_manager": self.order_manager,
@@ -190,6 +202,7 @@ class AsyncTradingBot:
             "scoring_engine": self.scoring_engine,
             "data_ingestion": self.data_ingestion,
             "trade_logger": self.trade_logger,
+            "signal_log": self.signal_log,
         }
 
         # --- Load strategies ---
@@ -271,6 +284,10 @@ class AsyncTradingBot:
             tasks.append(asyncio.create_task(self._orderbook_loop(), name="orderbook"))
             tasks.append(asyncio.create_task(self._orderflow_loop(), name="orderflow"))
             logger.info("Binance data streams started")
+
+        # Signal outcome tracker
+        if self.signal_log:
+            tasks.append(asyncio.create_task(self._outcome_tracker_loop(), name="outcome_tracker"))
 
         logger.info("Bot running. Tasks:")
         for t in tasks:
@@ -410,6 +427,67 @@ class AsyncTradingBot:
             except Exception as e:
                 logger.debug(f"[Orderflow] Error: {e}")
                 await asyncio.sleep(0.1)
+
+    async def _outcome_tracker_loop(self):
+        """
+        Ogni 30 minuti controlla i segnali bloccati e verifica se
+        avrebbero colpito TP o SL al prezzo corrente.
+        Permette di analizzare le opportunita' perse.
+        """
+        await asyncio.sleep(1800)  # primo check dopo 30 min
+        while self.running:
+            try:
+                await asyncio.get_event_loop().run_in_executor(
+                    None, self._check_pending_outcomes
+                )
+            except Exception as e:
+                logger.debug(f"[OutcomeTracker] Error: {e}")
+            await asyncio.sleep(1800)  # ogni 30 min
+
+    def _check_pending_outcomes(self):
+        """Risolve i segnali bloccati che hanno raggiunto TP o SL."""
+        if not self.signal_log or not self.orderflow_engine:
+            return
+        try:
+            pending = self.signal_log.get_pending(max_age_hours=24)
+            if not pending:
+                return
+            resolved = 0
+            for sig in pending:
+                symbol = self.symbols[0] if self.symbols else "BTCUSDT"
+                snap = self.orderflow_engine.get_snapshot(symbol)
+                if not snap or snap.price <= 0:
+                    continue
+                current_price = snap.price
+                sl = sig["sl"]
+                tp = sig["tp"]
+                direction = sig["direction"]
+                entry = sig["price"]
+                risk = abs(entry - sl)
+                if risk <= 0:
+                    continue
+                outcome = None
+                exit_price = current_price
+                if direction == "BUY":
+                    if current_price >= tp:
+                        outcome, exit_price = "WIN", tp
+                    elif current_price <= sl:
+                        outcome, exit_price = "LOSS", sl
+                else:  # SELL
+                    if current_price <= tp:
+                        outcome, exit_price = "WIN", tp
+                    elif current_price >= sl:
+                        outcome, exit_price = "LOSS", sl
+                if outcome:
+                    pnl_r = abs(exit_price - entry) / risk
+                    if outcome == "LOSS":
+                        pnl_r = -1.0
+                    self.signal_log.update_outcome(sig["id"], outcome, exit_price, pnl_r)
+                    resolved += 1
+            if resolved > 0:
+                logger.info(f"[OutcomeTracker] Risolti {resolved} segnali bloccati")
+        except Exception as e:
+            logger.debug(f"[OutcomeTracker] check error: {e}")
 
     async def _monitoring_loop(self):
         """Periodic monitoring: log stats, send daily summary."""

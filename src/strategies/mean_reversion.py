@@ -52,6 +52,16 @@ class MeanReversionStrategy(BaseStrategy):
             if self.regime_detector:
                 regime = self.regime_detector.get_last_regime(self.symbol)
                 if regime and regime.regime.value in ("TREND_UP", "TREND_DOWN"):
+                    if self.orderflow_engine:
+                        self.orderflow_engine.flush_snapshot(self.symbol)
+                        snap_q = self.orderflow_engine.get_snapshot(self.symbol)
+                        if snap_q and snap_q.price > 0:
+                            p = snap_q.price
+                            direction = "SELL" if regime.regime.value == "TREND_UP" else "BUY"
+                            rough_sl = p * (1 + 0.006) if direction == "SELL" else p * (1 - 0.006)
+                            rough_risk = abs(p - rough_sl)
+                            rough_tp = p - rough_risk * self.rr_ratio if direction == "SELL" else p + rough_risk * self.rr_ratio
+                            self._log_blocked(f"regime_{regime.regime.value}", direction, p, rough_sl, rough_tp, regime.regime.value)
                     return []
 
             # Scoring check
@@ -148,6 +158,12 @@ class MeanReversionStrategy(BaseStrategy):
                 take_profit=signal["take_profit"],
                 label=f"mr_{signal['direction'].lower()}",
             )
+            if success:
+                self._log_executed(
+                    signal["direction"], signal["price"],
+                    signal["stop_loss"], signal["take_profit"],
+                    signal.get("regime", "UNKNOWN"),
+                )
             return success
         except Exception as e:
             self.logger.error(f"[MeanReversion] execute error: {e}", exc_info=True)
