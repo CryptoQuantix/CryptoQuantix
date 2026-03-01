@@ -137,12 +137,21 @@ class TradeLogger:
         self,
         db_path: str = "data/journal.db",
         export_path: str = "data/journal_export.json",
+        position_log_path: str = "logs/positions.log",
     ):
         self.db_path = db_path
         self.export_path = export_path
         self._conn: Optional[sqlite3.Connection] = None
         self._open_trades: Dict[str, TradeSnapshot] = {}
         self._init_db()
+
+        # Human-readable position log
+        try:
+            from src.monitoring.position_log import PositionLog
+            self._position_log = PositionLog(position_log_path)
+        except Exception as e:
+            logger.warning(f"[TradeLogger] PositionLog not available: {e}")
+            self._position_log = None
 
     def _init_db(self):
         os.makedirs(os.path.dirname(self.db_path) or ".", exist_ok=True)
@@ -195,6 +204,10 @@ class TradeLogger:
             f"@ {snapshot.entry_price:.2f} | "
             f"regime={snapshot.regime} | strategy={snapshot.strategy}"
         )
+
+        if self._position_log:
+            self._position_log.log_open(snapshot, equity_before=snapshot.equity_at_entry)
+
         return snapshot.trade_id
 
     def log_exit(
@@ -244,6 +257,10 @@ class TradeLogger:
             f"@ {exit_price:.2f} | P&L=${pnl_usd:+,.2f} R={snap.r_multiple:+.2f} | "
             f"reason={exit_reason}"
         )
+
+        if self._position_log:
+            equity_after = snap.equity_at_entry + snap.pnl_usd
+            self._position_log.log_close(snap, equity_after=equity_after)
 
     def log_entry_from_signal(
         self,

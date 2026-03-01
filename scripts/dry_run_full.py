@@ -232,6 +232,11 @@ async def run_full_dry_run(
     # 4. Start data streams
     print(f"\n[4/6] Starting Binance streams...")
     await ingestion.start()
+    # Fetch REST depth snapshot (required before processing WS incremental updates)
+    snapshots = await ingestion.fetch_depth_snapshots()
+    for sym, snap in snapshots.items():
+        orderbook.apply_snapshot(sym, snap["bids"], snap["asks"],
+                                 last_update_id=snap["lastUpdateId"])
     print("  [OK] Streams started")
 
     # 5. Main loop

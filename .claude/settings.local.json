@@ -9,7 +9,8 @@
       "Bash(python -c \"import streamlit; print\\(''streamlit:'', streamlit.__version__\\)\")",
       "Bash(pip install duckdb --quiet)",
       "Bash(python -c \"import duckdb; print\\(''duckdb:'', duckdb.__version__\\)\")",
-      "Bash(timeout 35 python scripts/dry_run_data.py --duration 30)"
+      "Bash(timeout 35 python scripts/dry_run_data.py --duration 30)",
+      "Bash(python scripts/dry_run_full.py --duration 60)"
     ],
     "additionalDirectories": [
       "C:\\Users\\hp\\.claude\\projects\\c--Users-hp-Documents-GitHub-coinmaker-quant"

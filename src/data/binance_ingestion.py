@@ -418,6 +418,42 @@ class BinanceDataIngestion:
             except Exception as e:
                 logger.debug(f"[BinanceIngestion] OI poll error: {e}")
 
+    async def fetch_depth_snapshots(self) -> Dict[str, dict]:
+        """
+        Fetch initial REST depth snapshots for all symbols.
+        Must be called BEFORE processing WebSocket depth updates.
+
+        Returns:
+            {symbol: {"lastUpdateId": int, "bids": [...], "asks": [...]}}
+        """
+        result = {}
+        for symbol in self.symbols:
+            snap = await self._fetch_depth_snapshot(symbol)
+            if snap:
+                result[symbol] = snap
+                logger.info(
+                    f"[BinanceIngestion] Depth snapshot {symbol}: "
+                    f"lastUpdateId={snap['lastUpdateId']} "
+                    f"bids={len(snap['bids'])} asks={len(snap['asks'])}"
+                )
+        return result
+
+    async def _fetch_depth_snapshot(self, symbol: str) -> Optional[dict]:
+        """Fetch single REST depth snapshot from Binance Futures."""
+        try:
+            import urllib.request
+            url = f"{self.FUTURES_REST_BASE}/fapi/v1/depth?symbol={symbol}&limit=1000"
+            with urllib.request.urlopen(url, timeout=10) as resp:
+                data = json.loads(resp.read())
+            return {
+                "lastUpdateId": data["lastUpdateId"],
+                "bids": [[float(p), float(q)] for p, q in data.get("bids", [])],
+                "asks": [[float(p), float(q)] for p, q in data.get("asks", [])],
+            }
+        except Exception as e:
+            logger.warning(f"[BinanceIngestion] Depth snapshot error {symbol}: {e}")
+            return None
+
     async def _fetch_open_interest(self, symbol: str) -> Optional[OpenInterestSnapshot]:
         try:
             import urllib.request

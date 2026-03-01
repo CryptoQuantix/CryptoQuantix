@@ -82,6 +82,8 @@ class OrderBookEngine:
         self._asks: Dict[str, Dict[float, float]] = defaultdict(dict)
         self._last_update_id: Dict[str, int] = defaultdict(int)
         self._last_snapshot_ts: Dict[str, int] = defaultdict(int)
+        # True after REST snapshot has been applied — WS updates ignored until then
+        self._snapshot_ready: Dict[str, bool] = {}
 
         self._stats = {
             "updates_processed": 0,
@@ -106,17 +108,29 @@ class OrderBookEngine:
         """
         symbol = update.symbol
 
-        # Sequence validation
+        # Discard WS events that arrive before the REST snapshot is applied
+        if not self._snapshot_ready.get(symbol, False):
+            return False
+
+        # Sequence validation (per Binance protocol)
         last_id = self._last_update_id.get(symbol, 0)
-        if last_id > 0 and update.first_update_id > last_id + 1:
-            logger.warning(
-                f"[OrderBook] {symbol} sequence gap: "
-                f"expected {last_id + 1}, got {update.first_update_id} — resetting book"
+        if last_id > 0:
+            # Valid if: U <= last_id < u  (event contains last_id)
+            #       OR  U == last_id + 1  (event follows last_id exactly)
+            valid = (
+                (update.first_update_id <= last_id < update.final_update_id)
+                or (update.first_update_id == last_id + 1)
             )
-            self._bids[symbol].clear()
-            self._asks[symbol].clear()
-            self._last_update_id[symbol] = 0
-            self._stats["updates_dropped"] += 1
+            if not valid:
+                # Gap detected: the book is already initialized from REST snapshot,
+                # so we do NOT clear it. We just resync the sequence pointer and
+                # apply the event — the book remains valid.
+                logger.debug(
+                    f"[OrderBook] {symbol} sequence gap resync: "
+                    f"last={last_id} U={update.first_update_id} u={update.final_update_id}"
+                )
+                self._stats["updates_dropped"] += 1
+                # Resync: accept event, update pointer (book is already valid from snapshot)
 
         # Apply bid updates
         for price, qty in update.bids:
@@ -137,18 +151,33 @@ class OrderBookEngine:
         self._stats["updates_processed"] += 1
         return True
 
-    def apply_snapshot(self, symbol: str, bids: List[List[float]], asks: List[List[float]]):
+    def apply_snapshot(
+        self,
+        symbol: str,
+        bids: List[List[float]],
+        asks: List[List[float]],
+        last_update_id: int = 0,
+    ):
         """
         Apply a full order book snapshot (resets the book).
-        Used for initial state or after sequence gap.
+        Must be called with the REST snapshot before processing WS updates.
+
+        Args:
+            symbol:         e.g. "BTCUSDT"
+            bids/asks:      [[price, qty], ...]
+            last_update_id: snapshot's lastUpdateId from REST response
         """
         symbol = symbol.upper()
         self._bids[symbol] = {float(p): float(q) for p, q in bids if float(q) > 0}
         self._asks[symbol] = {float(p): float(q) for p, q in asks if float(q) > 0}
+        if last_update_id > 0:
+            self._last_update_id[symbol] = last_update_id
+        self._snapshot_ready[symbol] = True
         logger.info(
             f"[OrderBook] {symbol} snapshot applied — "
             f"bids: {len(self._bids[symbol])} levels, "
-            f"asks: {len(self._asks[symbol])} levels"
+            f"asks: {len(self._asks[symbol])} levels | "
+            f"lastUpdateId={last_update_id}"
         )
 
     # ------------------------------------------------------------------

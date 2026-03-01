@@ -175,7 +175,7 @@ class VolumeBreakoutConfig(StrategyConfig):
     def from_env():
         return VolumeBreakoutConfig(
             name="Volume Breakout",
-            enabled=os.getenv("VB_ENABLED", "false").lower() == "true",
+            enabled=os.getenv("VB_ENABLED", "true").lower() == "true",
             symbol=os.getenv("VB_SYMBOL", "BTCUSDT"),
             instrument=os.getenv("VB_INSTRUMENT", "BTC-PERPETUAL"),
             volume_zscore_threshold=float(os.getenv("VB_VOL_ZSCORE_THRESHOLD", "2.0")),
@@ -200,7 +200,7 @@ class MeanReversionConfig(StrategyConfig):
     def from_env():
         return MeanReversionConfig(
             name="Mean Reversion",
-            enabled=os.getenv("MR_ENABLED", "false").lower() == "true",
+            enabled=os.getenv("MR_ENABLED", "true").lower() == "true",
             symbol=os.getenv("MR_SYMBOL", "BTCUSDT"),
             instrument=os.getenv("MR_INSTRUMENT", "BTC-PERPETUAL"),
             vwap_z_threshold=float(os.getenv("MR_VWAP_Z_THRESHOLD", "2.0")),
@@ -224,7 +224,7 @@ class LiqSqueezeConfig(StrategyConfig):
     def from_env():
         return LiqSqueezeConfig(
             name="Liquidation Squeeze",
-            enabled=os.getenv("LIQ_ENABLED", "false").lower() == "true",
+            enabled=os.getenv("LIQ_ENABLED", "true").lower() == "true",
             symbol=os.getenv("LIQ_SYMBOL", "BTCUSDT"),
             instrument=os.getenv("LIQ_INSTRUMENT", "BTC-PERPETUAL"),
             liq_volume_threshold=float(os.getenv("LIQ_VOLUME_THRESHOLD", "50.0")),
@@ -250,7 +250,7 @@ class ImbalanceScalpConfig(StrategyConfig):
     def from_env():
         return ImbalanceScalpConfig(
             name="Imbalance Scalp",
-            enabled=os.getenv("IS_ENABLED", "false").lower() == "true",
+            enabled=os.getenv("IS_ENABLED", "true").lower() == "true",
             symbol=os.getenv("IS_SYMBOL", "BTCUSDT"),
             instrument=os.getenv("IS_INSTRUMENT", "BTC-PERPETUAL"),
             imbalance_threshold_long=float(os.getenv("IS_IMB_THRESHOLD_LONG", "0.65")),
@@ -286,8 +286,9 @@ class Config:
         """Load enabled strategies"""
         cls.STRATEGIES = []
 
-        # Iron Condor
-        if os.getenv("STRATEGY_IRON_CONDOR_ENABLED", "true").lower() == "true":
+        # --- Legacy strategies (disabled by default) ---
+        # Iron Condor — opzioni, non usa orderflow; abilitare con STRATEGY_IRON_CONDOR_ENABLED=true
+        if os.getenv("STRATEGY_IRON_CONDOR_ENABLED", "false").lower() == "true":
             cls.STRATEGIES.append(IronCondorConfig(
                 name="Iron Condor",
                 initial_equity=float(os.getenv("INITIAL_EQUITY", 10000)),
@@ -303,8 +304,8 @@ class Config:
                 wing_width_percent=float(os.getenv("WING_WIDTH_PERCENT", 0.05))
             ))
 
-        # Smart Money
-        if os.getenv("STRATEGY_SMART_MONEY_ENABLED", "true").lower() == "true":
+        # Smart Money — segnali classici, non usa orderflow; abilitare con STRATEGY_SMART_MONEY_ENABLED=true
+        if os.getenv("STRATEGY_SMART_MONEY_ENABLED", "false").lower() == "true":
             cls.STRATEGIES.append(SmartMoneyConfig(
                 name="Smart Money",
                 time_window_start=int(os.getenv("SM_TIME_WINDOW_START", 14)),
@@ -318,25 +319,25 @@ class Config:
                 leverage_max=int(os.getenv("LEVERAGE_MAX", 5))
             ))
 
-        # W/M Formation
+        # W/M Formation — abilitare con WM_ENABLED=true
         if os.getenv("WM_ENABLED", "false").lower() == "true":
             cls.STRATEGIES.append(WMFormationConfig.from_env())
 
-        # NY Brings
+        # NY Brings — abilitare con BRINGS_ENABLED=true
         if os.getenv("BRINGS_ENABLED", "false").lower() == "true":
             cls.STRATEGIES.append(BringsStrategyConfig.from_env())
 
-        # --- New Volumetric Strategies ---
-        if os.getenv("VB_ENABLED", "false").lower() == "true":
+        # --- Nuove strategie volumetriche (abilitate per default) ---
+        if os.getenv("VB_ENABLED", "true").lower() == "true":
             cls.STRATEGIES.append(VolumeBreakoutConfig.from_env())
 
-        if os.getenv("MR_ENABLED", "false").lower() == "true":
+        if os.getenv("MR_ENABLED", "true").lower() == "true":
             cls.STRATEGIES.append(MeanReversionConfig.from_env())
 
-        if os.getenv("LIQ_ENABLED", "false").lower() == "true":
+        if os.getenv("LIQ_ENABLED", "true").lower() == "true":
             cls.STRATEGIES.append(LiqSqueezeConfig.from_env())
 
-        if os.getenv("IS_ENABLED", "false").lower() == "true":
+        if os.getenv("IS_ENABLED", "true").lower() == "true":
             cls.STRATEGIES.append(ImbalanceScalpConfig.from_env())
 
     @classmethod
@@ -360,8 +361,6 @@ class Config:
             if isinstance(strategy, IronCondorConfig):
                 if strategy.initial_equity <= 0:
                     errors.append("Iron Condor: INITIAL_EQUITY must be positive")
-            elif isinstance(strategy, SmartMoneyConfig):
-                pass
 
         if errors:
             for error in errors:
@@ -390,11 +389,24 @@ class Config:
                 print(f"  Binance Symbol: {strategy.binance_symbol}")
             elif isinstance(strategy, WMFormationConfig):
                 print(f"  Primary Timeframe: {strategy.primary_timeframe}")
-                print(f"  Confirmation: {strategy.confirmation_timeframe_1}, {strategy.confirmation_timeframe_2}")
                 print(f"  Deribit Symbol: {strategy.deribit_symbol}")
             elif isinstance(strategy, BringsStrategyConfig):
                 print(f"  Timeframe: {strategy.timeframe}")
                 print(f"  Deribit Symbol: {strategy.deribit_symbol}")
+            elif isinstance(strategy, VolumeBreakoutConfig):
+                print(f"  Symbol: {strategy.symbol} | Instrument: {strategy.instrument}")
+                print(f"  Vol Z threshold: {strategy.volume_zscore_threshold} | Lookback: {strategy.breakout_lookback}")
+                print(f"  R/R: {strategy.rr_ratio} | SL ATR mult: {strategy.sl_atr_multiplier}")
+            elif isinstance(strategy, MeanReversionConfig):
+                print(f"  Symbol: {strategy.symbol} | Instrument: {strategy.instrument}")
+                print(f"  VWAP Z threshold: {strategy.vwap_z_threshold} | R/R: {strategy.rr_ratio}")
+            elif isinstance(strategy, LiqSqueezeConfig):
+                print(f"  Symbol: {strategy.symbol} | Instrument: {strategy.instrument}")
+                print(f"  Liq volume threshold: {strategy.liq_volume_threshold} BTC | R/R: {strategy.rr_ratio}")
+            elif isinstance(strategy, ImbalanceScalpConfig):
+                print(f"  Symbol: {strategy.symbol} | Instrument: {strategy.instrument}")
+                print(f"  Imbalance long: {strategy.imbalance_threshold_long} | short: {strategy.imbalance_threshold_short}")
+                print(f"  TP: {strategy.tp_pct:.1%} | SL: {strategy.sl_pct:.1%}")
         print("=" * 60)
 
 if __name__ == "__main__":

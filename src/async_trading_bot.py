@@ -189,6 +189,7 @@ class AsyncTradingBot:
             "regime_detector": self.regime_detector,
             "scoring_engine": self.scoring_engine,
             "data_ingestion": self.data_ingestion,
+            "trade_logger": self.trade_logger,
         }
 
         # --- Load strategies ---
@@ -340,6 +341,18 @@ class AsyncTradingBot:
         """Route depth updates from BinanceDataIngestion to OrderBookEngine."""
         if not self.data_ingestion or not self.orderbook_engine:
             return
+
+        # --- Binance protocol: fetch REST snapshot BEFORE processing WS updates ---
+        logger.info("[OrderBook] Fetching REST depth snapshots...")
+        snapshots = await self.data_ingestion.fetch_depth_snapshots()
+        for sym, snap in snapshots.items():
+            self.orderbook_engine.apply_snapshot(
+                sym, snap["bids"], snap["asks"],
+                last_update_id=snap["lastUpdateId"],
+            )
+        if not snapshots:
+            logger.warning("[OrderBook] No depth snapshots received — book may have gaps")
+
         while self.running:
             try:
                 depth = await asyncio.wait_for(
