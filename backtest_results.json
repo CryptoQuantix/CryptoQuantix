@@ -1,0 +1,251 @@
+[
+  {
+    "strategy": "Volume Breakout",
+    "metrics": {
+      "total_trades": 319,
+      "wins": 86,
+      "losses": 233,
+      "winrate_pct": 27.0,
+      "initial_equity": 10000.0,
+      "final_equity": 9955.89,
+      "total_pnl": -44.11,
+      "total_return_pct": -0.44,
+      "max_drawdown_pct": 0.44,
+      "sharpe": -0.1696,
+      "sortino": 0.0,
+      "calmar": -0.9951,
+      "profit_factor": 0.488,
+      "payoff_ratio": 1.322,
+      "expectancy_r": -0.2167,
+      "avg_win_usd": 0.49,
+      "avg_loss_usd": -0.37,
+      "gross_profit": 42.07,
+      "gross_loss": 86.18,
+      "total_fees": 25.4,
+      "avg_duration_min": 62.2,
+      "max_consecutive_losses": 11,
+      "by_exit": {
+        "sl": 230,
+        "tp": 88,
+        "end_of_data": 1
+      },
+      "by_regime": {
+        "TREND_UP": 104,
+        "COMPRESSION": 90,
+        "TREND_DOWN": 125
+      }
+    },
+    "regime_breakdown": {
+      "TREND_UP": {
+        "trades": 104,
+        "winrate_pct": 22.1,
+        "avg_pnl": -0.23,
+        "expectancy_r": -0.3998,
+        "total_pnl": -24.23
+      },
+      "COMPRESSION": {
+        "trades": 90,
+        "winrate_pct": 30.0,
+        "avg_pnl": -0.02,
+        "expectancy_r": -0.067,
+        "total_pnl": -2.02
+      },
+      "TREND_DOWN": {
+        "trades": 125,
+        "winrate_pct": 28.8,
+        "avg_pnl": -0.14,
+        "expectancy_r": -0.1721,
+        "total_pnl": -17.86
+      }
+    },
+    "trade_count": 319
+  },
+  {
+    "strategy": "Mean Reversion",
+    "metrics": {
+      "total_trades": 14,
+      "wins": 1,
+      "losses": 13,
+      "winrate_pct": 7.1,
+      "initial_equity": 10000.0,
+      "final_equity": 9998.3,
+      "total_pnl": -1.7,
+      "total_return_pct": -0.02,
+      "max_drawdown_pct": 0.02,
+      "sharpe": -0.708,
+      "sortino": -1.4991,
+      "calmar": -1.0,
+      "profit_factor": 0.018,
+      "payoff_ratio": 0.236,
+      "expectancy_r": -0.4703,
+      "avg_win_usd": 0.03,
+      "avg_loss_usd": -0.13,
+      "gross_profit": 0.03,
+      "gross_loss": 1.73,
+      "total_fees": 1.21,
+      "avg_duration_min": 5.2,
+      "max_consecutive_losses": 11,
+      "by_exit": {
+        "tp": 7,
+        "sl": 7
+      },
+      "by_regime": {
+        "COMPRESSION": 5,
+        "RANGE": 9
+      }
+    },
+    "regime_breakdown": {
+      "COMPRESSION": {
+        "trades": 5,
+        "winrate_pct": 0.0,
+        "avg_pnl": -0.12,
+        "expectancy_r": -0.5049,
+        "total_pnl": -0.59
+      },
+      "RANGE": {
+        "trades": 9,
+        "winrate_pct": 11.1,
+        "avg_pnl": -0.12,
+        "expectancy_r": -0.4511,
+        "total_pnl": -1.11
+      }
+    },
+    "trade_count": 14
+  },
+  {
+    "strategy": "Liq Squeeze",
+    "metrics": {
+      "total_trades": 424,
+      "wins": 2,
+      "losses": 422,
+      "winrate_pct": 0.5,
+      "initial_equity": 10000.0,
+      "final_equity": 9947.28,
+      "total_pnl": -52.72,
+      "total_return_pct": -0.53,
+      "max_drawdown_pct": 0.53,
+      "sharpe": -1.5543,
+      "sortino": -2.1859,
+      "calmar": -1.0,
+      "profit_factor": 0.001,
+      "payoff_ratio": 0.179,
+      "expectancy_r": -0.6958,
+      "avg_win_usd": 0.02,
+      "avg_loss_usd": -0.13,
+      "gross_profit": 0.04,
+      "gross_loss": 52.76,
+      "total_fees": 34.85,
+      "avg_duration_min": 1.4,
+      "max_consecutive_losses": 267,
+      "by_exit": {
+        "sl": 262,
+        "tp": 162
+      },
+      "by_regime": {
+        "TREND_UP": 88,
+        "COMPRESSION": 98,
+        "RANGE": 128,
+        "TREND_DOWN": 110
+      }
+    },
+    "regime_breakdown": {
+      "TREND_UP": {
+        "trades": 88,
+        "winrate_pct": 0.0,
+        "avg_pnl": -0.12,
+        "expectancy_r": -0.6882,
+        "total_pnl": -10.96
+      },
+      "COMPRESSION": {
+        "trades": 98,
+        "winrate_pct": 0.0,
+        "avg_pnl": -0.13,
+        "expectancy_r": -0.758,
+        "total_pnl": -12.62
+      },
+      "RANGE": {
+        "trades": 128,
+        "winrate_pct": 1.6,
+        "avg_pnl": -0.12,
+        "expectancy_r": -0.6533,
+        "total_pnl": -15.56
+      },
+      "TREND_DOWN": {
+        "trades": 110,
+        "winrate_pct": 0.0,
+        "avg_pnl": -0.12,
+        "expectancy_r": -0.6958,
+        "total_pnl": -13.57
+      }
+    },
+    "trade_count": 424
+  },
+  {
+    "strategy": "Imbalance Scalp",
+    "metrics": {
+      "total_trades": 135,
+      "wins": 55,
+      "losses": 80,
+      "winrate_pct": 40.7,
+      "initial_equity": 10000.0,
+      "final_equity": 9986.18,
+      "total_pnl": -13.82,
+      "total_return_pct": -0.14,
+      "max_drawdown_pct": 0.14,
+      "sharpe": -0.0612,
+      "sortino": 0.0,
+      "calmar": -1.0,
+      "profit_factor": 0.527,
+      "payoff_ratio": 0.766,
+      "expectancy_r": -0.0688,
+      "avg_win_usd": 0.28,
+      "avg_loss_usd": -0.37,
+      "gross_profit": 15.38,
+      "gross_loss": 29.2,
+      "total_fees": 10.88,
+      "avg_duration_min": 121.2,
+      "max_consecutive_losses": 9,
+      "by_exit": {
+        "sl": 80,
+        "tp": 55
+      },
+      "by_regime": {
+        "RANGE": 40,
+        "TREND_DOWN": 30,
+        "COMPRESSION": 31,
+        "TREND_UP": 34
+      }
+    },
+    "regime_breakdown": {
+      "RANGE": {
+        "trades": 40,
+        "winrate_pct": 40.0,
+        "avg_pnl": -0.11,
+        "expectancy_r": -0.0857,
+        "total_pnl": -4.32
+      },
+      "TREND_DOWN": {
+        "trades": 30,
+        "winrate_pct": 50.0,
+        "avg_pnl": -0.03,
+        "expectancy_r": 0.1429,
+        "total_pnl": -0.79
+      },
+      "COMPRESSION": {
+        "trades": 31,
+        "winrate_pct": 29.0,
+        "avg_pnl": -0.18,
+        "expectancy_r": -0.3364,
+        "total_pnl": -5.47
+      },
+      "TREND_UP": {
+        "trades": 34,
+        "winrate_pct": 44.1,
+        "avg_pnl": -0.1,
+        "expectancy_r": 0.0084,
+        "total_pnl": -3.24
+      }
+    },
+    "trade_count": 135
+  }
+]

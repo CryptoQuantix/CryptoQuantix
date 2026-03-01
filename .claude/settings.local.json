@@ -10,7 +10,9 @@
       "Bash(pip install duckdb --quiet)",
       "Bash(python -c \"import duckdb; print\\(''duckdb:'', duckdb.__version__\\)\")",
       "Bash(timeout 35 python scripts/dry_run_data.py --duration 30)",
-      "Bash(python scripts/dry_run_full.py --duration 60)"
+      "Bash(python scripts/dry_run_full.py --duration 60)",
+      "Bash(python scripts/real_backtest.py)",
+      "Bash(python scripts/sweep_vb.py)"
     ],
     "additionalDirectories": [
       "C:\\Users\\hp\\.claude\\projects\\c--Users-hp-Documents-GitHub-coinmaker-quant"

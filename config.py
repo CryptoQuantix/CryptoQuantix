@@ -165,8 +165,8 @@ class VolumeBreakoutConfig(StrategyConfig):
     """Configuration for Volume Breakout strategy"""
     symbol: str = "BTCUSDT"          # Binance symbol (data source)
     instrument: str = "BTC-PERPETUAL"  # Deribit execution instrument
-    volume_zscore_threshold: float = 2.0
-    imbalance_threshold: float = 0.55
+    volume_zscore_threshold: float = 2.5
+    imbalance_threshold: float = 0.50
     breakout_lookback: int = 20
     rr_ratio: float = 2.5
     sl_atr_multiplier: float = 1.5
@@ -178,8 +178,8 @@ class VolumeBreakoutConfig(StrategyConfig):
             enabled=os.getenv("VB_ENABLED", "true").lower() == "true",
             symbol=os.getenv("VB_SYMBOL", "BTCUSDT"),
             instrument=os.getenv("VB_INSTRUMENT", "BTC-PERPETUAL"),
-            volume_zscore_threshold=float(os.getenv("VB_VOL_ZSCORE_THRESHOLD", "2.0")),
-            imbalance_threshold=float(os.getenv("VB_IMBALANCE_THRESHOLD", "0.55")),
+            volume_zscore_threshold=float(os.getenv("VB_VOL_ZSCORE_THRESHOLD", "2.5")),
+            imbalance_threshold=float(os.getenv("VB_IMBALANCE_THRESHOLD", "0.50")),
             breakout_lookback=int(os.getenv("VB_BREAKOUT_LOOKBACK", "20")),
             rr_ratio=float(os.getenv("VB_RR_RATIO", "2.5")),
             sl_atr_multiplier=float(os.getenv("VB_SL_ATR_MULT", "1.5")),

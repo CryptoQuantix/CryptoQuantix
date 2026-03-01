@@ -92,10 +92,10 @@ class VolumeBreakoutStrategy(BaseStrategy):
             if not snap or snap.price <= 0:
                 return []
 
-            # Check regime
+            # Check regime — skip RANGE (no momentum) and TREND_UP (bull traps, E=-0.40R)
             if self.regime_detector:
                 regime = self.regime_detector.get_last_regime(self.symbol)
-                if regime and regime.regime.value in ("RANGE",):
+                if regime and regime.regime.value in ("RANGE", "TREND_UP"):
                     self.logger.debug(f"Regime {regime.regime.value} — skipping breakout")
                     return []
 
