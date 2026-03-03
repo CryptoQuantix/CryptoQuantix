@@ -83,31 +83,31 @@ class ImbalanceScalpStrategy(BaseStrategy):
             cvd = snap.cvd_1m
 
             # --- Long imbalance scalp ---
+            # is_liq_vacuum removed: on a 1000-level Binance book the 5x gap threshold
+            # is almost never triggered; extreme imbalance+aggr+cvd is sufficient.
             if (imbalance > self.imbalance_threshold_long and
                     aggr > self.aggression_threshold and
-                    cvd >= 0 and
-                    snap.is_liq_vacuum):
+                    cvd >= 0):
 
                 sl_price = price * (1 - self.sl_pct)
                 tp_price = price * (1 + self.tp_pct)
                 signals.append(self._build_signal("BUY", price, sl_price, tp_price, snap))
                 self.logger.info(
                     f"[ImbalanceScalp] LONG @ {price:.2f} "
-                    f"imb={imbalance:.3f} aggr={aggr:.3f} vacuum={snap.is_liq_vacuum}"
+                    f"imb={imbalance:.3f} aggr={aggr:.3f}"
                 )
 
             # --- Short imbalance scalp ---
             elif (imbalance < self.imbalance_threshold_short and
                   aggr < (1 - self.aggression_threshold) and
-                  cvd <= 0 and
-                  snap.is_liq_vacuum):
+                  cvd <= 0):
 
                 sl_price = price * (1 + self.sl_pct)
                 tp_price = price * (1 - self.tp_pct)
                 signals.append(self._build_signal("SELL", price, sl_price, tp_price, snap))
                 self.logger.info(
                     f"[ImbalanceScalp] SHORT @ {price:.2f} "
-                    f"imb={imbalance:.3f} aggr={aggr:.3f} vacuum={snap.is_liq_vacuum}"
+                    f"imb={imbalance:.3f} aggr={aggr:.3f}"
                 )
 
             if signals:

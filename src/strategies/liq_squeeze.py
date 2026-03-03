@@ -42,7 +42,7 @@ class LiquidationSqueezeStrategy(BaseStrategy):
 
         self.symbol = getattr(config, "symbol", "BTCUSDT")
         self.instrument = getattr(config, "instrument", "BTC-PERPETUAL")
-        self.liq_volume_threshold = getattr(config, "liq_volume_threshold", 50.0)  # USD/BTC contracts
+        self.liq_volume_threshold = getattr(config, "liq_volume_threshold", 5.0)   # BTC in last 10 min
         self.delta_threshold = getattr(config, "delta_threshold", 0.3)
         self.rr_ratio = getattr(config, "rr_ratio", 1.5)
         self.sl_atr_multiplier = getattr(config, "sl_atr_multiplier", 0.8)
@@ -76,8 +76,17 @@ class LiquidationSqueezeStrategy(BaseStrategy):
             if not snap or snap.price <= 0:
                 return []
 
-            buy_liq = snap.liq_buy_volume_10m
-            sell_liq = snap.liq_sell_volume_10m
+            # Rolling 10-minute liquidation window from data_ingestion buffer
+            # (snap.liq_buy/sell_volume_10m accumulates since bot start — not a true 10m window)
+            cutoff_ms = int((now - 600) * 1000)
+            if self.data_ingestion:
+                recent = self.data_ingestion.get_recent_liquidations(self.symbol, n=500)
+                recent = [l for l in recent if l.timestamp_ms >= cutoff_ms]
+                buy_liq = sum(l.quantity for l in recent if l.side == "BUY")
+                sell_liq = sum(l.quantity for l in recent if l.side == "SELL")
+            else:
+                buy_liq = snap.liq_buy_volume_10m
+                sell_liq = snap.liq_sell_volume_10m
 
             candles = self.orderflow_engine.get_candle_history(self.symbol, 60, n=20)
             atr = self._compute_atr(candles[-14:]) if len(candles) >= 14 else 0.0
