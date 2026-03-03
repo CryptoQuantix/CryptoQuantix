@@ -173,8 +173,9 @@ class ImbalanceScalpStrategy(BaseStrategy):
         }
 
     def _compute_quantity(self, price: float, sl_distance: float) -> float:
+        # Returns USD amount rounded to Deribit BTC-PERPETUAL step (10 USD)
         if not self.risk_manager or sl_distance <= 0:
-            return 0.001
+            return 10
         try:
             result = self.risk_manager.calculate_dynamic_size(
                 instrument_name=self.instrument,
@@ -185,6 +186,7 @@ class ImbalanceScalpStrategy(BaseStrategy):
                 model_winrate=0.52,
             )
             # Scale down for scalps (50% of normal size)
-            return result.get("quantity", 0.001) * 0.5
+            qty_usd = result.get("quantity_usd", 20.0) * 0.5
+            return max(10, int(qty_usd / 10) * 10)
         except Exception:
-            return 0.001
+            return 10

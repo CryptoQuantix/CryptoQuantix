@@ -191,8 +191,9 @@ class LiquidationSqueezeStrategy(BaseStrategy):
         return float(np.mean(trs)) if trs else 0.0
 
     def _compute_quantity(self, price: float, sl_distance: float) -> float:
+        # Returns USD amount rounded to Deribit BTC-PERPETUAL step (10 USD)
         if not self.risk_manager or sl_distance <= 0:
-            return 0.001
+            return 10
         try:
             result = self.risk_manager.calculate_dynamic_size(
                 instrument_name=self.instrument,
@@ -202,6 +203,7 @@ class LiquidationSqueezeStrategy(BaseStrategy):
                 regime="EXPANSION",
                 model_winrate=0.48,
             )
-            return result.get("quantity", 0.001)
+            qty_usd = result.get("quantity_usd", 10.0)
+            return max(10, int(qty_usd / 10) * 10)
         except Exception:
-            return 0.001
+            return 10
