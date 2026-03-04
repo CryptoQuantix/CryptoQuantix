@@ -581,6 +581,11 @@ class OrderManager:
             order_id = order.get("order_id")
             logger.info(f"Entry order placed: {order_id}")
 
+            # Wait for Deribit to open the position before placing reduce_only SL/TP.
+            # Without this delay, reduce_only orders fail with invalid_reduce_only_order
+            # because the limit entry may not be processed yet.
+            time.sleep(0.3)
+
             # Track SL and TP order IDs for orphan cleanup
             sl_order_id = None
             tp_order_id = None

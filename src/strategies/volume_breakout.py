@@ -192,6 +192,7 @@ class VolumeBreakoutStrategy(BaseStrategy):
             # Dynamic position sizing
             sl_distance = abs(signal["price"] - signal["stop_loss"])
             quantity = self._compute_quantity(signal["price"], sl_distance)
+            signal["_qty_usd"] = quantity  # expose for position log
 
             if quantity <= 0:
                 self.logger.warning("Quantity too small — skipping")

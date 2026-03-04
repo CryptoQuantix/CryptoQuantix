@@ -125,6 +125,7 @@ class ImbalanceScalpStrategy(BaseStrategy):
             quantity = self._compute_quantity(signal["price"], sl_distance)
             if quantity <= 0:
                 return False
+            signal["_qty_usd"] = quantity  # expose for position log
             success, msg = self.order_manager.execute_generic_trade(
                 instrument_name=self.instrument,
                 direction=signal["direction"].lower(),

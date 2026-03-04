@@ -146,6 +146,7 @@ class MeanReversionStrategy(BaseStrategy):
                 return False
             sl_distance = abs(signal["price"] - signal["stop_loss"])
             quantity = self._compute_quantity(signal["price"], sl_distance)
+            signal["_qty_usd"] = quantity  # expose for position log
             if quantity <= 0:
                 return False
             success, msg = self.order_manager.execute_generic_trade(

@@ -155,6 +155,7 @@ class AsyncTradingBot:
         self.data_quality: Optional[Any] = None
         self.alerts: Optional[Any] = None
         self.trade_logger: Optional[Any] = None
+        self._active_trades: Dict[str, Dict] = {}  # trade_id -> open trade info
 
         if HAS_DATA_LAYER:
             self.data_ingestion = BinanceDataIngestion(
@@ -516,6 +517,9 @@ class AsyncTradingBot:
     def _manage_positions_sync(self):
         """Synchronous position management (runs in thread executor)."""
         try:
+            # 0. Detect and log closed positions
+            self._check_closed_positions()
+
             # 1. Orphan cleanup (highest priority)
             orphan_stats = self.position_monitor.check_orphan_orders(currencies=["BTC", "ETH"])
             if orphan_stats.get("orphans_found", 0) > 0:
@@ -567,22 +571,103 @@ class AsyncTradingBot:
                     for signal in signals:
                         logger.info(f"Signal from {strategy.name}: {signal.get('type')} {signal.get('direction')}")
                         success = strategy.execute_entry(signal)
-                        if success and self.alerts:
-                            self.alerts.send_trade_open(
-                                instrument=signal.get("instrument", ""),
-                                direction=signal.get("direction", ""),
-                                entry_price=signal.get("price", 0),
-                                sl_price=signal.get("stop_loss", 0),
-                                tp_price=signal.get("take_profit", 0),
-                                strategy=strategy.name,
-                                regime=signal.get("regime", current_regime),
-                            )
+                        if success:
+                            self._on_trade_open(signal, strategy.name, current_regime)
+                            if self.alerts:
+                                self.alerts.send_trade_open(
+                                    instrument=signal.get("instrument", ""),
+                                    direction=signal.get("direction", ""),
+                                    entry_price=signal.get("price", 0),
+                                    sl_price=signal.get("stop_loss", 0),
+                                    tp_price=signal.get("take_profit", 0),
+                                    strategy=strategy.name,
+                                    regime=signal.get("regime", current_regime),
+                                )
 
                 except Exception as e:
                     logger.error(f"[{strategy.name}] scan error: {e}", exc_info=True)
 
         except Exception as e:
             logger.error(f"[Scan] Error: {e}", exc_info=True)
+
+    def _on_trade_open(self, signal: Dict, strategy_name: str, regime: str):
+        """Called after execute_entry() succeeds — logs to positions.log and tracks for close."""
+        if not self.trade_logger:
+            return
+        try:
+            trade_id = f"{strategy_name}_{int(time.time())}"
+            qty_usd = signal.get("_qty_usd", 0.0)
+            price = signal.get("price", 0.0)
+            qty_btc = qty_usd / price if price > 0 else 0.0
+            equity = self.risk_manager.get_risk_summary().get("equity", 0.0) if self.risk_manager else 0.0
+
+            self.trade_logger.log_entry_from_signal(
+                trade_id=trade_id,
+                signal=signal,
+                quantity=qty_btc,
+                regime=regime,
+                equity=equity,
+            )
+            self._active_trades[trade_id] = {
+                "instrument": signal.get("instrument", "BTC-PERPETUAL"),
+                "direction": signal.get("direction", "buy"),
+                "entry_price": price,
+                "stop_loss": signal.get("stop_loss", 0.0),
+                "take_profit": signal.get("take_profit", 0.0),
+                "qty_btc": qty_btc,
+                "equity_at_entry": equity,
+                "strategy": strategy_name,
+            }
+            logger.info(f"[PositionLog] OPEN logged: {trade_id}")
+        except Exception as e:
+            logger.debug(f"[PositionLog] _on_trade_open error: {e}")
+
+    def _check_closed_positions(self):
+        """Detect positions closed since last check and log them."""
+        if not self._active_trades or not self.trade_logger:
+            return
+        try:
+            open_pos = self.client.get_positions(currency="BTC", kind="future")
+            open_instruments = {
+                p.get("instrument_name") for p in open_pos
+                if p.get("instrument_name") and abs(p.get("size", 0)) > 0
+            }
+            for trade_id, info in list(self._active_trades.items()):
+                if info["instrument"] not in open_instruments:
+                    # Position gone — determine reason from proximity to TP/SL
+                    # Query last fill via Deribit trade history for exact price
+                    exit_price = self._get_last_fill_price(info["instrument"]) or info["entry_price"]
+                    direction = info["direction"].lower()
+                    pnl = (exit_price - info["entry_price"]) * info["qty_btc"] if direction == "buy" \
+                        else (info["entry_price"] - exit_price) * info["qty_btc"]
+
+                    tp = info.get("take_profit", 0)
+                    sl = info.get("stop_loss", 0)
+                    if tp and abs(exit_price - tp) < abs(exit_price - sl):
+                        reason = "tp"
+                    elif sl and abs(exit_price - sl) <= abs(exit_price - tp if tp else float("inf")):
+                        reason = "sl"
+                    else:
+                        reason = "unknown"
+
+                    self.trade_logger.log_exit(trade_id, exit_price=exit_price, pnl_usd=pnl, exit_reason=reason)
+                    del self._active_trades[trade_id]
+                    logger.info(f"[PositionLog] CLOSE logged: {trade_id} pnl=${pnl:+.2f} ({reason})")
+        except Exception as e:
+            logger.debug(f"[PositionLog] _check_closed_positions error: {e}")
+
+    def _get_last_fill_price(self, instrument: str) -> Optional[float]:
+        """Get price of last trade fill for an instrument from Deribit."""
+        try:
+            result = self.client._request(
+                "GET", "/private/get_user_trades_by_instrument",
+                params={"instrument_name": instrument, "count": 1, "sorting": "desc"},
+                private=True,
+            )
+            trades = result.get("result", {}).get("trades", [])
+            return float(trades[0]["price"]) if trades else None
+        except Exception:
+            return None
 
     async def _scan_once(self):
         """Async wrapper for initial scan."""
