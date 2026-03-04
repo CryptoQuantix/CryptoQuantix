@@ -623,19 +623,25 @@ class AsyncTradingBot:
             logger.debug(f"[PositionLog] _on_trade_open error: {e}")
 
     def _check_closed_positions(self):
-        """Detect positions closed since last check and log them."""
+        """Detect positions closed since last check and log them.
+
+        Safety: only logs a close if the position was previously seen as open on
+        Deribit (_seen_open flag). This prevents false closes when a LIMIT entry
+        order is placed but never filled (position never existed on Deribit).
+        """
         if not self._active_trades or not self.trade_logger:
             return
         try:
-            open_pos = self.client.get_positions(currency="BTC", kind="future")
+            open_pos = self.client.get_futures_positions("BTC")
             open_instruments = {
                 p.get("instrument_name") for p in open_pos
                 if p.get("instrument_name") and abs(p.get("size", 0)) > 0
             }
             for trade_id, info in list(self._active_trades.items()):
-                if info["instrument"] not in open_instruments:
-                    # Position gone — determine reason from proximity to TP/SL
-                    # Query last fill via Deribit trade history for exact price
+                if info["instrument"] in open_instruments:
+                    info["_seen_open"] = True  # confirmed position exists on Deribit
+                elif info.get("_seen_open"):
+                    # Was open, now gone -> position closed (TP or SL hit)
                     exit_price = self._get_last_fill_price(info["instrument"]) or info["entry_price"]
                     direction = info["direction"].lower()
                     pnl = (exit_price - info["entry_price"]) * info["qty_btc"] if direction == "buy" \
@@ -643,16 +649,15 @@ class AsyncTradingBot:
 
                     tp = info.get("take_profit", 0)
                     sl = info.get("stop_loss", 0)
-                    if tp and abs(exit_price - tp) < abs(exit_price - sl):
-                        reason = "tp"
-                    elif sl and abs(exit_price - sl) <= abs(exit_price - tp if tp else float("inf")):
-                        reason = "sl"
+                    if tp and sl:
+                        reason = "tp" if abs(exit_price - tp) < abs(exit_price - sl) else "sl"
                     else:
                         reason = "unknown"
 
                     self.trade_logger.log_exit(trade_id, exit_price=exit_price, pnl_usd=pnl, exit_reason=reason)
                     del self._active_trades[trade_id]
                     logger.info(f"[PositionLog] CLOSE logged: {trade_id} pnl=${pnl:+.2f} ({reason})")
+                # else: entry limit not yet filled, wait
         except Exception as e:
             logger.debug(f"[PositionLog] _check_closed_positions error: {e}")
 
