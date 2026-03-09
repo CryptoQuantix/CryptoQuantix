@@ -71,8 +71,8 @@ REGIME_RULES: Dict[str, Tuple[List[str], List[str]]] = {
         ["TREND_UP", "TREND_DOWN"],     # OFF in trend
     ),
     "VolumeBreakoutStrategy": (
-        ["TREND_DOWN", "EXPANSION", "COMPRESSION"],
-        ["TREND_UP"],                    # E=-0.40R in backtest — hard-off
+        ["TREND_UP", "TREND_DOWN", "EXPANSION", "COMPRESSION"],
+        [],
     ),
     "LiquidationSqueezeStrategy": (
         ["COMPRESSION", "EXPANSION"],
