@@ -152,6 +152,9 @@ class BinanceDataIngestion:
         self._tasks: List[asyncio.Task] = []
         self._db = None
 
+        # REST trade poller state (fallback when WS aggTrade is blocked)
+        self._last_trade_id: Dict[str, Optional[int]] = {sym: None for sym in self.symbols}
+
         # Stats
         self.stats: Dict = {
             "trades_received": 0,
@@ -188,12 +191,13 @@ class BinanceDataIngestion:
         self._tasks = [
             asyncio.create_task(self._ws_listener(stream_url), name="binance_ws"),
             asyncio.create_task(self._oi_poller(), name="oi_poller"),
+            asyncio.create_task(self._rest_trade_poller(), name="rest_trade_poller"),
         ]
 
         logger.info(
             f"[BinanceIngestion] Started — symbols: {self.symbols} | "
             f"OI poll: {self.oi_poll_interval_sec}s | "
-            f"DB persist: {self.persist_to_db}"
+            f"DB persist: {self.persist_to_db} | REST trade fallback: ON"
         )
 
     async def stop(self):
@@ -258,6 +262,12 @@ class BinanceDataIngestion:
     # WebSocket listener
     # ------------------------------------------------------------------
 
+    # Timeout in secondi: se nessun messaggio arriva, forza reconnect.
+    # Binance chiude le connessioni ogni 24h (clean close senza eccezione
+    # con websockets>=14). Il watchdog garantisce la riconnessione anche
+    # in caso di stream silenzioso.
+    _WS_MESSAGE_TIMEOUT_SEC = 60
+
     async def _ws_listener(self, url: str):
         """Main WebSocket listener with exponential backoff reconnect."""
         reconnect_delay = 1
@@ -271,10 +281,19 @@ class BinanceDataIngestion:
                 ) as ws:
                     logger.info("[BinanceIngestion] WebSocket connected")
                     reconnect_delay = 1
-                    async for raw_msg in ws:
-                        if not self._running:
-                            break
-                        await self._process_message(raw_msg)
+                    while self._running:
+                        try:
+                            raw_msg = await asyncio.wait_for(
+                                ws.recv(),
+                                timeout=self._WS_MESSAGE_TIMEOUT_SEC,
+                            )
+                            await self._process_message(raw_msg)
+                        except asyncio.TimeoutError:
+                            logger.warning(
+                                f"[BinanceIngestion] Nessun messaggio per "
+                                f"{self._WS_MESSAGE_TIMEOUT_SEC}s — riconnessione forzata"
+                            )
+                            break  # esce dal while interno → riconnette
 
             except asyncio.CancelledError:
                 break
@@ -398,6 +417,88 @@ class BinanceDataIngestion:
     # OI Poller
     # ------------------------------------------------------------------
 
+    # ------------------------------------------------------------------
+    # REST trade poller (fallback when WS aggTrade stream is blocked)
+    # ------------------------------------------------------------------
+
+    async def _rest_trade_poller(self):
+        """
+        Fallback trade ingestion via REST polling.
+        Chiamato ogni secondo per recuperare gli aggTrade recenti.
+        Necessario quando il WebSocket aggTrade è bloccato a livello IP/geo.
+        Usa fromId per evitare duplicati tra un poll e l'altro.
+        """
+        logger.info("[BinanceIngestion] REST trade poller avviato (fallback aggTrade)")
+        # Warm-up: aspetta 2s per lasciar partire il WS
+        await asyncio.sleep(2.0)
+
+        while self._running:
+            try:
+                for symbol in self.symbols:
+                    trades = await self._fetch_recent_trades(
+                        symbol,
+                        from_id=self._last_trade_id.get(symbol),
+                    )
+                    if not trades:
+                        continue
+
+                    # Aggiorna il puntatore all'ultimo trade processato
+                    self._last_trade_id[symbol] = trades[-1]["a"] + 1
+
+                    # Al primo poll prendi solo gli ultimi 10 per non inondare la queue
+                    if self._last_trade_id[symbol] is None or len(trades) > 50:
+                        trades = trades[-10:]
+
+                    for t in trades:
+                        trade = AggTrade(
+                            symbol=symbol,
+                            trade_id=int(t["a"]),
+                            price=float(t["p"]),
+                            quantity=float(t["q"]),
+                            timestamp_ms=int(t["T"]),
+                            is_buyer_maker=bool(t["m"]),
+                        )
+                        buf = self._trade_buffers.get(symbol)
+                        if buf is not None:
+                            buf.append(trade)
+                        self.stats["trades_received"] += 1
+                        try:
+                            self.trade_queue.put_nowait(trade)
+                        except asyncio.QueueFull:
+                            pass
+
+                await asyncio.sleep(1.0)
+
+            except asyncio.CancelledError:
+                break
+            except Exception as e:
+                logger.debug(f"[BinanceIngestion] REST trade poller error: {e}")
+                await asyncio.sleep(2.0)
+
+    async def _fetch_recent_trades(
+        self, symbol: str, from_id: Optional[int] = None
+    ) -> list:
+        """Fetch recent aggTrades via REST. Uses fromId for incremental polling."""
+        try:
+            import urllib.request
+            loop = asyncio.get_event_loop()
+            url = f"{self.FUTURES_REST_BASE}/fapi/v1/aggTrades?symbol={symbol}&limit=100"
+            if from_id is not None:
+                url += f"&fromId={from_id}"
+
+            def _fetch():
+                with urllib.request.urlopen(url, timeout=5) as resp:
+                    return json.loads(resp.read())
+
+            return await loop.run_in_executor(None, _fetch)
+        except Exception as e:
+            logger.debug(f"[BinanceIngestion] REST aggTrade fetch {symbol}: {e}")
+            return []
+
+    # ------------------------------------------------------------------
+    # OI Poller
+    # ------------------------------------------------------------------
+
     async def _oi_poller(self):
         """Poll Open Interest via REST every N seconds."""
         while self._running:
@@ -439,12 +540,19 @@ class BinanceDataIngestion:
         return result
 
     async def _fetch_depth_snapshot(self, symbol: str) -> Optional[dict]:
-        """Fetch single REST depth snapshot from Binance Futures."""
+        """Fetch single REST depth snapshot from Binance Futures.
+        Eseguito in executor per non bloccare l'event loop asyncio.
+        """
         try:
             import urllib.request
+            loop = asyncio.get_event_loop()
             url = f"{self.FUTURES_REST_BASE}/fapi/v1/depth?symbol={symbol}&limit=1000"
-            with urllib.request.urlopen(url, timeout=10) as resp:
-                data = json.loads(resp.read())
+
+            def _fetch():
+                with urllib.request.urlopen(url, timeout=10) as resp:
+                    return json.loads(resp.read())
+
+            data = await loop.run_in_executor(None, _fetch)
             return {
                 "lastUpdateId": data["lastUpdateId"],
                 "bids": [[float(p), float(q)] for p, q in data.get("bids", [])],
@@ -455,15 +563,26 @@ class BinanceDataIngestion:
             return None
 
     async def _fetch_open_interest(self, symbol: str) -> Optional[OpenInterestSnapshot]:
+        """Fetch Open Interest + mark price via REST.
+        Eseguito in executor per non bloccare l'event loop asyncio.
+        """
         try:
             import urllib.request
-            url = f"{self.FUTURES_REST_BASE}/fapi/v1/openInterest?symbol={symbol}"
-            with urllib.request.urlopen(url, timeout=5) as resp:
-                data = json.loads(resp.read())
-            oi_contracts = float(data["openInterest"])
+            loop = asyncio.get_event_loop()
+            oi_url = f"{self.FUTURES_REST_BASE}/fapi/v1/openInterest?symbol={symbol}"
             price_url = f"{self.FUTURES_REST_BASE}/fapi/v1/premiumIndex?symbol={symbol}"
-            with urllib.request.urlopen(price_url, timeout=5) as resp:
-                price_data = json.loads(resp.read())
+
+            def _fetch_oi():
+                with urllib.request.urlopen(oi_url, timeout=5) as resp:
+                    return json.loads(resp.read())
+
+            def _fetch_price():
+                with urllib.request.urlopen(price_url, timeout=5) as resp:
+                    return json.loads(resp.read())
+
+            data = await loop.run_in_executor(None, _fetch_oi)
+            oi_contracts = float(data["openInterest"])
+            price_data = await loop.run_in_executor(None, _fetch_price)
             mark_price = float(price_data["markPrice"])
             return OpenInterestSnapshot(
                 symbol=symbol,
