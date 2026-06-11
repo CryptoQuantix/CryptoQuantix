@@ -1,0 +1,85 @@
+Data: 2022-06-12 -> 2026-06-11  macro-bull bars: 58%
+
+########################################################################
+# TB SHORT + macro BEAR gate
+########################################################################
+
+--- TB SHORT macro_gate=False ---
+  BULL: N=  222  WR= 38.7%  avg=  -24.4bps  PF= 0.75  sum=   -54.2%
+  BEAR: N=  182  WR= 42.3%  avg=  +13.6bps  PF= 1.14  sum=   +24.8%
+  ALL : N=  404  WR= 40.3%  avg=   -7.3bps  PF= 0.93  sum=   -29.4%
+  years: 2022:61tr/-2%  2023:71tr/-16%  2024:100tr/-25%  2025:114tr/-17%  2026:58tr/+31%
+
+--- TB SHORT macro_gate=True ---
+  BULL: N=   0
+  BEAR: N=  183  WR= 42.6%  avg=  +14.5bps  PF= 1.15  sum=   +26.6%
+  ALL : N=  183  WR= 42.6%  avg=  +14.5bps  PF= 1.15  sum=   +26.6%
+  years: 2022:61tr/-2%  2023:14tr/-5%  2024:22tr/+3%  2025:28tr/-0%  2026:58tr/+31%
+
+########################################################################
+# FS SHORT + macro BEAR gate
+########################################################################
+
+--- FS SHORT macro_gate=False ---
+  BULL: N=  389  WR= 36.5%  avg=  -23.4bps  PF= 0.75  sum=   -91.2%
+  BEAR: N=  176  WR= 38.6%  avg=   +6.1bps  PF= 1.06  sum=   +10.7%
+  ALL : N=  565  WR= 37.2%  avg=  -14.3bps  PF= 0.85  sum=   -80.5%
+  years: 2022:65tr/+12%  2023:155tr/-47%  2024:171tr/-45%  2025:139tr/-39%  2026:35tr/+38%
+
+--- FS SHORT macro_gate=True ---
+  BULL: N=   0
+  BEAR: N=  177  WR= 39.5%  avg=   +9.7bps  PF= 1.10  sum=   +17.2%
+  ALL : N=  177  WR= 39.5%  avg=   +9.7bps  PF= 1.10  sum=   +17.2%
+  years: 2022:65tr/+12%  2023:17tr/-2%  2024:20tr/-11%  2025:40tr/-19%  2026:35tr/+38%
+
+########################################################################
+# LONG candidates — macro BULL gate
+########################################################################
+
+--- DonchianLONG lb=168h rr=3.0 hold=48h ---
+  BULL: N=  129  WR= 39.5%  avg=  +21.9bps  PF= 1.22  sum=   +28.2%
+  BEAR: N=   0
+  ALL : N=  129  WR= 39.5%  avg=  +21.9bps  PF= 1.22  sum=   +28.2%
+  years: 2023:35tr/+16%  2024:53tr/+19%  2025:41tr/-8%
+
+--- DonchianLONG lb=168h rr=0 hold=48h ---
+  BULL: N=  108  WR= 31.5%  avg=  +17.3bps  PF= 1.16  sum=   +18.7%
+  BEAR: N=   0
+  ALL : N=  108  WR= 31.5%  avg=  +17.3bps  PF= 1.16  sum=   +18.7%
+  years: 2023:29tr/+13%  2024:43tr/+21%  2025:36tr/-15%
+
+--- DonchianLONG lb=480h rr=3.0 hold=72h ---
+  BULL: N=   86  WR= 38.4%  avg=   +6.6bps  PF= 1.06  sum=    +5.7%
+  BEAR: N=   0
+  ALL : N=   86  WR= 38.4%  avg=   +6.6bps  PF= 1.06  sum=    +5.7%
+  years: 2023:24tr/+16%  2024:41tr/-3%  2025:21tr/-7%
+
+--- DonchianLONG lb=480h rr=0 hold=72h ---
+  BULL: N=   70  WR= 28.6%  avg=  +23.4bps  PF= 1.19  sum=   +16.4%
+  BEAR: N=   0
+  ALL : N=   70  WR= 28.6%  avg=  +23.4bps  PF= 1.19  sum=   +16.4%
+  years: 2023:19tr/+24%  2024:33tr/+1%  2025:18tr/-8%
+
+--- PullbackLONG sl=2.0 rr=2.0 hold=48h ---
+  BULL: N=  500  WR= 39.4%  avg=   -9.2bps  PF= 0.89  sum=   -45.8%
+  BEAR: N=    1  WR=100.0%  avg= +183.4bps  PF=999.00  sum=    +1.8%
+  ALL : N=  501  WR= 39.5%  avg=   -8.8bps  PF= 0.90  sum=   -44.0%
+  years: 2023:167tr/-5%  2024:172tr/+16%  2025:162tr/-55%
+
+--- PullbackLONG sl=1.5 rr=3.0 hold=48h ---
+  BULL: N=  538  WR= 30.3%  avg=  -14.9bps  PF= 0.81  sum=   -80.3%
+  BEAR: N=    1  WR=100.0%  avg= +183.4bps  PF=999.00  sum=    +1.8%
+  ALL : N=  539  WR= 30.4%  avg=  -14.6bps  PF= 0.81  sum=   -78.4%
+  years: 2023:183tr/-18%  2024:182tr/-8%  2025:174tr/-52%
+
+--- Mom3dLONG rr=2.0 hold=24h ---
+  BULL: N=  339  WR= 36.0%  avg=  -20.4bps  PF= 0.74  sum=   -69.0%
+  BEAR: N=   0
+  ALL : N=  339  WR= 36.0%  avg=  -20.4bps  PF= 0.74  sum=   -69.0%
+  years: 2023:129tr/-32%  2024:101tr/-21%  2025:109tr/-17%
+
+--- Mom3dLONG rr=0 hold=48h ---
+  BULL: N=  280  WR= 26.1%  avg=  -14.6bps  PF= 0.85  sum=   -40.9%
+  BEAR: N=   0
+  ALL : N=  280  WR= 26.1%  avg=  -14.6bps  PF= 0.85  sum=   -40.9%
+  years: 2023:106tr/-29%  2024:84tr/+9%  2025:90tr/-21%

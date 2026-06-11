@@ -1,0 +1,12 @@
+{
+  "Trend Breakdown": {
+    "n": 207,
+    "avg_net_bps": 40.7,
+    "wr": 34.8
+  },
+  "Funding Squeeze": {
+    "n": 15,
+    "avg_net_bps": 74.1,
+    "wr": 53.3
+  }
+}

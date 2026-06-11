@@ -1,0 +1,234 @@
+C:\Users\hp\Documents\GitHub\coinmaker-quant\scripts\multicycle_research.py:74: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  bull = (d1 > sma200).shift(1).fillna(False)
+Loading 4y dataset...
+Data: 2022-06-12 -> 2026-06-11  (2,102,400 1m bars)  BULL days: 58%
+Price: 27,417 -> 62,802
+
+########################################################################
+# VB — VOLUME BREAKOUT (proxy)
+########################################################################
+
+--- VB 5m vz>2.5 gate=False ---
+  BULL: N= 5770  WR= 28.0%  avg=  -18.8bps  PF= 0.42  sum= -1083.9%
+  BEAR: N= 4007  WR= 27.0%  avg=  -20.2bps  PF= 0.42  sum=  -809.8%
+  ALL : N= 9777  WR= 27.5%  avg=  -19.4bps  PF= 0.42  sum= -1893.6%
+  years: 2022:1385tr/-307%  2023:2589tr/-479%  2024:2479tr/-439%  2025:2268tr/-452%  2026:1056tr/-216%
+
+--- VB 5m vz>2.5 gate=True ---
+  BULL: N= 3480  WR= 28.3%  avg=  -18.9bps  PF= 0.43  sum=  -657.1%
+  BEAR: N= 2405  WR= 26.3%  avg=  -20.6bps  PF= 0.43  sum=  -494.5%
+  ALL : N= 5885  WR= 27.5%  avg=  -19.6bps  PF= 0.43  sum= -1151.5%
+  years: 2022:802tr/-184%  2023:1528tr/-253%  2024:1510tr/-275%  2025:1382tr/-297%  2026:663tr/-143%
+
+--- VB 5m vz>3.0 gate=False ---
+  BULL: N= 4359  WR= 27.9%  avg=  -19.0bps  PF= 0.41  sum=  -828.5%
+  BEAR: N= 3097  WR= 27.3%  avg=  -19.5bps  PF= 0.43  sum=  -603.7%
+  ALL : N= 7456  WR= 27.7%  avg=  -19.2bps  PF= 0.42  sum= -1432.3%
+  years: 2022:1070tr/-228%  2023:2022tr/-372%  2024:1866tr/-337%  2025:1676tr/-345%  2026:822tr/-151%
+
+--- VB 5m vz>3.0 gate=True ---
+  BULL: N= 2633  WR= 28.2%  avg=  -19.2bps  PF= 0.42  sum=  -506.3%
+  BEAR: N= 1841  WR= 26.8%  avg=  -19.4bps  PF= 0.44  sum=  -356.7%
+  ALL : N= 4474  WR= 27.6%  avg=  -19.3bps  PF= 0.43  sum=  -863.0%
+  years: 2022:616tr/-139%  2023:1200tr/-201%  2024:1123tr/-198%  2025:1034tr/-235%  2026:501tr/-90%
+
+--- VB 15m vz>2.5 gate=False ---
+  BULL: N= 1680  WR= 31.8%  avg=  -14.2bps  PF= 0.68  sum=  -238.1%
+  BEAR: N= 1169  WR= 29.0%  avg=  -18.2bps  PF= 0.63  sum=  -213.0%
+  ALL : N= 2849  WR= 30.7%  avg=  -15.8bps  PF= 0.66  sum=  -451.1%
+  years: 2022:374tr/-72%  2023:746tr/-115%  2024:711tr/-99%  2025:686tr/-105%  2026:332tr/-61%
+
+--- VB 15m vz>2.5 gate=True ---
+  BULL: N= 1216  WR= 32.3%  avg=  -13.1bps  PF= 0.70  sum=  -159.7%
+  BEAR: N=  830  WR= 30.2%  avg=  -16.8bps  PF= 0.66  sum=  -139.5%
+  ALL : N= 2046  WR= 31.5%  avg=  -14.6bps  PF= 0.68  sum=  -299.2%
+  years: 2022:260tr/-48%  2023:511tr/-70%  2024:532tr/-71%  2025:503tr/-80%  2026:240tr/-30%
+
+--- VB 15m vz>3.0 gate=False ---
+  BULL: N= 1256  WR= 32.6%  avg=  -12.9bps  PF= 0.70  sum=  -161.4%
+  BEAR: N=  903  WR= 28.6%  avg=  -17.8bps  PF= 0.62  sum=  -160.6%
+  ALL : N= 2159  WR= 30.9%  avg=  -14.9bps  PF= 0.67  sum=  -322.0%
+  years: 2022:267tr/-56%  2023:588tr/-109%  2024:539tr/-49%  2025:503tr/-61%  2026:262tr/-47%
+
+--- VB 15m vz>3.0 gate=True ---
+  BULL: N=  896  WR= 33.0%  avg=  -11.4bps  PF= 0.74  sum=  -102.4%
+  BEAR: N=  652  WR= 30.1%  avg=  -16.3bps  PF= 0.65  sum=  -106.1%
+  ALL : N= 1548  WR= 31.8%  avg=  -13.5bps  PF= 0.70  sum=  -208.5%
+  years: 2022:190tr/-46%  2023:400tr/-75%  2024:398tr/-25%  2025:368tr/-44%  2026:192tr/-20%
+
+########################################################################
+# MR — MEAN REVERSION vs rolling VWAP (proxy)
+########################################################################
+
+--- MR z>2.0 gate=none sl=1.2 hold=8h ---
+  BULL: N= 7661  WR= 31.4%  avg=  -21.9bps  PF= 0.28  sum= -1674.4%
+  BEAR: N= 5216  WR= 32.1%  avg=  -21.9bps  PF= 0.31  sum= -1142.6%
+  ALL : N=12877  WR= 31.7%  avg=  -21.9bps  PF= 0.29  sum= -2817.0%
+  years: 2022:1611tr/-362%  2023:2976tr/-687%  2024:3302tr/-701%  2025:3396tr/-730%  2026:1592tr/-337%
+
+--- MR z>2.0 gate=none sl=2.0 hold=24h ---
+  BULL: N= 3380  WR= 36.2%  avg=  -24.0bps  PF= 0.47  sum=  -811.3%
+  BEAR: N= 2444  WR= 36.3%  avg=  -23.1bps  PF= 0.51  sum=  -565.6%
+  ALL : N= 5824  WR= 36.2%  avg=  -23.6bps  PF= 0.48  sum= -1376.9%
+  years: 2022:762tr/-169%  2023:1399tr/-359%  2024:1487tr/-352%  2025:1436tr/-326%  2026:740tr/-171%
+
+--- MR z>2.0 gate=with_trend sl=1.2 hold=8h ---
+  BULL: N=  149  WR= 30.9%  avg=  -26.4bps  PF= 0.30  sum=   -39.3%
+  BEAR: N=  118  WR= 33.9%  avg=  -25.5bps  PF= 0.29  sum=   -30.1%
+  ALL : N=  267  WR= 32.2%  avg=  -26.0bps  PF= 0.29  sum=   -69.4%
+  years: 2022:47tr/-15%  2023:71tr/-14%  2024:64tr/-14%  2025:61tr/-25%  2026:24tr/-2%
+
+--- MR z>2.0 gate=with_trend sl=2.0 hold=24h ---
+  BULL: N=  119  WR= 27.7%  avg=  -36.1bps  PF= 0.35  sum=   -43.0%
+  BEAR: N=  100  WR= 37.0%  avg=  -25.4bps  PF= 0.50  sum=   -25.4%
+  ALL : N=  219  WR= 32.0%  avg=  -31.2bps  PF= 0.42  sum=   -68.4%
+  years: 2022:39tr/-15%  2023:62tr/-19%  2024:48tr/-13%  2025:48tr/-17%  2026:22tr/-3%
+
+--- MR z>2.5 gate=none sl=1.2 hold=8h ---
+  BULL: N= 4245  WR= 33.2%  avg=  -22.3bps  PF= 0.30  sum=  -946.9%
+  BEAR: N= 2947  WR= 33.1%  avg=  -22.7bps  PF= 0.34  sum=  -668.0%
+  ALL : N= 7192  WR= 33.1%  avg=  -22.5bps  PF= 0.32  sum= -1614.9%
+  years: 2022:869tr/-206%  2023:1655tr/-409%  2024:1780tr/-382%  2025:1925tr/-402%  2026:963tr/-216%
+
+--- MR z>2.5 gate=none sl=2.0 hold=24h ---
+  BULL: N= 2091  WR= 37.0%  avg=  -23.9bps  PF= 0.50  sum=  -500.1%
+  BEAR: N= 1548  WR= 36.8%  avg=  -23.4bps  PF= 0.53  sum=  -361.9%
+  ALL : N= 3639  WR= 36.9%  avg=  -23.7bps  PF= 0.51  sum=  -862.0%
+  years: 2022:485tr/-96%  2023:866tr/-228%  2024:904tr/-220%  2025:902tr/-198%  2026:482tr/-120%
+
+--- MR z>2.5 gate=with_trend sl=1.2 hold=8h ---
+  BULL: N=   35  WR= 25.7%  avg=  -37.1bps  PF= 0.19  sum=   -13.0%
+  BEAR: N=   34  WR= 29.4%  avg=  -30.8bps  PF= 0.25  sum=   -10.5%
+  ALL : N=   69  WR= 27.5%  avg=  -34.0bps  PF= 0.22  sum=   -23.5%
+  years: 2022:17tr/-5%  2023:19tr/-6%  2024:13tr/-2%  2025:18tr/-11%  2026:2tr/+1%
+
+--- MR z>2.5 gate=with_trend sl=2.0 hold=24h ---
+  BULL: N=   31  WR= 22.6%  avg=  -47.3bps  PF= 0.31  sum=   -14.7%
+  BEAR: N=   28  WR= 39.3%  avg=  -11.9bps  PF= 0.75  sum=    -3.3%
+  ALL : N=   59  WR= 30.5%  avg=  -30.5bps  PF= 0.48  sum=   -18.0%
+  years: 2022:14tr/+3%  2023:17tr/-9%  2024:13tr/-5%  2025:13tr/-5%  2026:2tr/-2%
+
+########################################################################
+# IS — IMBALANCE SCALP continuation (proxy)
+########################################################################
+
+--- IS br>0.65 gate=False tp=0.5% sl=0.3% hold=60m ---
+  BULL: N=17308  WR= 24.6%  avg=  -19.9bps  PF= 0.22  sum= -3441.4%
+  BEAR: N=11914  WR= 24.3%  avg=  -20.5bps  PF= 0.22  sum= -2443.4%
+  ALL : N=29222  WR= 24.5%  avg=  -20.1bps  PF= 0.22  sum= -5884.9%
+  years: 2022:3409tr/-696%  2023:6622tr/-1325%  2024:7899tr/-1547%  2025:7886tr/-1620%  2026:3406tr/-697%
+
+--- IS br>0.65 gate=False tp=1.2% sl=0.6% hold=240m ---
+  BULL: N= 6000  WR= 31.9%  avg=  -20.5bps  PF= 0.48  sum= -1228.3%
+  BEAR: N= 4416  WR= 31.1%  avg=  -21.0bps  PF= 0.49  sum=  -928.8%
+  ALL : N=10416  WR= 31.5%  avg=  -20.7bps  PF= 0.49  sum= -2157.1%
+  years: 2022:1445tr/-303%  2023:2284tr/-442%  2024:2833tr/-631%  2025:2643tr/-545%  2026:1211tr/-236%
+
+--- IS br>0.65 gate=True tp=0.5% sl=0.3% hold=60m ---
+  BULL: N=11958  WR= 23.9%  avg=  -20.1bps  PF= 0.21  sum= -2398.8%
+  BEAR: N= 8137  WR= 23.6%  avg=  -20.2bps  PF= 0.22  sum= -1647.7%
+  ALL : N=20095  WR= 23.8%  avg=  -20.1bps  PF= 0.22  sum= -4046.5%
+  years: 2022:2288tr/-469%  2023:4703tr/-938%  2024:5367tr/-1074%  2025:5390tr/-1105%  2026:2347tr/-461%
+
+--- IS br>0.65 gate=True tp=1.2% sl=0.6% hold=240m ---
+  BULL: N= 5079  WR= 31.7%  avg=  -19.6bps  PF= 0.49  sum=  -995.1%
+  BEAR: N= 3641  WR= 31.1%  avg=  -19.8bps  PF= 0.50  sum=  -721.6%
+  ALL : N= 8720  WR= 31.4%  avg=  -19.7bps  PF= 0.50  sum= -1716.8%
+  years: 2022:1149tr/-240%  2023:1963tr/-390%  2024:2362tr/-447%  2025:2230tr/-461%  2026:1016tr/-178%
+
+--- IS br>0.7 gate=False tp=0.5% sl=0.3% hold=60m ---
+  BULL: N=10056  WR= 21.7%  avg=  -20.0bps  PF= 0.19  sum= -2009.2%
+  BEAR: N= 6455  WR= 20.2%  avg=  -21.0bps  PF= 0.18  sum= -1357.1%
+  ALL : N=16511  WR= 21.1%  avg=  -20.4bps  PF= 0.18  sum= -3366.3%
+  years: 2022:1422tr/-301%  2023:3767tr/-774%  2024:4350tr/-848%  2025:5024tr/-1030%  2026:1948tr/-414%
+
+--- IS br>0.7 gate=False tp=1.2% sl=0.6% hold=240m ---
+  BULL: N= 4224  WR= 32.4%  avg=  -19.8bps  PF= 0.46  sum=  -838.2%
+  BEAR: N= 2863  WR= 29.4%  avg=  -21.4bps  PF= 0.45  sum=  -612.2%
+  ALL : N= 7087  WR= 31.2%  avg=  -20.5bps  PF= 0.46  sum= -1450.4%
+  years: 2022:731tr/-160%  2023:1572tr/-320%  2024:1928tr/-365%  2025:2016tr/-431%  2026:840tr/-174%
+
+--- IS br>0.7 gate=True tp=0.5% sl=0.3% hold=60m ---
+  BULL: N= 6435  WR= 21.4%  avg=  -20.0bps  PF= 0.19  sum= -1284.1%
+  BEAR: N= 4156  WR= 20.3%  avg=  -20.4bps  PF= 0.18  sum=  -847.8%
+  ALL : N=10591  WR= 21.0%  avg=  -20.1bps  PF= 0.19  sum= -2131.9%
+  years: 2022:888tr/-183%  2023:2503tr/-504%  2024:2751tr/-539%  2025:3171tr/-655%  2026:1278tr/-252%
+
+--- IS br>0.7 gate=True tp=1.2% sl=0.6% hold=240m ---
+  BULL: N= 3346  WR= 30.6%  avg=  -20.3bps  PF= 0.45  sum=  -680.5%
+  BEAR: N= 2238  WR= 29.4%  avg=  -20.1bps  PF= 0.47  sum=  -450.7%
+  ALL : N= 5584  WR= 30.1%  avg=  -20.3bps  PF= 0.46  sum= -1131.2%
+  years: 2022:552tr/-109%  2023:1259tr/-252%  2024:1503tr/-273%  2025:1593tr/-367%  2026:677tr/-131%
+
+########################################################################
+# LS — LIQ CASCADE ride (proxy: extreme directional vol)
+########################################################################
+
+--- LS ride gate=False sl=0.8 rr=1.5 ---
+  BULL: N=  464  WR= 14.0%  avg=  -20.7bps  PF= 0.05  sum=   -95.8%
+  BEAR: N=  292  WR= 14.4%  avg=  -20.7bps  PF= 0.08  sum=   -60.4%
+  ALL : N=  756  WR= 14.2%  avg=  -20.7bps  PF= 0.06  sum=  -156.3%
+  years: 2022:37tr/-7%  2023:99tr/-19%  2024:161tr/-32%  2025:333tr/-73%  2026:126tr/-24%
+
+--- LS ride gate=False sl=1.5 rr=2.0 ---
+  BULL: N=  452  WR= 29.2%  avg=  -20.8bps  PF= 0.27  sum=   -94.1%
+  BEAR: N=  284  WR= 31.7%  avg=  -19.3bps  PF= 0.34  sum=   -54.7%
+  ALL : N=  736  WR= 30.2%  avg=  -20.2bps  PF= 0.30  sum=  -148.8%
+  years: 2022:36tr/-6%  2023:98tr/-23%  2024:159tr/-31%  2025:321tr/-70%  2026:122tr/-19%
+
+--- LS ride gate=True sl=0.8 rr=1.5 ---
+  BULL: N=  320  WR= 15.0%  avg=  -20.7bps  PF= 0.05  sum=   -66.4%
+  BEAR: N=  195  WR= 13.8%  avg=  -21.3bps  PF= 0.08  sum=   -41.5%
+  ALL : N=  515  WR= 14.6%  avg=  -20.9bps  PF= 0.06  sum=  -107.8%
+  years: 2022:27tr/-6%  2023:70tr/-13%  2024:104tr/-20%  2025:230tr/-53%  2026:84tr/-16%
+
+--- LS ride gate=True sl=1.5 rr=2.0 ---
+  BULL: N=  313  WR= 30.4%  avg=  -20.7bps  PF= 0.28  sum=   -64.8%
+  BEAR: N=  192  WR= 29.7%  avg=  -21.3bps  PF= 0.30  sum=   -40.9%
+  ALL : N=  505  WR= 30.1%  avg=  -20.9bps  PF= 0.29  sum=  -105.7%
+  years: 2022:26tr/-4%  2023:70tr/-17%  2024:104tr/-18%  2025:222tr/-53%  2026:83tr/-14%
+
+########################################################################
+# TBL — TREND BREAKDOWN LONG MIRROR (bull readiness)
+########################################################################
+
+--- TBL LONG lb=48 sl=2xATR rr=2.0 hold=24h ---
+  BULL: N=  286  WR= 40.9%  avg=   +3.6bps  PF= 1.05  sum=   +10.3%
+  BEAR: N=  167  WR= 35.9%  avg=  -29.5bps  PF= 0.68  sum=   -49.2%
+  ALL : N=  453  WR= 39.1%  avg=   -8.6bps  PF= 0.90  sum=   -38.9%
+  years: 2022:50tr/-10%  2023:113tr/+15%  2024:126tr/+14%  2025:121tr/-43%  2026:43tr/-14%
+
+--- TBL LONG lb=48 sl=2xATR rr=3.0 hold=24h ---
+  BULL: N=  251  WR= 36.3%  avg=   +5.2bps  PF= 1.06  sum=   +13.0%
+  BEAR: N=  159  WR= 35.8%  avg=  -24.0bps  PF= 0.74  sum=   -38.1%
+  ALL : N=  410  WR= 36.1%  avg=   -6.1bps  PF= 0.93  sum=   -25.1%
+  years: 2022:47tr/-8%  2023:99tr/+23%  2024:115tr/+1%  2025:109tr/-29%  2026:40tr/-11%
+
+--- TB SHORT (4y reference) ---
+  BULL: N=  222  WR= 38.7%  avg=  -24.4bps  PF= 0.75  sum=   -54.2%
+  BEAR: N=  182  WR= 42.3%  avg=  +13.6bps  PF= 1.14  sum=   +24.8%
+  ALL : N=  404  WR= 40.3%  avg=   -7.3bps  PF= 0.93  sum=   -29.4%
+  years: 2022:61tr/-2%  2023:71tr/-16%  2024:100tr/-25%  2025:114tr/-17%  2026:58tr/+31%
+
+########################################################################
+# FSL — FUNDING SQUEEZE LONG MIRROR + 4y short reference
+########################################################################
+  funding: N=4380  q10=-0.000014  q90=0.000100
+
+--- FSL LONG funding<-0.005% trend_up ---
+  BULL: N=   11  WR= 45.5%  avg=  -78.2bps  PF= 0.38  sum=    -8.6%
+  BEAR: N=   38  WR= 36.8%  avg=  -48.7bps  PF= 0.57  sum=   -18.5%
+  ALL : N=   49  WR= 38.8%  avg=  -55.3bps  PF= 0.52  sum=   -27.1%
+  years: 2022:8tr/-15%  2023:3tr/-0%  2024:9tr/-7%  2025:10tr/-6%  2026:19tr/+2%
+
+--- FSL LONG funding<-0.010% trend_up ---
+  BULL: N=    4  WR= 75.0%  avg=  +86.5bps  PF=20.21  sum=    +3.5%
+  BEAR: N=    7  WR= 42.9%  avg=  -89.4bps  PF= 0.31  sum=    -6.3%
+  ALL : N=   11  WR= 54.5%  avg=  -25.4bps  PF= 0.70  sum=    -2.8%
+  years: 2022:3tr/-4%  2023:2tr/+2%  2025:3tr/+1%  2026:3tr/-1%
+
+--- FS SHORT (4y reference) ---
+  BULL: N=  389  WR= 36.5%  avg=  -23.4bps  PF= 0.75  sum=   -91.2%
+  BEAR: N=  176  WR= 38.6%  avg=   +6.1bps  PF= 1.06  sum=   +10.7%
+  ALL : N=  565  WR= 37.2%  avg=  -14.3bps  PF= 0.85  sum=   -80.5%
+  years: 2022:65tr/+12%  2023:155tr/-47%  2024:171tr/-45%  2025:139tr/-39%  2026:35tr/+38%

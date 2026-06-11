@@ -1,0 +1,231 @@
+Loaded 388,800 1m candles  2025-09-14 -> 2026-06-11
+Price: 115,727 -> 62,982 (-45.6%)
+IS/OOS split at: 2026-03-22
+
+======================================================================
+A. VARIANCE RATIO (VR<1 = mean reversion, VR>1 = momentum)
+======================================================================
+  horizon     5m : VR = 0.965
+  horizon    15m : VR = 0.944
+  horizon    60m : VR = 0.904
+  horizon   240m : VR = 0.874
+  horizon  1440m : VR = 0.868
+
+======================================================================
+B. SEASONALITY
+======================================================================
+  [IS] hours with |t|>2:
+    mean_bps       t
+ts                  
+21      5.72    2.05
+23     -9.81   -3.11
+  [OOS] hours with |t|>2:
+    mean_bps       t
+ts                  
+20      9.91    2.04
+  Day-of-week (full sample, 0=Mon):
+    mean_bps       t
+ts                  
+0      36.02    0.97
+1     -47.13   -1.17
+2       3.86    0.10
+3    -106.56   -2.35
+4     -20.96   -0.41
+5     -20.12   -0.88
+6      20.33    0.66
+
+======================================================================
+C. SHORT-TERM REVERSAL — 15m return z-score vs forward returns
+======================================================================
+  [IS] z(15m ret) -> fwd 15m
+           N  mean_bps        t     hit%
+bucket                                  
+0       3610      0.19     0.35    54.90
+1       3609      0.43     1.08    52.45
+2       3610      0.03     0.07    49.09
+3       3609     -0.50    -1.33    49.21
+4       3610     -1.40    -2.97    45.01
+  [OOS] z(15m ret) -> fwd 15m
+           N  mean_bps        t     hit%
+bucket                                  
+0       1556      1.04     1.61    54.18
+1       1555      0.22     0.43    51.45
+2       1555      0.35     0.71    49.52
+3       1555     -0.89    -1.73    48.30
+4       1555     -1.15    -1.79    45.53
+  [IS] z(15m ret) -> fwd 30m
+           N  mean_bps        t     hit%
+bucket                                  
+0       3610     -0.37    -0.49    53.66
+1       3609      1.05     1.90    53.26
+2       3610     -0.35    -0.65    50.03
+3       3609     -0.81    -1.54    48.16
+4       3610     -2.02    -3.00    46.32
+  [OOS] z(15m ret) -> fwd 30m
+           N  mean_bps        t     hit%
+bucket                                  
+0       1555      1.04     1.19    54.41
+1       1555      1.35     1.74    51.13
+2       1555     -0.39    -0.57    50.74
+3       1555     -2.05    -2.99    46.37
+4       1555     -0.84    -0.97    47.72
+  [IS] z(15m ret) -> fwd 60m
+           N  mean_bps        t     hit%
+bucket                                  
+0       3610     -0.57    -0.57    53.32
+1       3609     -0.07    -0.08    51.45
+2       3610     -0.96    -1.25    48.78
+3       3609     -1.05    -1.37    48.66
+4       3610     -2.35    -2.43    47.59
+  [OOS] z(15m ret) -> fwd 60m
+           N  mean_bps        t     hit%
+bucket                                  
+0       1555      1.43     1.22    52.22
+1       1554      0.32     0.31    50.64
+2       1555     -0.93    -0.97    49.39
+3       1554     -1.99    -1.97    48.65
+4       1555     -0.63    -0.51    47.78
+
+======================================================================
+D. TIME-SERIES MOMENTUM — trailing return -> forward return (1h bars)
+======================================================================
+  [IS] trail  4h -> fwd 1h | after UP:    0.15bps (t= 0.14 N= 2234) | after DN:   -2.15bps (t=-1.97 N= 2298)
+  [OOS] trail  4h -> fwd 1h | after UP:   -0.63bps (t=-0.47 N=  942) | after DN:   -0.08bps (t=-0.06 N= 1002)
+  [IS] trail  4h -> fwd 4h | after UP:   -1.10bps (t=-0.52 N= 2234) | after DN:   -6.93bps (t=-3.15 N= 2298)
+  [OOS] trail  4h -> fwd 4h | after UP:   -1.96bps (t=-0.75 N=  939) | after DN:   -0.94bps (t=-0.35 N= 1002)
+  [IS] trail  4h -> fwd 8h | after UP:   -7.11bps (t=-2.42 N= 2234) | after DN:   -9.12bps (t=-2.85 N= 2298)
+  [OOS] trail  4h -> fwd 8h | after UP:   -1.84bps (t=-0.50 N=  935) | after DN:   -4.00bps (t=-1.11 N= 1002)
+  [IS] trail 12h -> fwd 1h | after UP:   -0.33bps (t=-0.33 N= 2201) | after DN:   -1.66bps (t=-1.48 N= 2323)
+  [OOS] trail 12h -> fwd 1h | after UP:   -0.56bps (t=-0.42 N=  946) | after DN:   -0.15bps (t=-0.11 N=  998)
+  [IS] trail 12h -> fwd 4h | after UP:   -4.42bps (t=-2.16 N= 2201) | after DN:   -3.69bps (t=-1.63 N= 2323)
+  [OOS] trail 12h -> fwd 4h | after UP:   -1.26bps (t=-0.48 N=  943) | after DN:   -1.60bps (t=-0.59 N=  998)
+  [IS] trail 12h -> fwd 8h | after UP:   -8.40bps (t=-2.80 N= 2201) | after DN:   -7.92bps (t=-2.52 N= 2323)
+  [OOS] trail 12h -> fwd 8h | after UP:   -0.83bps (t=-0.24 N=  939) | after DN:   -4.96bps (t=-1.32 N=  998)
+  [IS] trail 24h -> fwd 1h | after UP:   -0.27bps (t=-0.28 N= 2135) | after DN:   -1.67bps (t=-1.49 N= 2377)
+  [OOS] trail 24h -> fwd 1h | after UP:    0.39bps (t= 0.30 N=  971) | after DN:   -1.09bps (t=-0.75 N=  973)
+  [IS] trail 24h -> fwd 4h | after UP:   -4.03bps (t=-1.98 N= 2135) | after DN:   -3.99bps (t=-1.76 N= 2377)
+  [OOS] trail 24h -> fwd 4h | after UP:   -1.82bps (t=-0.76 N=  968) | after DN:   -1.05bps (t=-0.36 N=  973)
+  [IS] trail 24h -> fwd 8h | after UP:   -8.39bps (t=-2.96 N= 2135) | after DN:   -7.75bps (t=-2.37 N= 2377)
+  [OOS] trail 24h -> fwd 8h | after UP:   -4.08bps (t=-1.28 N=  964) | after DN:   -1.85bps (t=-0.46 N=  973)
+  [IS] trail 48h -> fwd 1h | after UP:   -0.41bps (t=-0.41 N= 2076) | after DN:   -1.57bps (t=-1.40 N= 2412)
+  [OOS] trail 48h -> fwd 1h | after UP:    0.19bps (t= 0.15 N= 1004) | after DN:   -0.93bps (t=-0.62 N=  940)
+  [IS] trail 48h -> fwd 4h | after UP:   -1.07bps (t=-0.50 N= 2076) | after DN:   -6.69bps (t=-3.04 N= 2412)
+  [OOS] trail 48h -> fwd 4h | after UP:   -0.12bps (t=-0.05 N= 1001) | after DN:   -2.83bps (t=-0.99 N=  940)
+  [IS] trail 48h -> fwd 8h | after UP:   -2.00bps (t=-0.66 N= 2076) | after DN:  -13.64bps (t=-4.32 N= 2412)
+  [OOS] trail 48h -> fwd 8h | after UP:   -0.14bps (t=-0.04 N= 1000) | after DN:   -5.96bps (t=-1.52 N=  937)
+
+======================================================================
+E. VOLUME SPIKE (5m vol z>3) — continuation or fade?
+======================================================================
+  [IS] fwd   5m signed-by-spike-dir:    0.75bps  t= 0.72  N=1404
+  [OOS] fwd   5m signed-by-spike-dir:   -1.05bps  t=-0.99  N=563
+  [IS] fwd  15m signed-by-spike-dir:   -1.18bps  t=-0.80  N=1404
+  [OOS] fwd  15m signed-by-spike-dir:   -2.66bps  t=-1.69  N=563
+  [IS] fwd  30m signed-by-spike-dir:    0.79bps  t= 0.40  N=1404
+  [OOS] fwd  30m signed-by-spike-dir:   -2.93bps  t=-1.42  N=562
+  [IS] fwd  60m signed-by-spike-dir:    1.31bps  t= 0.53  N=1404
+  [OOS] fwd  60m signed-by-spike-dir:   -4.31bps  t=-1.64  N=561
+
+======================================================================
+F. TAKER BUY RATIO EXTREMES (15m) -> forward returns
+======================================================================
+  [IS] buy_ratio -> fwd 15m
+           N  mean_bps        t     hit%
+bucket                                  
+0       3629     -0.21    -0.49    52.77
+1       3629      0.06     0.12    52.71
+2       3628      0.36     0.77    49.31
+3       3629     -0.45    -1.02    49.19
+4       3629     -1.02    -2.78    46.68
+  [OOS] buy_ratio -> fwd 15m
+           N  mean_bps        t     hit%
+bucket                                  
+0       1556      1.07     2.08    54.37
+1       1555      0.09     0.15    50.10
+2       1555      0.43     0.70    51.06
+3       1555     -0.74    -1.25    47.97
+4       1555     -1.28    -2.46    45.47
+  [IS] buy_ratio -> fwd 60m
+           N  mean_bps        t     hit%
+bucket                                  
+0       3629     -0.03    -0.04    52.05
+1       3629     -1.17    -1.24    51.17
+2       3628      0.15     0.16    49.89
+3       3629     -2.61    -2.89    48.69
+4       3629     -1.40    -1.86    48.03
+  [OOS] buy_ratio -> fwd 60m
+           N  mean_bps        t     hit%
+bucket                                  
+0       1555      1.70     1.69    51.19
+1       1554     -1.16    -1.05    49.49
+2       1555      1.47     1.24    51.06
+3       1554     -2.05    -1.80    48.91
+4       1555     -1.77    -1.80    48.04
+
+======================================================================
+G. DONCHIAN BREAKOUT (1h bars) — vectorized event study
+======================================================================
+  [IS] N=24h fwd=4h | LONG brk:   -4.81bps (t=-0.63 N= 175) | SHORT brk:   26.89bps (t= 2.71 N= 194)
+  [OOS] N=24h fwd=4h | LONG brk:  -12.13bps (t=-1.30 N=  63) | SHORT brk:  -11.48bps (t=-1.04 N=  86)
+  [IS] N=24h fwd=12h | LONG brk:  -15.48bps (t=-1.28 N= 175) | SHORT brk:   33.84bps (t= 2.33 N= 194)
+  [OOS] N=24h fwd=12h | LONG brk:  -18.78bps (t=-1.14 N=  63) | SHORT brk:    1.75bps (t= 0.09 N=  86)
+  [IS] N=24h fwd=24h | LONG brk:  -27.82bps (t=-1.74 N= 175) | SHORT brk:   52.20bps (t= 2.57 N= 194)
+  [OOS] N=24h fwd=24h | LONG brk:  -39.22bps (t=-1.83 N=  62) | SHORT brk:   35.84bps (t= 1.39 N=  86)
+  [IS] N=48h fwd=4h | LONG brk:   -5.61bps (t=-0.65 N= 111) | SHORT brk:   32.80bps (t= 2.68 N= 127)
+  [OOS] N=48h fwd=4h | LONG brk:  -26.64bps (t=-2.70 N=  36) | SHORT brk:   -3.95bps (t=-0.26 N=  54)
+  [IS] N=48h fwd=12h | LONG brk:  -34.37bps (t=-2.59 N= 111) | SHORT brk:   50.39bps (t= 2.64 N= 127)
+  [OOS] N=48h fwd=12h | LONG brk:  -50.88bps (t=-2.82 N=  36) | SHORT brk:   35.23bps (t= 1.78 N=  54)
+  [IS] N=48h fwd=24h | LONG brk:  -30.77bps (t=-1.77 N= 111) | SHORT brk:   48.94bps (t= 1.80 N= 127)
+  [OOS] N=48h fwd=24h | LONG brk:  -89.64bps (t=-4.61 N=  36) | SHORT brk:   68.89bps (t= 2.22 N=  54)
+  [IS] N=72h fwd=4h | LONG brk:  -13.36bps (t=-1.60 N=  88) | SHORT brk:   26.30bps (t= 1.95 N= 105)
+  [OOS] N=72h fwd=4h | LONG brk:  -31.84bps (t=-2.89 N=  30) | SHORT brk:   -6.43bps (t=-0.34 N=  40)
+  [IS] N=72h fwd=12h | LONG brk:  -42.99bps (t=-2.84 N=  88) | SHORT brk:   49.75bps (t= 2.30 N= 105)
+  [OOS] N=72h fwd=12h | LONG brk:  -59.36bps (t=-3.09 N=  30) | SHORT brk:   34.06bps (t= 1.41 N=  40)
+  [IS] N=72h fwd=24h | LONG brk:  -42.99bps (t=-2.14 N=  88) | SHORT brk:   33.64bps (t= 1.06 N= 105)
+  [OOS] N=72h fwd=24h | LONG brk:  -92.51bps (t=-4.64 N=  30) | SHORT brk:   73.54bps (t= 1.98 N=  40)
+
+======================================================================
+H. BOLLINGER FADE (1h) — z-score of close vs 20-period band
+======================================================================
+  [IS] fwd 4h | z>+2 (fade=short):   -8.18bps (t=-1.28 N= 252) | z<-2 (fade=long):  -14.99bps (t=-1.96 N= 294)
+  [OOS] fwd 4h | z>+2 (fade=short):    3.15bps (t= 0.39 N= 107) | z<-2 (fade=long):    3.08bps (t= 0.35 N= 118)
+  [IS] fwd 8h | z>+2 (fade=short):  -16.39bps (t=-1.87 N= 252) | z<-2 (fade=long):   -7.18bps (t=-0.76 N= 294)
+  [OOS] fwd 8h | z>+2 (fade=short):   -2.66bps (t=-0.24 N= 107) | z<-2 (fade=long):  -16.21bps (t=-1.46 N= 118)
+  [IS] fwd 24h | z>+2 (fade=short):  -21.39bps (t=-1.53 N= 252) | z<-2 (fade=long):  -49.69bps (t=-3.12 N= 294)
+  [OOS] fwd 24h | z>+2 (fade=short):   -1.53bps (t=-0.10 N= 106) | z<-2 (fade=long):  -22.51bps (t=-1.05 N= 118)
+
+======================================================================
+I. FUNDING RATE EXTREMES -> forward 8h/24h returns
+======================================================================
+  [IS] funding rate -> fwd 8h
+          N  mean_bps        t     hit%
+bucket                                 
+0       114      4.68     0.29    49.12
+1       113      3.69     0.27    50.44
+2       113    -10.65    -0.78    45.13
+3       113    -20.82    -1.83    47.79
+4       114    -17.53    -1.61    53.51
+  [OOS] funding rate -> fwd 8h
+         N  mean_bps        t     hit%
+bucket                                
+0       49    -17.86    -1.30    42.86
+1       48     30.60     2.07    62.50
+2       49     -7.37    -0.52    38.78
+3       48     -3.40    -0.19    50.00
+4       49    -16.17    -0.84    44.90
+  [IS] funding rate -> fwd 24h
+          N  mean_bps        t     hit%
+bucket                                 
+0       114      2.13     0.08    45.61
+1       113     -2.09    -0.08    52.21
+2       113    -30.71    -1.27    46.90
+3       113    -45.89    -2.45    43.36
+4       114    -46.22    -2.13    48.25
+  [OOS] funding rate -> fwd 24h
+         N  mean_bps        t     hit%
+bucket                                
+0       49    -16.52    -0.73    46.94
+1       48     50.47     1.69    64.58
+2       49     21.92     0.73    51.02
+3       48      8.21     0.29    56.25
+4       49   -102.12    -3.42    32.65

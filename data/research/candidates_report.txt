@@ -1,0 +1,603 @@
+Data: 2025-09-14 -> 2026-06-11  split 2026-03-22
+
+######################################################################
+# S1 — BREAKDOWN MOMENTUM SHORT (1h)
+######################################################################
+
+--- S1 lb=24 sl=1.5xATR rr=2.0 hold=12h ---
+  IS :   N= 116  WR= 43.1%  E[R]=+0.146  avg_net=   -1.3bps  PF= 0.98  total=   -2.8%  maxDD= 18.2%  shrp/tr=-0.009
+  OOS:   N=  52  WR= 36.5%  E[R]=-0.074  avg_net=  -17.0bps  PF= 0.74  total=   -8.9%  maxDD= 13.8%  shrp/tr=-0.130
+  ALL:   N= 168  WR= 41.1%  E[R]=+0.078  avg_net=   -6.2bps  PF= 0.91  total=  -11.4%  maxDD= 29.1%  shrp/tr=-0.042
+  exits: sl=74 (-132bps)  time=47 (+10bps)  tp=47 (+176bps)
+
+--- S1 lb=24 sl=1.5xATR rr=2.0 hold=24h ---
+  IS :   N= 110  WR= 40.0%  E[R]=+0.104  avg_net=   -1.6bps  PF= 0.98  total=   -3.4%  maxDD= 18.7%  shrp/tr=-0.009
+  OOS:   N=  49  WR= 36.7%  E[R]=-0.066  avg_net=  -16.9bps  PF= 0.75  total=   -8.3%  maxDD= 13.1%  shrp/tr=-0.126
+  ALL:   N= 159  WR= 39.0%  E[R]=+0.051  avg_net=   -6.3bps  PF= 0.92  total=  -11.4%  maxDD= 29.2%  shrp/tr=-0.038
+  exits: sl=86 (-133bps)  time=18 (-7bps)  tp=55 (+192bps)
+
+--- S1 lb=24 sl=1.5xATR rr=3.0 hold=12h ---
+  IS :   N= 106  WR= 41.5%  E[R]=+0.202  avg_net=   +4.2bps  PF= 1.06  total=   +2.9%  maxDD= 11.9%  shrp/tr=+0.024
+  OOS:   N=  49  WR= 32.7%  E[R]=-0.106  avg_net=  -20.3bps  PF= 0.70  total=   -9.9%  maxDD= 15.6%  shrp/tr=-0.153
+  ALL:   N= 155  WR= 38.7%  E[R]=+0.104  avg_net=   -3.6bps  PF= 0.95  total=   -7.2%  maxDD= 24.6%  shrp/tr=-0.022
+  exits: sl=71 (-128bps)  time=61 (+45bps)  tp=23 (+252bps)
+
+--- S1 lb=24 sl=1.5xATR rr=3.0 hold=24h ---
+  IS :   N=  99  WR= 36.4%  E[R]=+0.235  avg_net=   +6.9bps  PF= 1.08  total=   +4.8%  maxDD= 15.2%  shrp/tr=+0.033
+  OOS:   N=  43  WR= 37.2%  E[R]=-0.092  avg_net=  -17.9bps  PF= 0.73  total=   -7.8%  maxDD= 15.4%  shrp/tr=-0.133
+  ALL:   N= 142  WR= 36.6%  E[R]=+0.136  avg_net=   -0.6bps  PF= 0.99  total=   -3.3%  maxDD= 25.8%  shrp/tr=-0.003
+  exits: sl=80 (-133bps)  time=28 (+36bps)  tp=34 (+281bps)
+
+--- S1 lb=24 sl=1.5xATR rr=0 hold=12h ---
+  IS :   N=  93  WR= 39.8%  E[R]=+0.234  avg_net=   +1.2bps  PF= 1.02  total=   -0.3%  maxDD= 11.2%  shrp/tr=+0.007
+  OOS:   N=  47  WR= 31.9%  E[R]=-0.138  avg_net=  -23.5bps  PF= 0.65  total=  -10.8%  maxDD= 14.5%  shrp/tr=-0.183
+  ALL:   N= 140  WR= 37.1%  E[R]=+0.109  avg_net=   -7.1bps  PF= 0.89  total=  -11.1%  maxDD= 23.6%  shrp/tr=-0.044
+  exits: sl=66 (-128bps)  time=74 (+100bps)
+
+--- S1 lb=24 sl=1.5xATR rr=0 hold=24h ---
+  IS :   N=  78  WR= 34.6%  E[R]=+0.248  avg_net=   +6.2bps  PF= 1.07  total=   +3.0%  maxDD= 15.0%  shrp/tr=+0.027
+  OOS:   N=  39  WR= 35.9%  E[R]=-0.112  avg_net=  -21.8bps  PF= 0.67  total=   -8.5%  maxDD= 13.2%  shrp/tr=-0.164
+  ALL:   N= 117  WR= 35.0%  E[R]=+0.128  avg_net=   -3.1bps  PF= 0.96  total=   -5.8%  maxDD= 19.9%  shrp/tr=-0.016
+  exits: sl=68 (-128bps)  time=49 (+170bps)
+
+--- S1 lb=24 sl=2.0xATR rr=2.0 hold=12h ---
+  IS :   N= 109  WR= 45.9%  E[R]=+0.223  avg_net=  +18.3bps  PF= 1.28  total=  +19.8%  maxDD= 12.1%  shrp/tr=+0.097
+  OOS:   N=  49  WR= 36.7%  E[R]=-0.033  avg_net=  -13.1bps  PF= 0.82  total=   -6.8%  maxDD= 16.2%  shrp/tr=-0.081
+  ALL:   N= 158  WR= 43.0%  E[R]=+0.144  avg_net=   +8.6bps  PF= 1.13  total=  +11.6%  maxDD= 23.1%  shrp/tr=+0.047
+  exits: sl=50 (-161bps)  time=73 (+15bps)  tp=35 (+238bps)
+
+--- S1 lb=24 sl=2.0xATR rr=2.0 hold=24h ---
+  IS :   N= 100  WR= 43.0%  E[R]=+0.200  avg_net=  +19.1bps  PF= 1.23  total=  +18.1%  maxDD= 14.8%  shrp/tr=+0.085
+  OOS:   N=  40  WR= 47.5%  E[R]=+0.079  avg_net=   +4.8bps  PF= 1.07  total=   +1.4%  maxDD= 14.5%  shrp/tr=+0.029
+  ALL:   N= 140  WR= 44.3%  E[R]=+0.166  avg_net=  +15.0bps  PF= 1.19  total=  +19.7%  maxDD= 25.1%  shrp/tr=+0.072
+  exits: sl=62 (-164bps)  time=33 (+17bps)  tp=45 (+260bps)
+
+--- S1 lb=24 sl=2.0xATR rr=3.0 hold=12h ---
+  IS :   N=  95  WR= 47.4%  E[R]=+0.215  avg_net=  +12.2bps  PF= 1.18  total=  +10.3%  maxDD= 15.2%  shrp/tr=+0.063
+  OOS:   N=  45  WR= 35.6%  E[R]=-0.022  avg_net=   -8.0bps  PF= 0.89  total=   -4.2%  maxDD= 16.4%  shrp/tr=-0.045
+  ALL:   N= 140  WR= 43.6%  E[R]=+0.139  avg_net=   +5.7bps  PF= 1.08  total=   +5.7%  maxDD= 26.3%  shrp/tr=+0.030
+  exits: sl=46 (-162bps)  time=82 (+46bps)  tp=12 (+375bps)
+
+--- S1 lb=24 sl=2.0xATR rr=3.0 hold=24h ---
+  IS :   N=  85  WR= 43.5%  E[R]=+0.259  avg_net=  +22.6bps  PF= 1.26  total=  +18.1%  maxDD= 13.3%  shrp/tr=+0.090
+  OOS:   N=  36  WR= 47.2%  E[R]=+0.064  avg_net=  +11.5bps  PF= 1.18  total=   +3.7%  maxDD= 13.1%  shrp/tr=+0.066
+  ALL:   N= 121  WR= 44.6%  E[R]=+0.201  avg_net=  +19.3bps  PF= 1.24  total=  +22.4%  maxDD= 23.0%  shrp/tr=+0.083
+  exits: sl=55 (-160bps)  time=44 (+59bps)  tp=22 (+387bps)
+
+--- S1 lb=24 sl=2.0xATR rr=0 hold=12h ---
+  IS :   N=  90  WR= 45.6%  E[R]=+0.234  avg_net=   +9.2bps  PF= 1.13  total=   +6.8%  maxDD= 11.2%  shrp/tr=+0.047
+  OOS:   N=  45  WR= 35.6%  E[R]=-0.078  avg_net=  -16.7bps  PF= 0.77  total=   -7.7%  maxDD= 16.4%  shrp/tr=-0.105
+  ALL:   N= 135  WR= 42.2%  E[R]=+0.130  avg_net=   +0.6bps  PF= 1.01  total=   -1.5%  maxDD= 22.8%  shrp/tr=+0.003
+  exits: sl=46 (-162bps)  time=89 (+85bps)
+
+--- S1 lb=24 sl=2.0xATR rr=0 hold=24h ---
+  IS :   N=  75  WR= 38.7%  E[R]=+0.209  avg_net=   -2.6bps  PF= 0.97  total=   -4.0%  maxDD= 15.4%  shrp/tr=-0.011
+  OOS:   N=  34  WR= 47.1%  E[R]=+0.009  avg_net=   +0.0bps  PF= 1.00  total=   -0.4%  maxDD= 12.6%  shrp/tr=+0.000
+  ALL:   N= 109  WR= 41.3%  E[R]=+0.146  avg_net=   -1.8bps  PF= 0.98  total=   -4.4%  maxDD= 24.1%  shrp/tr=-0.008
+  exits: sl=54 (-164bps)  time=55 (+157bps)
+
+--- S1 lb=48 sl=1.5xATR rr=2.0 hold=12h ---
+  IS :   N=  81  WR= 43.2%  E[R]=+0.191  avg_net=   +2.6bps  PF= 1.04  total=   +1.0%  maxDD= 15.1%  shrp/tr=+0.015
+  OOS:   N=  33  WR= 42.4%  E[R]=+0.109  avg_net=   -1.9bps  PF= 0.97  total=   -0.9%  maxDD=  7.2%  shrp/tr=-0.014
+  ALL:   N= 114  WR= 43.0%  E[R]=+0.168  avg_net=   +1.3bps  PF= 1.02  total=   +0.1%  maxDD= 21.3%  shrp/tr=+0.008
+  exits: sl=46 (-146bps)  time=33 (+6bps)  tp=35 (+190bps)
+
+--- S1 lb=48 sl=1.5xATR rr=2.0 hold=24h ---
+  IS :   N=  77  WR= 42.9%  E[R]=+0.200  avg_net=   +9.8bps  PF= 1.12  total=   +6.3%  maxDD= 13.4%  shrp/tr=+0.051
+  OOS:   N=  31  WR= 41.9%  E[R]=+0.137  avg_net=   +0.5bps  PF= 1.01  total=   -0.2%  maxDD=  6.9%  shrp/tr=+0.003
+  ALL:   N= 108  WR= 42.6%  E[R]=+0.182  avg_net=   +7.1bps  PF= 1.10  total=   +6.2%  maxDD= 19.7%  shrp/tr=+0.040
+  exits: sl=54 (-143bps)  time=12 (-8bps)  tp=42 (+204bps)
+
+--- S1 lb=48 sl=1.5xATR rr=3.0 hold=12h ---
+  IS :   N=  73  WR= 38.4%  E[R]=+0.197  avg_net=   +6.0bps  PF= 1.08  total=   +3.2%  maxDD=  9.1%  shrp/tr=+0.032
+  OOS:   N=  31  WR= 38.7%  E[R]=+0.142  avg_net=   +1.3bps  PF= 1.02  total=   +0.1%  maxDD=  8.5%  shrp/tr=+0.009
+  ALL:   N= 104  WR= 38.5%  E[R]=+0.180  avg_net=   +4.6bps  PF= 1.07  total=   +3.3%  maxDD= 16.1%  shrp/tr=+0.026
+  exits: sl=43 (-138bps)  time=45 (+45bps)  tp=16 (+272bps)
+
+--- S1 lb=48 sl=1.5xATR rr=3.0 hold=24h ---
+  IS :   N=  66  WR= 36.4%  E[R]=+0.342  avg_net=  +20.7bps  PF= 1.24  total=  +12.7%  maxDD= 10.9%  shrp/tr=+0.089
+  OOS:   N=  27  WR= 44.4%  E[R]=+0.223  avg_net=  +10.2bps  PF= 1.18  total=   +2.5%  maxDD=  8.8%  shrp/tr=+0.068
+  ALL:   N=  93  WR= 38.7%  E[R]=+0.307  avg_net=  +17.7bps  PF= 1.23  total=  +15.5%  maxDD= 17.5%  shrp/tr=+0.084
+  exits: sl=49 (-140bps)  time=17 (+24bps)  tp=27 (+299bps)
+
+--- S1 lb=48 sl=1.5xATR rr=0 hold=12h ---
+  IS :   N=  65  WR= 38.5%  E[R]=+0.144  avg_net=   -3.6bps  PF= 0.95  total=   -3.3%  maxDD=  9.5%  shrp/tr=-0.020
+  OOS:   N=  29  WR= 37.9%  E[R]=+0.107  avg_net=   -2.5bps  PF= 0.96  total=   -1.0%  maxDD=  7.2%  shrp/tr=-0.018
+  ALL:   N=  94  WR= 38.3%  E[R]=+0.133  avg_net=   -3.2bps  PF= 0.95  total=   -4.2%  maxDD= 16.0%  shrp/tr=-0.019
+  exits: sl=41 (-139bps)  time=53 (+102bps)
+
+--- S1 lb=48 sl=1.5xATR rr=0 hold=24h ---
+  IS :   N=  53  WR= 34.0%  E[R]=+0.193  avg_net=   +6.1bps  PF= 1.07  total=   +1.9%  maxDD= 10.0%  shrp/tr=+0.026
+  OOS:   N=  23  WR= 43.5%  E[R]=+0.167  avg_net=   +3.1bps  PF= 1.06  total=   +0.5%  maxDD=  7.2%  shrp/tr=+0.021
+  ALL:   N=  76  WR= 36.8%  E[R]=+0.185  avg_net=   +5.2bps  PF= 1.07  total=   +2.4%  maxDD= 12.1%  shrp/tr=+0.025
+  exits: sl=43 (-132bps)  time=33 (+184bps)
+
+--- S1 lb=48 sl=2.0xATR rr=2.0 hold=12h ---
+  IS :   N=  75  WR= 44.0%  E[R]=+0.243  avg_net=  +25.9bps  PF= 1.39  total=  +19.6%  maxDD=  8.7%  shrp/tr=+0.128
+  OOS:   N=  30  WR= 40.0%  E[R]=+0.148  avg_net=   +4.0bps  PF= 1.07  total=   +0.9%  maxDD=  8.4%  shrp/tr=+0.027
+  ALL:   N= 105  WR= 42.9%  E[R]=+0.216  avg_net=  +19.7bps  PF= 1.31  total=  +20.7%  maxDD= 13.5%  shrp/tr=+0.104
+  exits: sl=27 (-170bps)  time=54 (+5bps)  tp=24 (+265bps)
+
+--- S1 lb=48 sl=2.0xATR rr=2.0 hold=24h ---
+  IS :   N=  68  WR= 47.1%  E[R]=+0.361  avg_net=  +49.6bps  PF= 1.65  total=  +37.4%  maxDD=  7.5%  shrp/tr=+0.208
+  OOS:   N=  24  WR= 58.3%  E[R]=+0.454  avg_net=  +46.4bps  PF= 1.91  total=  +11.4%  maxDD=  6.1%  shrp/tr=+0.272
+  ALL:   N=  92  WR= 50.0%  E[R]=+0.385  avg_net=  +48.8bps  PF= 1.70  total=  +53.1%  maxDD= 10.5%  shrp/tr=+0.219
+  exits: sl=31 (-176bps)  time=25 (-8bps)  tp=36 (+281bps)
+
+--- S1 lb=48 sl=2.0xATR rr=3.0 hold=12h ---
+  IS :   N=  69  WR= 44.9%  E[R]=+0.218  avg_net=  +15.1bps  PF= 1.21  total=   +9.4%  maxDD=  9.3%  shrp/tr=+0.071
+  OOS:   N=  27  WR= 40.7%  E[R]=+0.244  avg_net=  +21.0bps  PF= 1.41  total=   +5.4%  maxDD=  7.2%  shrp/tr=+0.123
+  ALL:   N=  96  WR= 43.8%  E[R]=+0.225  avg_net=  +16.8bps  PF= 1.25  total=  +15.3%  maxDD= 12.2%  shrp/tr=+0.084
+  exits: sl=27 (-173bps)  time=59 (+39bps)  tp=10 (+397bps)
+
+--- S1 lb=48 sl=2.0xATR rr=3.0 hold=24h ---
+  IS :   N=  60  WR= 40.0%  E[R]=+0.262  avg_net=  +28.2bps  PF= 1.33  total=  +16.1%  maxDD=  7.2%  shrp/tr=+0.107
+  OOS:   N=  22  WR= 54.5%  E[R]=+0.490  avg_net=  +57.4bps  PF= 2.09  total=  +12.9%  maxDD=  8.1%  shrp/tr=+0.277
+  ALL:   N=  82  WR= 43.9%  E[R]=+0.323  avg_net=  +36.1bps  PF= 1.47  total=  +31.1%  maxDD= 10.8%  shrp/tr=+0.145
+  exits: sl=31 (-170bps)  time=34 (+37bps)  tp=17 (+410bps)
+
+--- S1 lb=48 sl=2.0xATR rr=0 hold=12h ---
+  IS :   N=  63  WR= 44.4%  E[R]=+0.181  avg_net=   +9.0bps  PF= 1.12  total=   +4.4%  maxDD=  9.3%  shrp/tr=+0.043
+  OOS:   N=  27  WR= 40.7%  E[R]=+0.152  avg_net=   +6.6bps  PF= 1.13  total=   +1.5%  maxDD=  7.2%  shrp/tr=+0.047
+  ALL:   N=  90  WR= 43.3%  E[R]=+0.172  avg_net=   +8.3bps  PF= 1.12  total=   +6.0%  maxDD= 12.7%  shrp/tr=+0.044
+  exits: sl=26 (-173bps)  time=64 (+82bps)
+
+--- S1 lb=48 sl=2.0xATR rr=0 hold=24h ---
+  IS :   N=  52  WR= 40.4%  E[R]=+0.175  avg_net=   +2.5bps  PF= 1.03  total=   -0.2%  maxDD= 10.4%  shrp/tr=+0.010
+  OOS:   N=  20  WR= 55.0%  E[R]=+0.372  avg_net=  +35.8bps  PF= 1.70  total=   +7.1%  maxDD=  8.1%  shrp/tr=+0.199
+  ALL:   N=  72  WR= 44.4%  E[R]=+0.229  avg_net=  +11.8bps  PF= 1.14  total=   +6.9%  maxDD= 13.0%  shrp/tr=+0.052
+  exits: sl=30 (-175bps)  time=42 (+145bps)
+
+######################################################################
+# S1L — BREAKOUT LONG mirror (expect bad in bear sample)
+######################################################################
+
+--- S1L lb=48 sl=2xATR rr=3 hold=24h ---
+  IS :   N=  47  WR= 42.6%  E[R]=+0.145  avg_net=   -6.4bps  PF= 0.91  total=   -3.5%  maxDD=  9.4%  shrp/tr=-0.042
+  OOS:   N=  19  WR= 26.3%  E[R]=-0.407  avg_net=  -65.0bps  PF= 0.24  total=  -11.8%  maxDD= 10.0%  shrp/tr=-0.569
+  ALL:   N=  66  WR= 37.9%  E[R]=-0.014  avg_net=  -23.3bps  PF= 0.69  total=  -14.8%  maxDD= 16.9%  shrp/tr=-0.161
+  exits: sl=29 (-144bps)  time=30 (+36bps)  tp=7 (+221bps)
+
+######################################################################
+# S2 — BULL-TRAP FADE SHORT (upside breakout below slow SMA)
+######################################################################
+
+--- S2 lb=24 sma=120 sl=1.5 rr=2.0 hold=24h ---
+  IS :   N=  29  WR= 37.9%  E[R]=-0.106  avg_net=  -11.0bps  PF= 0.83  total=   -3.4%  maxDD=  7.8%  shrp/tr=-0.080
+  OOS:   N=   9  WR= 11.1%  E[R]=-0.649  avg_net=  -66.1bps  PF= 0.10  total=   -5.8%  maxDD=  5.0%  shrp/tr=-1.093
+  ALL:   N=  38  WR= 31.6%  E[R]=-0.235  avg_net=  -24.0bps  PF= 0.65  total=   -9.0%  maxDD= 11.5%  shrp/tr=-0.192
+  exits: sl=24 (-106bps)  time=6 (+61bps)  tp=8 (+158bps)
+
+--- S2 lb=24 sma=120 sl=1.5 rr=0 hold=24h ---
+  IS :   N=  29  WR= 31.0%  E[R]=-0.237  avg_net=  -14.5bps  PF= 0.80  total=   -4.5%  maxDD= 11.5%  shrp/tr=-0.080
+  OOS:   N=   9  WR= 11.1%  E[R]=-0.348  avg_net=  -51.3bps  PF= 0.30  total=   -4.6%  maxDD=  3.8%  shrp/tr=-0.509
+  ALL:   N=  38  WR= 26.3%  E[R]=-0.264  avg_net=  -23.2bps  PF= 0.68  total=   -8.9%  maxDD= 15.2%  shrp/tr=-0.140
+  exits: sl=26 (-105bps)  time=12 (+153bps)
+
+--- S2 lb=24 sma=120 sl=2.0 rr=2.0 hold=24h ---
+  IS :   N=  27  WR= 40.7%  E[R]=-0.119  avg_net=  -19.4bps  PF= 0.76  total=   -5.4%  maxDD= 11.8%  shrp/tr=-0.117
+  OOS:   N=   9  WR= 22.2%  E[R]=-0.467  avg_net=  -69.0bps  PF= 0.16  total=   -6.1%  maxDD=  6.3%  shrp/tr=-0.786
+  ALL:   N=  36  WR= 36.1%  E[R]=-0.206  avg_net=  -31.8bps  PF= 0.60  total=  -11.2%  maxDD= 16.9%  shrp/tr=-0.211
+  exits: sl=20 (-138bps)  time=10 (+37bps)  tp=6 (+209bps)
+
+--- S2 lb=24 sma=120 sl=2.0 rr=0 hold=24h ---
+  IS :   N=  27  WR= 40.7%  E[R]=-0.027  avg_net=   -7.9bps  PF= 0.90  total=   -2.6%  maxDD= 11.8%  shrp/tr=-0.039
+  OOS:   N=   9  WR= 22.2%  E[R]=-0.286  avg_net=  -57.4bps  PF= 0.30  total=   -5.1%  maxDD=  5.3%  shrp/tr=-0.498
+  ALL:   N=  36  WR= 36.1%  E[R]=-0.091  avg_net=  -20.3bps  PF= 0.75  total=   -7.6%  maxDD= 16.0%  shrp/tr=-0.110
+  exits: sl=20 (-138bps)  time=16 (+127bps)
+
+--- S2 lb=24 sma=168 sl=1.5 rr=2.0 hold=24h ---
+  IS :   N=  36  WR= 36.1%  E[R]=-0.136  avg_net=  -14.0bps  PF= 0.79  total=   -5.2%  maxDD=  8.0%  shrp/tr=-0.104
+  OOS:   N=  12  WR= 25.0%  E[R]=-0.363  avg_net=  -50.6bps  PF= 0.28  total=   -6.0%  maxDD=  4.1%  shrp/tr=-0.558
+  ALL:   N=  48  WR= 33.3%  E[R]=-0.193  avg_net=  -23.2bps  PF= 0.66  total=  -10.9%  maxDD= 11.8%  shrp/tr=-0.185
+  exits: sl=30 (-108bps)  time=7 (+61bps)  tp=11 (+154bps)
+
+--- S2 lb=24 sma=168 sl=1.5 rr=0 hold=24h ---
+  IS :   N=  36  WR= 30.6%  E[R]=-0.121  avg_net=   -6.9bps  PF= 0.90  total=   -3.0%  maxDD=  9.4%  shrp/tr=-0.037
+  OOS:   N=  12  WR= 25.0%  E[R]=-0.066  avg_net=  -34.4bps  PF= 0.51  total=   -4.1%  maxDD=  2.6%  shrp/tr=-0.284
+  ALL:   N=  48  WR= 29.2%  E[R]=-0.107  avg_net=  -13.8bps  PF= 0.81  total=   -7.0%  maxDD= 12.8%  shrp/tr=-0.081
+  exits: sl=32 (-106bps)  time=16 (+171bps)
+
+--- S2 lb=24 sma=168 sl=2.0 rr=2.0 hold=24h ---
+  IS :   N=  31  WR= 35.5%  E[R]=-0.193  avg_net=  -23.3bps  PF= 0.72  total=   -7.4%  maxDD= 11.8%  shrp/tr=-0.140
+  OOS:   N=  11  WR= 27.3%  E[R]=-0.420  avg_net=  -73.0bps  PF= 0.18  total=   -7.8%  maxDD=  5.6%  shrp/tr=-0.696
+  ALL:   N=  42  WR= 33.3%  E[R]=-0.252  avg_net=  -36.3bps  PF= 0.57  total=  -14.6%  maxDD= 18.4%  shrp/tr=-0.238
+  exits: sl=25 (-138bps)  time=10 (+40bps)  tp=7 (+216bps)
+
+--- S2 lb=24 sma=168 sl=2.0 rr=0 hold=24h ---
+  IS :   N=  31  WR= 32.3%  E[R]=-0.206  avg_net=  -26.8bps  PF= 0.70  total=   -8.5%  maxDD= 14.6%  shrp/tr=-0.139
+  OOS:   N=  11  WR= 27.3%  E[R]=-0.272  avg_net=  -63.5bps  PF= 0.29  total=   -6.8%  maxDD=  4.7%  shrp/tr=-0.509
+  ALL:   N=  42  WR= 31.0%  E[R]=-0.224  avg_net=  -36.4bps  PF= 0.59  total=  -14.8%  maxDD= 20.1%  shrp/tr=-0.205
+  exits: sl=26 (-138bps)  time=16 (+129bps)
+
+--- S2 lb=48 sma=120 sl=1.5 rr=2.0 hold=24h ---
+  IS :   N=   6  WR= 50.0%  E[R]=+0.271  avg_net=   +0.9bps  PF= 1.01  total=   -0.0%  maxDD=  2.3%  shrp/tr=+0.006
+  OOS:   N=   1  WR=  0.0%  E[R]=+0.029  avg_net=   -6.1bps  PF= 0.00  total=   -0.1%  maxDD=  0.0%  shrp/tr=+0.000
+  ALL:   N=   7  WR= 42.9%  E[R]=+0.237  avg_net=   -0.1bps  PF= 1.00  total=   -0.1%  maxDD=  2.3%  shrp/tr=-0.001
+  exits: sl=3 (-139bps)  time=2 (+54bps)  tp=2 (+155bps)
+
+--- S2 lb=48 sma=120 sl=1.5 rr=0 hold=24h ---
+  IS :   N=   6  WR= 33.3%  E[R]=-0.068  avg_net=  -44.2bps  PF= 0.52  total=   -2.7%  maxDD=  4.3%  shrp/tr=-0.301
+  OOS:   N=   1  WR=  0.0%  E[R]=+0.029  avg_net=   -6.1bps  PF= 0.00  total=   -0.1%  maxDD=  0.0%  shrp/tr=+0.000
+  ALL:   N=   7  WR= 28.6%  E[R]=-0.054  avg_net=  -38.8bps  PF= 0.51  total=   -2.7%  maxDD=  4.3%  shrp/tr=-0.287
+  exits: sl=4 (-137bps)  time=3 (+92bps)
+
+--- S2 lb=48 sma=120 sl=2.0 rr=2.0 hold=24h ---
+  IS :   N=   6  WR= 33.3%  E[R]=-0.238  avg_net=  -72.7bps  PF= 0.38  total=   -4.3%  maxDD=  5.8%  shrp/tr=-0.443
+  OOS:   N=   1  WR=  0.0%  E[R]=+0.022  avg_net=   -6.1bps  PF= 0.00  total=   -0.1%  maxDD=  0.0%  shrp/tr=+0.000
+  ALL:   N=   7  WR= 28.6%  E[R]=-0.201  avg_net=  -63.2bps  PF= 0.38  total=   -4.4%  maxDD=  5.8%  shrp/tr=-0.416
+  exits: sl=4 (-176bps)  time=2 (+54bps)  tp=1 (+153bps)
+
+--- S2 lb=48 sma=120 sl=2.0 rr=0 hold=24h ---
+  IS :   N=   6  WR= 33.3%  E[R]=-0.210  avg_net=  -70.2bps  PF= 0.40  total=   -4.2%  maxDD=  5.8%  shrp/tr=-0.417
+  OOS:   N=   1  WR=  0.0%  E[R]=+0.022  avg_net=   -6.1bps  PF= 0.00  total=   -0.1%  maxDD=  0.0%  shrp/tr=+0.000
+  ALL:   N=   7  WR= 28.6%  E[R]=-0.177  avg_net=  -61.0bps  PF= 0.40  total=   -4.3%  maxDD=  5.8%  shrp/tr=-0.392
+  exits: sl=4 (-176bps)  time=3 (+92bps)
+
+--- S2 lb=48 sma=168 sl=1.5 rr=2.0 hold=24h ---
+  IS :   N=  10  WR= 30.0%  E[R]=-0.265  avg_net=  -40.9bps  PF= 0.50  total=   -4.1%  maxDD=  5.1%  shrp/tr=-0.316
+  OOS:   N=   2  WR= 50.0%  E[R]=+0.413  avg_net=  +26.1bps  PF= 9.53  total=   +0.5%  maxDD=  0.0%  shrp/tr=+0.573
+  ALL:   N=  12  WR= 33.3%  E[R]=-0.152  avg_net=  -29.7bps  PF= 0.57  total=   -3.6%  maxDD=  5.2%  shrp/tr=-0.246
+  exits: sl=7 (-118bps)  time=3 (+56bps)  tp=2 (+150bps)
+
+--- S2 lb=48 sma=168 sl=1.5 rr=0 hold=24h ---
+  IS :   N=  10  WR= 20.0%  E[R]=-0.468  avg_net=  -66.6bps  PF= 0.30  total=   -6.5%  maxDD=  8.1%  shrp/tr=-0.578
+  OOS:   N=   2  WR= 50.0%  E[R]=+0.413  avg_net=  +26.1bps  PF= 9.53  total=   +0.5%  maxDD=  0.0%  shrp/tr=+0.573
+  ALL:   N=  12  WR= 25.0%  E[R]=-0.322  avg_net=  -51.1bps  PF= 0.36  total=   -6.0%  maxDD=  8.1%  shrp/tr=-0.460
+  exits: sl=8 (-119bps)  time=4 (+84bps)
+
+--- S2 lb=48 sma=168 sl=2.0 rr=2.0 hold=24h ---
+  IS :   N=   9  WR= 33.3%  E[R]=-0.189  avg_net=  -41.7bps  PF= 0.58  total=   -3.8%  maxDD=  5.3%  shrp/tr=-0.240
+  OOS:   N=   2  WR= 50.0%  E[R]=+0.314  avg_net=  +26.1bps  PF= 9.53  total=   +0.5%  maxDD=  0.0%  shrp/tr=+0.573
+  ALL:   N=  11  WR= 36.4%  E[R]=-0.098  avg_net=  -29.4bps  PF= 0.64  total=   -3.3%  maxDD=  5.3%  shrp/tr=-0.185
+  exits: sl=6 (-150bps)  time=3 (+56bps)  tp=2 (+207bps)
+
+--- S2 lb=48 sma=168 sl=2.0 rr=0 hold=24h ---
+  IS :   N=   9  WR= 22.2%  E[R]=-0.493  avg_net=  -86.7bps  PF= 0.27  total=   -7.6%  maxDD=  9.1%  shrp/tr=-0.627
+  OOS:   N=   2  WR= 50.0%  E[R]=+0.314  avg_net=  +26.1bps  PF= 9.53  total=   +0.5%  maxDD=  0.0%  shrp/tr=+0.573
+  ALL:   N=  11  WR= 27.3%  E[R]=-0.346  avg_net=  -66.2bps  PF= 0.32  total=   -7.1%  maxDD=  9.2%  shrp/tr=-0.499
+  exits: sl=7 (-152bps)  time=4 (+84bps)
+
+######################################################################
+# S3 — FUNDING EXTREME SHORT
+######################################################################
+
+--- S3 q=0.8 sl=2.0xATR hold=8h ---
+  IS :   N=  99  WR= 43.4%  E[R]=+0.004  avg_net=   +6.1bps  PF= 1.12  total=   +5.3%  maxDD= 15.0%  shrp/tr=+0.046
+  OOS:   N=  74  WR= 36.5%  E[R]=-0.098  avg_net=  -16.7bps  PF= 0.65  total=  -11.9%  maxDD= 17.9%  shrp/tr=-0.175
+  ALL:   N= 173  WR= 40.5%  E[R]=-0.040  avg_net=   -3.7bps  PF= 0.93  total=   -7.3%  maxDD= 18.7%  shrp/tr=-0.031
+  exits: sl=51 (-118bps)  time=122 (+44bps)
+
+--- S3 q=0.8 sl=2.0xATR hold=24h ---
+  IS :   N=  71  WR= 39.4%  E[R]=+0.180  avg_net=  +41.7bps  PF= 1.60  total=  +31.0%  maxDD= 11.2%  shrp/tr=+0.152
+  OOS:   N=  49  WR= 32.7%  E[R]=-0.157  avg_net=   -8.6bps  PF= 0.88  total=   -4.8%  maxDD= 20.7%  shrp/tr=-0.052
+  ALL:   N= 120  WR= 36.7%  E[R]=+0.042  avg_net=  +21.1bps  PF= 1.30  total=  +24.8%  maxDD= 20.7%  shrp/tr=+0.089
+  exits: sl=65 (-122bps)  time=55 (+191bps)
+
+--- S3 q=0.8 sl=3.0xATR hold=8h ---
+  IS :   N=  99  WR= 45.5%  E[R]=+0.000  avg_net=   +6.9bps  PF= 1.14  total=   +6.1%  maxDD= 15.0%  shrp/tr=+0.051
+  OOS:   N=  74  WR= 36.5%  E[R]=-0.075  avg_net=  -17.3bps  PF= 0.64  total=  -12.4%  maxDD= 19.5%  shrp/tr=-0.177
+  ALL:   N= 173  WR= 41.6%  E[R]=-0.032  avg_net=   -3.5bps  PF= 0.93  total=   -7.0%  maxDD= 19.5%  shrp/tr=-0.029
+  exits: sl=24 (-146bps)  time=149 (+20bps)
+
+--- S3 q=0.8 sl=3.0xATR hold=24h ---
+  IS :   N=  67  WR= 43.3%  E[R]=+0.057  avg_net=  +30.1bps  PF= 1.34  total=  +18.9%  maxDD= 11.4%  shrp/tr=+0.101
+  OOS:   N=  45  WR= 42.2%  E[R]=+0.060  avg_net=  +12.0bps  PF= 1.19  total=   +4.8%  maxDD= 16.0%  shrp/tr=+0.068
+  ALL:   N= 112  WR= 42.9%  E[R]=+0.058  avg_net=  +22.9bps  PF= 1.29  total=  +24.7%  maxDD= 16.0%  shrp/tr=+0.089
+  exits: sl=42 (-175bps)  time=70 (+141bps)
+
+--- S3 q=0.9 sl=2.0xATR hold=8h ---
+  IS :   N=  40  WR= 42.5%  E[R]=+0.074  avg_net=   +8.7bps  PF= 1.20  total=   +3.2%  maxDD=  5.0%  shrp/tr=+0.069
+  OOS:   N=  50  WR= 34.0%  E[R]=-0.116  avg_net=  -16.1bps  PF= 0.67  total=   -8.0%  maxDD= 12.5%  shrp/tr=-0.166
+  ALL:   N=  90  WR= 37.8%  E[R]=-0.032  avg_net=   -5.1bps  PF= 0.89  total=   -5.0%  maxDD= 14.2%  shrp/tr=-0.046
+  exits: sl=26 (-110bps)  time=64 (+37bps)
+
+--- S3 q=0.9 sl=2.0xATR hold=24h ---
+  IS :   N=  29  WR= 44.8%  E[R]=+0.548  avg_net=  +99.1bps  PF= 2.93  total=  +31.2%  maxDD=  5.8%  shrp/tr=+0.299
+  OOS:   N=  35  WR= 34.3%  E[R]=-0.152  avg_net=   -3.6bps  PF= 0.94  total=   -1.6%  maxDD= 14.0%  shrp/tr=-0.023
+  ALL:   N=  64  WR= 39.1%  E[R]=+0.165  avg_net=  +42.9bps  PF= 1.74  total=  +29.1%  maxDD= 15.2%  shrp/tr=+0.169
+  exits: sl=31 (-111bps)  time=33 (+187bps)
+
+--- S3 q=0.9 sl=3.0xATR hold=8h ---
+  IS :   N=  40  WR= 47.5%  E[R]=+0.070  avg_net=  +15.7bps  PF= 1.41  total=   +6.2%  maxDD=  4.8%  shrp/tr=+0.127
+  OOS:   N=  50  WR= 34.0%  E[R]=-0.098  avg_net=  -17.0bps  PF= 0.66  total=   -8.4%  maxDD= 13.7%  shrp/tr=-0.170
+  ALL:   N=  90  WR= 40.0%  E[R]=-0.023  avg_net=   -2.5bps  PF= 0.94  total=   -2.7%  maxDD= 13.7%  shrp/tr=-0.022
+  exits: sl=12 (-130bps)  time=78 (+17bps)
+
+--- S3 q=0.9 sl=3.0xATR hold=24h ---
+  IS :   N=  27  WR= 51.9%  E[R]=+0.361  avg_net=  +98.8bps  PF= 2.53  total=  +28.4%  maxDD=  6.7%  shrp/tr=+0.280
+  OOS:   N=  32  WR= 46.9%  E[R]=-0.010  avg_net=  +14.8bps  PF= 1.25  total=   +4.4%  maxDD= 12.1%  shrp/tr=+0.087
+  ALL:   N=  59  WR= 49.2%  E[R]=+0.160  avg_net=  +53.3bps  PF= 1.87  total=  +34.1%  maxDD= 12.1%  shrp/tr=+0.197
+  exits: sl=20 (-161bps)  time=39 (+163bps)
+
+######################################################################
+# S4 — PUMP FADE SHORT (15m z-score + buy ratio)
+######################################################################
+
+--- S4 z>2.0 br>0.6 sl=1.0 rr=1.5 hold=120m ---
+  IS :   N= 190  WR= 26.8%  E[R]=-0.434  avg_net=  -24.3bps  PF= 0.26  total=  -37.1%  maxDD= 36.8%  shrp/tr=-0.567
+  OOS:   N=  98  WR= 32.7%  E[R]=-0.323  avg_net=  -17.0bps  PF= 0.41  total=  -15.4%  maxDD= 16.3%  shrp/tr=-0.392
+  ALL:   N= 288  WR= 28.8%  E[R]=-0.397  avg_net=  -21.8bps  PF= 0.31  total=  -46.8%  maxDD= 46.5%  shrp/tr=-0.506
+  exits: sl=156 (-52bps)  time=52 (-11bps)  tp=80 (+30bps)
+
+--- S4 z>2.0 br>0.6 sl=1.0 rr=1.5 hold=240m ---
+  IS :   N= 190  WR= 31.1%  E[R]=-0.380  avg_net=  -21.7bps  PF= 0.34  total=  -33.9%  maxDD= 33.7%  shrp/tr=-0.465
+  OOS:   N=  98  WR= 39.8%  E[R]=-0.281  avg_net=  -16.1bps  PF= 0.45  total=  -14.7%  maxDD= 15.6%  shrp/tr=-0.353
+  ALL:   N= 288  WR= 34.0%  E[R]=-0.346  avg_net=  -19.8bps  PF= 0.38  total=  -43.6%  maxDD= 43.5%  shrp/tr=-0.428
+  exits: sl=169 (-53bps)  time=18 (-1bps)  tp=101 (+32bps)
+
+--- S4 z>2.0 br>0.6 sl=1.0 rr=2.0 hold=120m ---
+  IS :   N= 189  WR= 24.3%  E[R]=-0.447  avg_net=  -25.9bps  PF= 0.24  total=  -38.9%  maxDD= 38.6%  shrp/tr=-0.625
+  OOS:   N=  98  WR= 23.5%  E[R]=-0.418  avg_net=  -19.8bps  PF= 0.37  total=  -17.7%  maxDD= 18.0%  shrp/tr=-0.437
+  ALL:   N= 287  WR= 24.0%  E[R]=-0.437  avg_net=  -23.8bps  PF= 0.28  total=  -49.7%  maxDD= 49.5%  shrp/tr=-0.556
+  exits: sl=165 (-52bps)  time=74 (-2bps)  tp=48 (+39bps)
+
+--- S4 z>2.0 br>0.6 sl=1.0 rr=2.0 hold=240m ---
+  IS :   N= 189  WR= 28.6%  E[R]=-0.405  avg_net=  -24.3bps  PF= 0.32  total=  -37.0%  maxDD= 36.8%  shrp/tr=-0.511
+  OOS:   N=  97  WR= 30.9%  E[R]=-0.361  avg_net=  -18.3bps  PF= 0.44  total=  -16.4%  maxDD= 17.9%  shrp/tr=-0.366
+  ALL:   N= 286  WR= 29.4%  E[R]=-0.390  avg_net=  -22.3bps  PF= 0.36  total=  -47.3%  maxDD= 47.8%  shrp/tr=-0.460
+  exits: sl=182 (-53bps)  time=34 (+3bps)  tp=70 (+44bps)
+
+--- S4 z>2.0 br>0.6 sl=1.5 rr=1.5 hold=120m ---
+  IS :   N= 187  WR= 27.8%  E[R]=-0.348  avg_net=  -27.0bps  PF= 0.27  total=  -39.8%  maxDD= 39.5%  shrp/tr=-0.550
+  OOS:   N=  95  WR= 28.4%  E[R]=-0.290  avg_net=  -17.2bps  PF= 0.47  total=  -15.2%  maxDD= 17.0%  shrp/tr=-0.327
+  ALL:   N= 282  WR= 28.0%  E[R]=-0.328  avg_net=  -23.7bps  PF= 0.33  total=  -48.9%  maxDD= 49.7%  shrp/tr=-0.469
+  exits: sl=123 (-64bps)  time=113 (-7bps)  tp=46 (+45bps)
+
+--- S4 z>2.0 br>0.6 sl=1.5 rr=1.5 hold=240m ---
+  IS :   N= 186  WR= 31.7%  E[R]=-0.338  avg_net=  -26.2bps  PF= 0.33  total=  -38.8%  maxDD= 38.7%  shrp/tr=-0.473
+  OOS:   N=  95  WR= 38.9%  E[R]=-0.223  avg_net=  -14.2bps  PF= 0.58  total=  -12.8%  maxDD= 16.9%  shrp/tr=-0.233
+  ALL:   N= 281  WR= 34.2%  E[R]=-0.299  avg_net=  -22.2bps  PF= 0.41  total=  -46.6%  maxDD= 48.8%  shrp/tr=-0.385
+  exits: sl=145 (-66bps)  time=69 (+0bps)  tp=67 (+50bps)
+
+--- S4 z>2.0 br>0.6 sl=1.5 rr=2.0 hold=120m ---
+  IS :   N= 186  WR= 25.8%  E[R]=-0.344  avg_net=  -27.2bps  PF= 0.28  total=  -39.9%  maxDD= 39.7%  shrp/tr=-0.538
+  OOS:   N=  95  WR= 27.4%  E[R]=-0.290  avg_net=  -17.6bps  PF= 0.47  total=  -15.5%  maxDD= 18.1%  shrp/tr=-0.316
+  ALL:   N= 281  WR= 26.3%  E[R]=-0.325  avg_net=  -24.0bps  PF= 0.34  total=  -49.3%  maxDD= 50.5%  shrp/tr=-0.457
+  exits: sl=125 (-65bps)  time=127 (-2bps)  tp=29 (+57bps)
+
+--- S4 z>2.0 br>0.6 sl=1.5 rr=2.0 hold=240m ---
+  IS :   N= 184  WR= 28.8%  E[R]=-0.342  avg_net=  -27.0bps  PF= 0.34  total=  -39.4%  maxDD= 39.3%  shrp/tr=-0.464
+  OOS:   N=  95  WR= 36.8%  E[R]=-0.213  avg_net=  -14.4bps  PF= 0.59  total=  -13.0%  maxDD= 17.4%  shrp/tr=-0.222
+  ALL:   N= 279  WR= 31.5%  E[R]=-0.298  avg_net=  -22.7bps  PF= 0.42  total=  -47.3%  maxDD= 49.3%  shrp/tr=-0.374
+  exits: sl=150 (-66bps)  time=84 (+9bps)  tp=45 (+63bps)
+
+--- S4 z>2.0 br>0.65 sl=1.0 rr=1.5 hold=120m ---
+  IS :   N=  54  WR= 18.5%  E[R]=-0.524  avg_net=  -28.1bps  PF= 0.10  total=  -14.1%  maxDD= 13.9%  shrp/tr=-0.914
+  OOS:   N=  32  WR= 31.2%  E[R]=-0.369  avg_net=  -16.8bps  PF= 0.37  total=   -5.3%  maxDD=  4.8%  shrp/tr=-0.432
+  ALL:   N=  86  WR= 23.3%  E[R]=-0.466  avg_net=  -23.9bps  PF= 0.19  total=  -18.6%  maxDD= 18.4%  shrp/tr=-0.698
+  exits: sl=46 (-47bps)  time=13 (-24bps)  tp=27 (+16bps)
+
+--- S4 z>2.0 br>0.65 sl=1.0 rr=1.5 hold=240m ---
+  IS :   N=  54  WR= 24.1%  E[R]=-0.450  avg_net=  -23.8bps  PF= 0.21  total=  -12.1%  maxDD= 12.2%  shrp/tr=-0.651
+  OOS:   N=  32  WR= 40.6%  E[R]=-0.297  avg_net=  -15.2bps  PF= 0.41  total=   -4.8%  maxDD=  4.3%  shrp/tr=-0.380
+  ALL:   N=  86  WR= 30.2%  E[R]=-0.393  avg_net=  -20.6bps  PF= 0.27  total=  -16.3%  maxDD= 16.4%  shrp/tr=-0.544
+  exits: sl=50 (-48bps)  time=2 (+15bps)  tp=34 (+17bps)
+
+--- S4 z>2.0 br>0.65 sl=1.0 rr=2.0 hold=120m ---
+  IS :   N=  54  WR= 20.4%  E[R]=-0.485  avg_net=  -27.5bps  PF= 0.11  total=  -13.8%  maxDD= 13.7%  shrp/tr=-0.853
+  OOS:   N=  32  WR= 25.0%  E[R]=-0.395  avg_net=  -18.2bps  PF= 0.37  total=   -5.7%  maxDD=  5.6%  shrp/tr=-0.419
+  ALL:   N=  86  WR= 22.1%  E[R]=-0.452  avg_net=  -24.0bps  PF= 0.21  total=  -18.7%  maxDD= 18.9%  shrp/tr=-0.652
+  exits: sl=47 (-47bps)  time=21 (-12bps)  tp=18 (+23bps)
+
+--- S4 z>2.0 br>0.65 sl=1.0 rr=2.0 hold=240m ---
+  IS :   N=  54  WR= 29.6%  E[R]=-0.360  avg_net=  -20.9bps  PF= 0.31  total=  -10.7%  maxDD= 10.9%  shrp/tr=-0.491
+  OOS:   N=  31  WR= 32.3%  E[R]=-0.382  avg_net=  -19.0bps  PF= 0.37  total=   -5.8%  maxDD=  5.9%  shrp/tr=-0.427
+  ALL:   N=  85  WR= 30.6%  E[R]=-0.368  avg_net=  -20.2bps  PF= 0.33  total=  -15.8%  maxDD= 16.6%  shrp/tr=-0.470
+  exits: sl=52 (-48bps)  time=5 (-2bps)  tp=28 (+28bps)
+
+--- S4 z>2.0 br>0.65 sl=1.5 rr=1.5 hold=120m ---
+  IS :   N=  54  WR= 24.1%  E[R]=-0.382  avg_net=  -28.0bps  PF= 0.16  total=  -14.1%  maxDD= 14.0%  shrp/tr=-0.712
+  OOS:   N=  31  WR= 29.0%  E[R]=-0.298  avg_net=  -15.1bps  PF= 0.49  total=   -4.6%  maxDD=  6.0%  shrp/tr=-0.298
+  ALL:   N=  85  WR= 25.9%  E[R]=-0.351  avg_net=  -23.3bps  PF= 0.27  total=  -18.1%  maxDD= 19.5%  shrp/tr=-0.530
+  exits: sl=36 (-57bps)  time=31 (-14bps)  tp=18 (+29bps)
+
+--- S4 z>2.0 br>0.65 sl=1.5 rr=1.5 hold=240m ---
+  IS :   N=  53  WR= 28.3%  E[R]=-0.422  avg_net=  -28.7bps  PF= 0.22  total=  -14.2%  maxDD= 14.5%  shrp/tr=-0.615
+  OOS:   N=  31  WR= 41.9%  E[R]=-0.176  avg_net=  -10.0bps  PF= 0.62  total=   -3.1%  maxDD=  4.8%  shrp/tr=-0.192
+  ALL:   N=  84  WR= 33.3%  E[R]=-0.331  avg_net=  -21.8bps  PF= 0.34  total=  -16.9%  maxDD= 19.1%  shrp/tr=-0.442
+  exits: sl=43 (-60bps)  time=17 (+2bps)  tp=24 (+30bps)
+
+--- S4 z>2.0 br>0.65 sl=1.5 rr=2.0 hold=120m ---
+  IS :   N=  53  WR= 22.6%  E[R]=-0.354  avg_net=  -27.4bps  PF= 0.19  total=  -13.6%  maxDD= 13.5%  shrp/tr=-0.665
+  OOS:   N=  31  WR= 29.0%  E[R]=-0.212  avg_net=  -10.2bps  PF= 0.66  total=   -3.2%  maxDD=  5.4%  shrp/tr=-0.169
+  ALL:   N=  84  WR= 25.0%  E[R]=-0.302  avg_net=  -21.1bps  PF= 0.35  total=  -16.3%  maxDD= 18.5%  shrp/tr=-0.425
+  exits: sl=36 (-57bps)  time=33 (-12bps)  tp=15 (+45bps)
+
+--- S4 z>2.0 br>0.65 sl=1.5 rr=2.0 hold=240m ---
+  IS :   N=  52  WR= 26.9%  E[R]=-0.405  avg_net=  -29.0bps  PF= 0.23  total=  -14.1%  maxDD= 14.5%  shrp/tr=-0.615
+  OOS:   N=  31  WR= 41.9%  E[R]=-0.079  avg_net=   -5.0bps  PF= 0.81  total=   -1.6%  maxDD=  4.2%  shrp/tr=-0.082
+  ALL:   N=  83  WR= 32.5%  E[R]=-0.283  avg_net=  -20.1bps  PF= 0.40  total=  -15.5%  maxDD= 18.5%  shrp/tr=-0.372
+  exits: sl=43 (-60bps)  time=22 (+8bps)  tp=18 (+41bps)
+
+--- S4 z>2.5 br>0.6 sl=1.0 rr=1.5 hold=120m ---
+  IS :   N= 106  WR= 27.4%  E[R]=-0.451  avg_net=  -27.4bps  PF= 0.21  total=  -25.3%  maxDD= 25.0%  shrp/tr=-0.664
+  OOS:   N=  56  WR= 37.5%  E[R]=-0.247  avg_net=  -16.3bps  PF= 0.43  total=   -8.8%  maxDD= 10.4%  shrp/tr=-0.362
+  ALL:   N= 162  WR= 30.9%  E[R]=-0.381  avg_net=  -23.6bps  PF= 0.28  total=  -31.9%  maxDD= 31.6%  shrp/tr=-0.551
+  exits: sl=89 (-54bps)  time=27 (-12bps)  tp=46 (+29bps)
+
+--- S4 z>2.5 br>0.6 sl=1.0 rr=1.5 hold=240m ---
+  IS :   N= 106  WR= 33.0%  E[R]=-0.394  avg_net=  -24.4bps  PF= 0.29  total=  -22.9%  maxDD= 22.6%  shrp/tr=-0.538
+  OOS:   N=  56  WR= 41.1%  E[R]=-0.247  avg_net=  -16.5bps  PF= 0.45  total=   -8.9%  maxDD= 10.0%  shrp/tr=-0.353
+  ALL:   N= 162  WR= 35.8%  E[R]=-0.343  avg_net=  -21.7bps  PF= 0.34  total=  -29.8%  maxDD= 29.5%  shrp/tr=-0.473
+  exits: sl=95 (-55bps)  time=13 (-0bps)  tp=54 (+31bps)
+
+--- S4 z>2.5 br>0.6 sl=1.0 rr=2.0 hold=120m ---
+  IS :   N= 106  WR= 25.5%  E[R]=-0.449  avg_net=  -27.9bps  PF= 0.22  total=  -25.7%  maxDD= 25.4%  shrp/tr=-0.676
+  OOS:   N=  56  WR= 25.0%  E[R]=-0.405  avg_net=  -21.8bps  PF= 0.33  total=  -11.5%  maxDD= 12.4%  shrp/tr=-0.483
+  ALL:   N= 162  WR= 25.3%  E[R]=-0.434  avg_net=  -25.8bps  PF= 0.26  total=  -34.3%  maxDD= 34.0%  shrp/tr=-0.606
+  exits: sl=95 (-54bps)  time=41 (-2bps)  tp=26 (+39bps)
+
+--- S4 z>2.5 br>0.6 sl=1.0 rr=2.0 hold=240m ---
+  IS :   N= 106  WR= 32.1%  E[R]=-0.370  avg_net=  -23.8bps  PF= 0.34  total=  -22.4%  maxDD= 22.2%  shrp/tr=-0.491
+  OOS:   N=  56  WR= 26.8%  E[R]=-0.423  avg_net=  -22.9bps  PF= 0.34  total=  -12.1%  maxDD= 12.7%  shrp/tr=-0.485
+  ALL:   N= 162  WR= 30.2%  E[R]=-0.389  avg_net=  -23.4bps  PF= 0.34  total=  -31.8%  maxDD= 31.6%  shrp/tr=-0.490
+  exits: sl=103 (-54bps)  time=22 (+4bps)  tp=37 (+45bps)
+
+--- S4 z>2.5 br>0.6 sl=1.5 rr=1.5 hold=120m ---
+  IS :   N= 106  WR= 30.2%  E[R]=-0.343  avg_net=  -27.7bps  PF= 0.27  total=  -25.6%  maxDD= 25.2%  shrp/tr=-0.569
+  OOS:   N=  56  WR= 28.6%  E[R]=-0.308  avg_net=  -19.9bps  PF= 0.41  total=  -10.6%  maxDD= 11.6%  shrp/tr=-0.381
+  ALL:   N= 162  WR= 29.6%  E[R]=-0.331  avg_net=  -25.0bps  PF= 0.31  total=  -33.5%  maxDD= 33.4%  shrp/tr=-0.501
+  exits: sl=72 (-65bps)  time=64 (-9bps)  tp=26 (+46bps)
+
+--- S4 z>2.5 br>0.6 sl=1.5 rr=1.5 hold=240m ---
+  IS :   N= 106  WR= 35.8%  E[R]=-0.308  avg_net=  -24.4bps  PF= 0.37  total=  -22.9%  maxDD= 22.7%  shrp/tr=-0.428
+  OOS:   N=  56  WR= 35.7%  E[R]=-0.277  avg_net=  -18.7bps  PF= 0.48  total=  -10.1%  maxDD= 11.3%  shrp/tr=-0.317
+  ALL:   N= 162  WR= 35.8%  E[R]=-0.297  avg_net=  -22.4bps  PF= 0.40  total=  -30.7%  maxDD= 31.0%  shrp/tr=-0.390
+  exits: sl=85 (-67bps)  time=40 (+3bps)  tp=37 (+53bps)
+
+--- S4 z>2.5 br>0.6 sl=1.5 rr=2.0 hold=120m ---
+  IS :   N= 106  WR= 28.3%  E[R]=-0.329  avg_net=  -27.3bps  PF= 0.28  total=  -25.3%  maxDD= 25.0%  shrp/tr=-0.548
+  OOS:   N=  56  WR= 26.8%  E[R]=-0.342  avg_net=  -22.7bps  PF= 0.36  total=  -12.0%  maxDD= 13.1%  shrp/tr=-0.444
+  ALL:   N= 162  WR= 27.8%  E[R]=-0.333  avg_net=  -25.7bps  PF= 0.31  total=  -34.3%  maxDD= 34.2%  shrp/tr=-0.513
+  exits: sl=73 (-66bps)  time=75 (-1bps)  tp=14 (+48bps)
+
+--- S4 z>2.5 br>0.6 sl=1.5 rr=2.0 hold=240m ---
+  IS :   N= 106  WR= 33.0%  E[R]=-0.309  avg_net=  -25.1bps  PF= 0.37  total=  -23.5%  maxDD= 23.4%  shrp/tr=-0.429
+  OOS:   N=  56  WR= 33.9%  E[R]=-0.267  avg_net=  -19.2bps  PF= 0.49  total=  -10.3%  maxDD= 11.9%  shrp/tr=-0.309
+  ALL:   N= 162  WR= 33.3%  E[R]=-0.294  avg_net=  -23.0bps  PF= 0.41  total=  -31.4%  maxDD= 31.7%  shrp/tr=-0.387
+  exits: sl=87 (-67bps)  time=53 (+14bps)  tp=22 (+62bps)
+
+--- S4 z>2.5 br>0.65 sl=1.0 rr=1.5 hold=120m ---
+  IS :   N=  24  WR= 20.8%  E[R]=-0.458  avg_net=  -29.7bps  PF= 0.10  total=   -6.9%  maxDD=  6.8%  shrp/tr=-0.927
+  OOS:   N=  14  WR= 35.7%  E[R]=-0.331  avg_net=  -21.2bps  PF= 0.30  total=   -2.9%  maxDD=  2.6%  shrp/tr=-0.503
+  ALL:   N=  38  WR= 26.3%  E[R]=-0.411  avg_net=  -26.6bps  PF= 0.17  total=   -9.6%  maxDD=  9.4%  shrp/tr=-0.743
+  exits: sl=21 (-52bps)  time=4 (-27bps)  tp=13 (+15bps)
+
+--- S4 z>2.5 br>0.65 sl=1.0 rr=1.5 hold=240m ---
+  IS :   N=  24  WR= 33.3%  E[R]=-0.309  avg_net=  -22.1bps  PF= 0.23  total=   -5.2%  maxDD=  5.4%  shrp/tr=-0.585
+  OOS:   N=  14  WR= 42.9%  E[R]=-0.309  avg_net=  -19.7bps  PF= 0.34  total=   -2.7%  maxDD=  2.4%  shrp/tr=-0.458
+  ALL:   N=  38  WR= 36.8%  E[R]=-0.309  avg_net=  -21.2bps  PF= 0.27  total=   -7.8%  maxDD=  7.9%  shrp/tr=-0.541
+  exits: sl=21 (-52bps)  time=2 (+15bps)  tp=15 (+18bps)
+
+--- S4 z>2.5 br>0.65 sl=1.0 rr=2.0 hold=120m ---
+  IS :   N=  24  WR= 25.0%  E[R]=-0.390  avg_net=  -28.1bps  PF= 0.14  total=   -6.5%  maxDD=  6.6%  shrp/tr=-0.798
+  OOS:   N=  14  WR= 28.6%  E[R]=-0.438  avg_net=  -28.1bps  PF= 0.20  total=   -3.9%  maxDD=  3.6%  shrp/tr=-0.712
+  ALL:   N=  38  WR= 26.3%  E[R]=-0.407  avg_net=  -28.1bps  PF= 0.16  total=  -10.2%  maxDD=  9.9%  shrp/tr=-0.774
+  exits: sl=22 (-53bps)  time=8 (-5bps)  tp=8 (+17bps)
+
+--- S4 z>2.5 br>0.65 sl=1.0 rr=2.0 hold=240m ---
+  IS :   N=  24  WR= 41.7%  E[R]=-0.146  avg_net=  -17.5bps  PF= 0.39  total=   -4.1%  maxDD=  4.6%  shrp/tr=-0.398
+  OOS:   N=  14  WR= 21.4%  E[R]=-0.640  avg_net=  -34.9bps  PF= 0.09  total=   -4.8%  maxDD=  4.5%  shrp/tr=-1.039
+  ALL:   N=  38  WR= 34.2%  E[R]=-0.328  avg_net=  -23.9bps  PF= 0.25  total=   -8.7%  maxDD=  8.9%  shrp/tr=-0.585
+  exits: sl=23 (-53bps)  time=3 (+8bps)  tp=12 (+23bps)
+
+--- S4 z>2.5 br>0.65 sl=1.5 rr=1.5 hold=120m ---
+  IS :   N=  24  WR= 33.3%  E[R]=-0.289  avg_net=  -25.8bps  PF= 0.24  total=   -6.0%  maxDD=  6.2%  shrp/tr=-0.602
+  OOS:   N=  14  WR= 35.7%  E[R]=-0.313  avg_net=  -22.0bps  PF= 0.35  total=   -3.0%  maxDD=  3.5%  shrp/tr=-0.465
+  ALL:   N=  38  WR= 34.2%  E[R]=-0.298  avg_net=  -24.4bps  PF= 0.28  total=   -8.9%  maxDD=  9.4%  shrp/tr=-0.556
+  exits: sl=17 (-61bps)  time=13 (-5bps)  tp=8 (+21bps)
+
+--- S4 z>2.5 br>0.65 sl=1.5 rr=1.5 hold=240m ---
+  IS :   N=  24  WR= 45.8%  E[R]=-0.212  avg_net=  -21.0bps  PF= 0.37  total=   -4.9%  maxDD=  5.6%  shrp/tr=-0.408
+  OOS:   N=  14  WR= 35.7%  E[R]=-0.312  avg_net=  -19.5bps  PF= 0.37  total=   -2.7%  maxDD=  3.4%  shrp/tr=-0.401
+  ALL:   N=  38  WR= 42.1%  E[R]=-0.249  avg_net=  -20.4bps  PF= 0.37  total=   -7.5%  maxDD=  8.7%  shrp/tr=-0.411
+  exits: sl=19 (-63bps)  time=8 (+13bps)  tp=11 (+29bps)
+
+--- S4 z>2.5 br>0.65 sl=1.5 rr=2.0 hold=120m ---
+  IS :   N=  24  WR= 29.2%  E[R]=-0.261  avg_net=  -25.3bps  PF= 0.26  total=   -5.9%  maxDD=  6.3%  shrp/tr=-0.586
+  OOS:   N=  14  WR= 35.7%  E[R]=-0.253  avg_net=  -20.0bps  PF= 0.41  total=   -2.8%  maxDD=  3.5%  shrp/tr=-0.404
+  ALL:   N=  38  WR= 31.6%  E[R]=-0.258  avg_net=  -23.3bps  PF= 0.31  total=   -8.5%  maxDD=  9.1%  shrp/tr=-0.519
+  exits: sl=17 (-61bps)  time=15 (-1bps)  tp=6 (+28bps)
+
+--- S4 z>2.5 br>0.65 sl=1.5 rr=2.0 hold=240m ---
+  IS :   N=  24  WR= 41.7%  E[R]=-0.207  avg_net=  -22.4bps  PF= 0.35  total=   -5.3%  maxDD=  6.4%  shrp/tr=-0.454
+  OOS:   N=  14  WR= 35.7%  E[R]=-0.252  avg_net=  -17.5bps  PF= 0.43  total=   -2.4%  maxDD=  3.4%  shrp/tr=-0.345
+  ALL:   N=  38  WR= 39.5%  E[R]=-0.224  avg_net=  -20.6bps  PF= 0.38  total=   -7.6%  maxDD=  9.1%  shrp/tr=-0.418
+  exits: sl=19 (-63bps)  time=12 (+19bps)  tp=7 (+26bps)
+
+--- S4 z>3.0 br>0.6 sl=1.0 rr=1.5 hold=120m ---
+  IS :   N=  67  WR= 31.3%  E[R]=-0.410  avg_net=  -23.0bps  PF= 0.29  total=  -14.4%  maxDD= 13.9%  shrp/tr=-0.528
+  OOS:   N=  34  WR= 41.2%  E[R]=-0.221  avg_net=  -12.5bps  PF= 0.53  total=   -4.2%  maxDD=  6.2%  shrp/tr=-0.266
+  ALL:   N= 101  WR= 34.7%  E[R]=-0.346  avg_net=  -19.5bps  PF= 0.36  total=  -18.0%  maxDD= 17.6%  shrp/tr=-0.434
+  exits: sl=57 (-52bps)  time=12 (-3bps)  tp=32 (+32bps)
+
+--- S4 z>3.0 br>0.6 sl=1.0 rr=1.5 hold=240m ---
+  IS :   N=  67  WR= 31.3%  E[R]=-0.407  avg_net=  -22.8bps  PF= 0.33  total=  -14.2%  maxDD= 13.8%  shrp/tr=-0.485
+  OOS:   N=  34  WR= 41.2%  E[R]=-0.230  avg_net=  -13.4bps  PF= 0.52  total=   -4.5%  maxDD=  6.5%  shrp/tr=-0.280
+  ALL:   N= 101  WR= 34.7%  E[R]=-0.347  avg_net=  -19.6bps  PF= 0.39  total=  -18.1%  maxDD= 17.7%  shrp/tr=-0.415
+  exits: sl=60 (-52bps)  time=6 (-4bps)  tp=35 (+34bps)
+
+--- S4 z>3.0 br>0.6 sl=1.0 rr=2.0 hold=120m ---
+  IS :   N=  67  WR= 28.4%  E[R]=-0.420  avg_net=  -24.4bps  PF= 0.28  total=  -15.1%  maxDD= 14.8%  shrp/tr=-0.572
+  OOS:   N=  34  WR= 26.5%  E[R]=-0.441  avg_net=  -19.4bps  PF= 0.40  total=   -6.4%  maxDD=  7.6%  shrp/tr=-0.394
+  ALL:   N= 101  WR= 27.7%  E[R]=-0.427  avg_net=  -22.7bps  PF= 0.32  total=  -20.6%  maxDD= 20.2%  shrp/tr=-0.507
+  exits: sl=63 (-51bps)  time=20 (+8bps)  tp=18 (+44bps)
+
+--- S4 z>3.0 br>0.6 sl=1.0 rr=2.0 hold=240m ---
+  IS :   N=  67  WR= 28.4%  E[R]=-0.405  avg_net=  -23.2bps  PF= 0.36  total=  -14.5%  maxDD= 14.1%  shrp/tr=-0.470
+  OOS:   N=  34  WR= 23.5%  E[R]=-0.515  avg_net=  -22.1bps  PF= 0.37  total=   -7.3%  maxDD=  8.7%  shrp/tr=-0.440
+  ALL:   N= 101  WR= 26.7%  E[R]=-0.442  avg_net=  -22.8bps  PF= 0.36  total=  -20.7%  maxDD= 20.3%  shrp/tr=-0.462
+  exits: sl=68 (-52bps)  time=10 (+4bps)  tp=23 (+51bps)
+
+--- S4 z>3.0 br>0.6 sl=1.5 rr=1.5 hold=120m ---
+  IS :   N=  67  WR= 31.3%  E[R]=-0.382  avg_net=  -28.8bps  PF= 0.27  total=  -17.7%  maxDD= 17.2%  shrp/tr=-0.561
+  OOS:   N=  34  WR= 29.4%  E[R]=-0.391  avg_net=  -21.7bps  PF= 0.41  total=   -7.2%  maxDD=  8.5%  shrp/tr=-0.382
+  ALL:   N= 101  WR= 30.7%  E[R]=-0.385  avg_net=  -26.4bps  PF= 0.32  total=  -23.6%  maxDD= 23.6%  shrp/tr=-0.498
+  exits: sl=53 (-66bps)  time=31 (-1bps)  tp=17 (+49bps)
+
+--- S4 z>3.0 br>0.6 sl=1.5 rr=1.5 hold=240m ---
+  IS :   N=  67  WR= 31.3%  E[R]=-0.364  avg_net=  -25.5bps  PF= 0.37  total=  -15.8%  maxDD= 15.4%  shrp/tr=-0.434
+  OOS:   N=  34  WR= 29.4%  E[R]=-0.395  avg_net=  -21.4bps  PF= 0.45  total=   -7.1%  maxDD=  9.4%  shrp/tr=-0.349
+  ALL:   N= 101  WR= 30.7%  E[R]=-0.374  avg_net=  -24.1bps  PF= 0.40  total=  -21.8%  maxDD= 22.0%  shrp/tr=-0.406
+  exits: sl=59 (-65bps)  time=20 (+8bps)  tp=22 (+56bps)
+
+--- S4 z>3.0 br>0.6 sl=1.5 rr=2.0 hold=120m ---
+  IS :   N=  67  WR= 28.4%  E[R]=-0.371  avg_net=  -28.4bps  PF= 0.29  total=  -17.5%  maxDD= 17.0%  shrp/tr=-0.537
+  OOS:   N=  34  WR= 26.5%  E[R]=-0.446  avg_net=  -26.1bps  PF= 0.34  total=   -8.5%  maxDD=  9.9%  shrp/tr=-0.468
+  ALL:   N= 101  WR= 27.7%  E[R]=-0.396  avg_net=  -27.6bps  PF= 0.30  total=  -24.5%  maxDD= 24.5%  shrp/tr=-0.515
+  exits: sl=54 (-66bps)  time=38 (+8bps)  tp=9 (+52bps)
+
+--- S4 z>3.0 br>0.6 sl=1.5 rr=2.0 hold=240m ---
+  IS :   N=  67  WR= 29.9%  E[R]=-0.340  avg_net=  -24.4bps  PF= 0.41  total=  -15.2%  maxDD= 14.8%  shrp/tr=-0.388
+  OOS:   N=  34  WR= 26.5%  E[R]=-0.427  avg_net=  -24.7bps  PF= 0.40  total=   -8.1%  maxDD= 10.6%  shrp/tr=-0.398
+  ALL:   N= 101  WR= 28.7%  E[R]=-0.369  avg_net=  -24.5bps  PF= 0.41  total=  -22.1%  maxDD= 22.3%  shrp/tr=-0.393
+  exits: sl=61 (-65bps)  time=26 (+23bps)  tp=14 (+64bps)
+
+--- S4 z>3.0 br>0.65 sl=1.0 rr=1.5 hold=120m ---
+  IS :   N=  11  WR= 27.3%  E[R]=-0.375  avg_net=  -23.8bps  PF= 0.09  total=   -2.6%  maxDD=  2.7%  shrp/tr=-0.862
+  OOS:   N=   7  WR= 42.9%  E[R]=-0.267  avg_net=  -23.8bps  PF= 0.29  total=   -1.7%  maxDD=  1.3%  shrp/tr=-0.496
+  ALL:   N=  18  WR= 33.3%  E[R]=-0.333  avg_net=  -23.8bps  PF= 0.18  total=   -4.2%  maxDD=  4.2%  shrp/tr=-0.671
+  exits: sl=10 (-51bps)  tp=8 (+11bps)
+
+--- S4 z>3.0 br>0.65 sl=1.0 rr=1.5 hold=240m ---
+  IS :   N=  11  WR= 27.3%  E[R]=-0.375  avg_net=  -23.8bps  PF= 0.09  total=   -2.6%  maxDD=  2.7%  shrp/tr=-0.862
+  OOS:   N=   7  WR= 42.9%  E[R]=-0.267  avg_net=  -23.8bps  PF= 0.29  total=   -1.7%  maxDD=  1.3%  shrp/tr=-0.496
+  ALL:   N=  18  WR= 33.3%  E[R]=-0.333  avg_net=  -23.8bps  PF= 0.18  total=   -4.2%  maxDD=  4.2%  shrp/tr=-0.671
+  exits: sl=10 (-51bps)  tp=8 (+11bps)
+
+--- S4 z>3.0 br>0.65 sl=1.0 rr=2.0 hold=120m ---
+  IS :   N=  11  WR= 36.4%  E[R]=-0.245  avg_net=  -21.3bps  PF= 0.17  total=   -2.3%  maxDD=  2.6%  shrp/tr=-0.696
+  OOS:   N=   7  WR= 28.6%  E[R]=-0.495  avg_net=  -36.8bps  PF= 0.13  total=   -2.6%  maxDD=  2.3%  shrp/tr=-0.869
+  ALL:   N=  18  WR= 33.3%  E[R]=-0.342  avg_net=  -27.3bps  PF= 0.15  total=   -4.8%  maxDD=  4.8%  shrp/tr=-0.775
+  exits: sl=11 (-52bps)  time=2 (+21bps)  tp=5 (+8bps)
+
+--- S4 z>3.0 br>0.65 sl=1.0 rr=2.0 hold=240m ---
+  IS :   N=  11  WR= 36.4%  E[R]=-0.207  avg_net=  -20.3bps  PF= 0.21  total=   -2.2%  maxDD=  2.5%  shrp/tr=-0.634
+  OOS:   N=   7  WR= 14.3%  E[R]=-0.837  avg_net=  -48.1bps  PF= 0.03  total=   -3.3%  maxDD=  3.1%  shrp/tr=-1.601
+  ALL:   N=  18  WR= 27.8%  E[R]=-0.452  avg_net=  -31.1bps  PF= 0.11  total=   -5.5%  maxDD=  5.5%  shrp/tr=-0.931
+  exits: sl=12 (-52bps)  tp=6 (+11bps)
+
+--- S4 z>3.0 br>0.65 sl=1.5 rr=1.5 hold=120m ---
+  IS :   N=  11  WR= 45.5%  E[R]=-0.278  avg_net=  -27.3bps  PF= 0.16  total=   -3.0%  maxDD=  3.3%  shrp/tr=-0.689
+  OOS:   N=   7  WR= 42.9%  E[R]=-0.299  avg_net=  -24.9bps  PF= 0.36  total=   -1.7%  maxDD=  2.3%  shrp/tr=-0.432
+  ALL:   N=  18  WR= 44.4%  E[R]=-0.286  avg_net=  -26.4bps  PF= 0.25  total=   -4.7%  maxDD=  5.5%  shrp/tr=-0.576
+  exits: sl=10 (-63bps)  time=3 (+33bps)  tp=5 (+12bps)
+
+--- S4 z>3.0 br>0.65 sl=1.5 rr=1.5 hold=240m ---
+  IS :   N=  11  WR= 36.4%  E[R]=-0.370  avg_net=  -30.7bps  PF= 0.12  total=   -3.3%  maxDD=  3.7%  shrp/tr=-0.820
+  OOS:   N=   7  WR= 28.6%  E[R]=-0.380  avg_net=  -26.9bps  PF= 0.33  total=   -1.9%  maxDD=  2.4%  shrp/tr=-0.449
+  ALL:   N=  18  WR= 33.3%  E[R]=-0.374  avg_net=  -29.2bps  PF= 0.21  total=   -5.1%  maxDD=  5.9%  shrp/tr=-0.639
+  exits: sl=10 (-63bps)  time=3 (+16bps)  tp=5 (+12bps)
+
+--- S4 z>3.0 br>0.65 sl=1.5 rr=2.0 hold=120m ---
+  IS :   N=  11  WR= 36.4%  E[R]=-0.228  avg_net=  -25.4bps  PF= 0.24  total=   -2.8%  maxDD=  3.2%  shrp/tr=-0.590
+  OOS:   N=   7  WR= 42.9%  E[R]=-0.241  avg_net=  -23.4bps  PF= 0.40  total=   -1.6%  maxDD=  2.3%  shrp/tr=-0.396
+  ALL:   N=  18  WR= 38.9%  E[R]=-0.233  avg_net=  -24.6bps  PF= 0.31  total=   -4.4%  maxDD=  5.2%  shrp/tr=-0.511
+  exits: sl=10 (-63bps)  time=4 (+23bps)  tp=4 (+25bps)
+
+--- S4 z>3.0 br>0.65 sl=1.5 rr=2.0 hold=240m ---
+  IS :   N=  11  WR= 36.4%  E[R]=-0.226  avg_net=  -26.8bps  PF= 0.23  total=   -2.9%  maxDD=  3.6%  shrp/tr=-0.626
+  OOS:   N=   7  WR= 28.6%  E[R]=-0.322  avg_net=  -25.4bps  PF= 0.37  total=   -1.8%  maxDD=  2.4%  shrp/tr=-0.414
+  ALL:   N=  18  WR= 33.3%  E[R]=-0.263  avg_net=  -26.3bps  PF= 0.29  total=   -4.6%  maxDD=  5.6%  shrp/tr=-0.536
+  exits: sl=10 (-63bps)  time=3 (+16bps)  tp=5 (+23bps)

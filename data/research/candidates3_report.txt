@@ -1,0 +1,82 @@
+C:\Users\hp\Documents\GitHub\coinmaker-quant\scripts\test_candidates3.py:19: UserWarning: Converting to PeriodArray/Index representation will drop timezone information.
+  t["month"] = t["entry_ts"].dt.to_period("M")
+Data: 2025-09-14 -> 2026-06-11  split 2026-03-22
+
+Funding distribution: mean=0.000023  q50=0.000027  q80=0.000062  q90=0.000086  q95=0.000100  max=0.000100
+
+######################################################################
+# S1 FINAL — breakdown short lb=48 sl=2xATR rr=2 hold=24h +flow<0.50
+######################################################################
+
+--- S1 FINAL ---
+  IS :   N=  68  WR= 47.1%  E[R]=+0.361  avg_net=  +49.6bps  PF= 1.65  total=  +37.4%  maxDD=  7.5%  shrp/tr=+0.208
+  OOS:   N=  23  WR= 60.9%  E[R]=+0.517  avg_net=  +65.3bps  PF= 2.60  total=  +15.8%  maxDD=  6.1%  shrp/tr=+0.394
+  ALL:   N=  91  WR= 50.5%  E[R]=+0.401  avg_net=  +53.6bps  PF= 1.80  total=  +59.1%  maxDD= 10.5%  shrp/tr=+0.241
+  exits: sl=30 (-172bps)  time=25 (-6bps)  tp=36 (+283bps)
+  monthly S1 FINAL:
+    2025-09  N=  3  sum= -0.73%  avg=  -24.3bps
+    2025-10  N= 10  sum=+12.06%  avg= +120.6bps
+    2025-11  N= 12  sum= +7.22%  avg=  +60.2bps
+    2025-12  N=  8  sum= -0.43%  avg=   -5.4bps
+    2026-01  N= 14  sum= +7.19%  avg=  +51.3bps
+    2026-02  N= 13  sum=+10.02%  avg=  +77.1bps
+    2026-03  N= 11  sum= -0.03%  avg=   -0.3bps
+    2026-04  N=  5  sum= -4.15%  avg=  -83.0bps
+    2026-05  N=  9  sum= +4.87%  avg=  +54.1bps
+    2026-06  N=  6  sum=+12.74%  avg= +212.4bps
+
+######################################################################
+# S7 — weekly breakdown short lb=168
+######################################################################
+
+--- S7 lb=168 sl=2.0 rr=2 hold=24h ---
+  IS :   N=  33  WR= 42.4%  E[R]=+0.306  avg_net=  +58.5bps  PF= 1.62  total=  +19.6%  maxDD=  9.6%  shrp/tr=+0.202
+  OOS:   N=  14  WR= 57.1%  E[R]=+0.445  avg_net=  +44.1bps  PF= 1.81  total=   +6.1%  maxDD=  3.2%  shrp/tr=+0.239
+  ALL:   N=  47  WR= 46.8%  E[R]=+0.348  avg_net=  +54.2bps  PF= 1.66  total=  +27.0%  maxDD=  9.6%  shrp/tr=+0.208
+  exits: sl=17 (-195bps)  time=12 (-2bps)  tp=18 (+327bps)
+
+--- S7 lb=168 sl=2.0 rr=2 hold=48h ---
+  IS :   N=  33  WR= 45.5%  E[R]=+0.310  avg_net=  +56.2bps  PF= 1.57  total=  +18.7%  maxDD= 12.7%  shrp/tr=+0.189
+  OOS:   N=  14  WR= 50.0%  E[R]=+0.469  avg_net=  +29.0bps  PF= 1.33  total=   +3.8%  maxDD=  6.2%  shrp/tr=+0.126
+  ALL:   N=  47  WR= 46.8%  E[R]=+0.357  avg_net=  +48.1bps  PF= 1.50  total=  +23.2%  maxDD= 12.7%  shrp/tr=+0.173
+  exits: sl=21 (-205bps)  time=5 (-37bps)  tp=21 (+321bps)
+
+--- S7 lb=168 sl=3.0 rr=2 hold=24h ---
+  IS :   N=  31  WR= 35.5%  E[R]=+0.165  avg_net=  +34.3bps  PF= 1.27  total=   +9.1%  maxDD= 12.5%  shrp/tr=+0.095
+  OOS:   N=  11  WR= 54.5%  E[R]=+0.280  avg_net=  +60.1bps  PF= 2.60  total=   +6.6%  maxDD=  3.3%  shrp/tr=+0.307
+  ALL:   N=  42  WR= 40.5%  E[R]=+0.196  avg_net=  +41.0bps  PF= 1.39  total=  +16.3%  maxDD= 12.5%  shrp/tr=+0.127
+  exits: sl=11 (-270bps)  time=21 (-10bps)  tp=10 (+491bps)
+
+--- S7 lb=168 sl=3.0 rr=2 hold=48h ---
+  IS :   N=  28  WR= 42.9%  E[R]=+0.279  avg_net=  +76.0bps  PF= 1.57  total=  +21.0%  maxDD= 14.8%  shrp/tr=+0.189
+  OOS:   N=  11  WR= 45.5%  E[R]=+0.333  avg_net=  +60.4bps  PF= 1.78  total=   +6.5%  maxDD=  4.0%  shrp/tr=+0.230
+  ALL:   N=  39  WR= 43.6%  E[R]=+0.295  avg_net=  +71.6bps  PF= 1.61  total=  +28.9%  maxDD= 14.8%  shrp/tr=+0.196
+  exits: sl=15 (-260bps)  time=11 (+40bps)  tp=13 (+482bps)
+
+######################################################################
+# S6 — funding absolute threshold SHORT (sl=3xATR no-tp hold=24h)
+######################################################################
+
+--- S6 abs>0.005% trend=False ---
+  IS :   N= 109  WR= 42.2%  E[R]=+0.019  avg_net=  +12.7bps  PF= 1.17  total=  +11.4%  maxDD= 22.1%  shrp/tr=+0.053
+  OOS:   N=  25  WR= 48.0%  E[R]=+0.165  avg_net=  +23.3bps  PF= 1.37  total=   +5.5%  maxDD=  8.4%  shrp/tr=+0.120
+  ALL:   N= 134  WR= 43.3%  E[R]=+0.046  avg_net=  +14.7bps  PF= 1.20  total=  +17.6%  maxDD= 22.1%  shrp/tr=+0.063
+  exits: sl=47 (-166bps)  time=87 (+112bps)
+
+--- S6 abs>0.005% trend=True ---
+  IS :   N=  64  WR= 42.2%  E[R]=+0.174  avg_net=  +36.4bps  PF= 1.44  total=  +22.9%  maxDD= 23.0%  shrp/tr=+0.123
+  OOS:   N=  14  WR= 57.1%  E[R]=+0.561  avg_net=  +79.9bps  PF= 2.29  total=  +11.4%  maxDD=  3.3%  shrp/tr=+0.341
+  ALL:   N=  78  WR= 44.9%  E[R]=+0.243  avg_net=  +44.2bps  PF= 1.56  total=  +36.9%  maxDD= 23.0%  shrp/tr=+0.155
+  exits: sl=25 (-188bps)  time=53 (+154bps)
+
+--- S6 abs>0.010% trend=False ---
+  no trades
+
+--- S6 abs>0.010% trend=True ---
+  no trades
+
+--- S6 abs>0.020% trend=False ---
+  no trades
+
+--- S6 abs>0.020% trend=True ---
+  no trades

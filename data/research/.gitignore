@@ -1,0 +1,4 @@
+# Dataset 270g: ridondante (sottoinsieme del 4y), rigenerabile con
+# scripts/download_research_data.py
+btc_1m_research.json.gz
+btc_funding.json
