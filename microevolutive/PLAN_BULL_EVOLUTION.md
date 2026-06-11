@@ -132,6 +132,19 @@ Funding < -0,01% + macro bull: solo 4-11 eventi in 4 anni (N insufficiente).
 Riconsiderare solo se il prossimo bull produce abbastanza eventi (monitorare
 via signal_log senza tradare).
 
+### C7 — Validazione strategie LEGACY (mai testate quantitativamente)
+Iron Condor, Smart Money, W/M Formation, NY Brings: oggi OFF ma **mai
+passate dalla pipeline** — da validare e migliorare se valide, o bocciare
+con dati come le volumetriche.
+**Priorità**: W/M e Brings (backtestabili subito sul dataset 4y; per W/M
+esiste già `scripts/backtest_wm_strategy.py` — VERIFICARE lookahead) >
+Smart Money (proxy OHLCV parziale; nota: la stagionalità oraria è già
+risultata non robusta nella ricerca) > Iron Condor (servono dati storici
+opzioni/IV — valutare se vale lo sforzo).
+**Micro-step**: estrarre la regola core in forma vettoriale → test 4y con
+fase bull/bear e costi → gate §1 → se passa, gating macro come TB; se
+fallisce, documentare nel report e lasciare OFF per sempre.
+
 ---
 
 ## 3. Infrastruttura da costruire (prerequisiti C1-C4)
