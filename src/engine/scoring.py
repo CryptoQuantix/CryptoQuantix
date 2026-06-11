@@ -71,8 +71,8 @@ REGIME_RULES: Dict[str, Tuple[List[str], List[str]]] = {
         ["TREND_UP", "TREND_DOWN"],     # OFF in trend
     ),
     "VolumeBreakoutStrategy": (
-        ["TREND_UP", "TREND_DOWN", "EXPANSION", "COMPRESSION"],
-        [],
+        ["TREND_DOWN", "EXPANSION", "COMPRESSION"],
+        ["TREND_UP"],     # E=-0.40R in TREND_UP (real backtest 2025-12 -> 2026-03)
     ),
     "LiquidationSqueezeStrategy": (
         ["COMPRESSION", "EXPANSION"],
@@ -93,6 +93,20 @@ REGIME_RULES: Dict[str, Tuple[List[str], List[str]]] = {
     "BringsStrategy": (
         ["RANGE", "TREND_UP", "TREND_DOWN"],
         [],
+    ),
+    # Quant-validated strategies (4y multi-cycle dataset, Jun 2022 - Jun 2026).
+    # TrendBreakdown is two-sided and macro-gated internally (daily SMA200):
+    # shorts fire in macro bear, longs (7d-high breakout) in macro bull —
+    # so no hourly regime is disabled here.
+    "TrendBreakdownStrategy": (
+        ["TREND_DOWN", "TREND_UP", "EXPANSION", "COMPRESSION", "RANGE"],
+        [],
+    ),
+    # FundingSqueeze is short-only; internal macro gate already blocks bull,
+    # TREND_UP disabled as a second hourly gate.
+    "FundingSqueezeStrategy": (
+        ["TREND_DOWN", "EXPANSION", "COMPRESSION", "RANGE"],
+        ["TREND_UP"],
     ),
 }
 

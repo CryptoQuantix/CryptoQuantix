@@ -262,6 +262,92 @@ class ImbalanceScalpConfig(StrategyConfig):
         )
 
 
+@dataclass
+class TrendBreakdownConfig(StrategyConfig):
+    """Configuration for Trend Breakdown strategy (two-sided, macro-gated).
+
+    Validated on 4y BTCUSDT 1m (Jun 2022 - Jun 2026, bear+bull+bear):
+    SHORT (48h-low break, macro bear): +14.5bps/trade PF 1.15 (183 trades);
+      on 2025-26 bear alone +50bps PF 1.8 (IS/OOS confirmed).
+    LONG (7d-high break, macro bull, no TP / hold 7d): +71bps/trade PF 1.56
+      (83 trades) — letting winners run doubles the edge vs TP 3R/48h."""
+    symbol: str = "BTCUSDT"
+    instrument: str = "BTC-PERPETUAL"
+    lookback_h: int = 48          # Donchian LOW lookback for shorts (1h bars)
+    lookback_long_h: int = 168    # Donchian HIGH lookback for longs (7 days)
+    sma_h: int = 48               # trend filter SMA period (1h bars)
+    atr_period: int = 14
+    sl_atr_mult: float = 2.0
+    rr_ratio: float = 2.0         # TP for shorts
+    rr_long: float = 0.0          # 0 = no TP for longs (let winners run)
+    max_hold_hours: int = 24      # time exit for shorts
+    max_hold_long_hours: int = 168  # time exit for longs (7 days)
+    flow_confirm: float = 0.50    # taker buy_ratio gate (<x short, >1-x long)
+    enable_long: bool = True      # macro-gated: inactive until macro bull
+    macro_sma_days: int = 200     # daily SMA gate: bear=shorts, bull=longs
+
+    @staticmethod
+    def from_env():
+        return TrendBreakdownConfig(
+            name="Trend Breakdown",
+            enabled=os.getenv("TB_ENABLED", "true").lower() == "true",
+            symbol=os.getenv("TB_SYMBOL", "BTCUSDT"),
+            instrument=os.getenv("TB_INSTRUMENT", "BTC-PERPETUAL"),
+            lookback_h=int(os.getenv("TB_LOOKBACK_H", "48")),
+            lookback_long_h=int(os.getenv("TB_LOOKBACK_LONG_H", "168")),
+            sma_h=int(os.getenv("TB_SMA_H", "48")),
+            atr_period=int(os.getenv("TB_ATR_PERIOD", "14")),
+            sl_atr_mult=float(os.getenv("TB_SL_ATR_MULT", "2.0")),
+            rr_ratio=float(os.getenv("TB_RR_RATIO", "2.0")),
+            rr_long=float(os.getenv("TB_RR_LONG", "0")),
+            max_hold_hours=int(os.getenv("TB_MAX_HOLD_HOURS", "24")),
+            max_hold_long_hours=int(os.getenv("TB_MAX_HOLD_LONG_HOURS", "168")),
+            flow_confirm=float(os.getenv("TB_FLOW_CONFIRM", "0.50")),
+            enable_long=os.getenv("TB_ENABLE_LONG", "true").lower() == "true",
+            macro_sma_days=int(os.getenv("TB_MACRO_SMA_DAYS", "200")),
+        )
+
+
+@dataclass
+class FundingSqueezeConfig(StrategyConfig):
+    """Configuration for Funding Squeeze strategy (deep-bear capitulation short).
+
+    4y multi-cycle validation (Jun 2022 - Jun 2026): funding at cap (0.01%/8h)
+    + daily close < SMA200d with SMA200d declining -> +74bps/trade PF 3.05
+    WR 60% (low frequency by design; bleed in bull/transitions eliminated)."""
+    symbol: str = "BTCUSDT"
+    instrument: str = "BTC-PERPETUAL"
+    funding_threshold: float = 0.0001    # 0.01% per 8h = exchange cap
+    sma_h: int = 48
+    atr_period: int = 14
+    sl_atr_mult: float = 2.0
+    tp_rr: float = 2.0                   # TP at 2R (0 = time exit only)
+    max_hold_hours: int = 24
+    cooldown_hours: int = 8              # one trade per funding window
+    macro_sma_days: int = 200            # daily SMA200 bear gate
+    slope_days: int = 30                 # SMA200d must be lower than N days ago
+    entry_window_min: int = 60           # enter only just after funding settles
+
+    @staticmethod
+    def from_env():
+        return FundingSqueezeConfig(
+            name="Funding Squeeze",
+            enabled=os.getenv("FS_ENABLED", "true").lower() == "true",
+            symbol=os.getenv("FS_SYMBOL", "BTCUSDT"),
+            instrument=os.getenv("FS_INSTRUMENT", "BTC-PERPETUAL"),
+            funding_threshold=float(os.getenv("FS_FUNDING_THRESHOLD", "0.0001")),
+            sma_h=int(os.getenv("FS_SMA_H", "48")),
+            atr_period=int(os.getenv("FS_ATR_PERIOD", "14")),
+            sl_atr_mult=float(os.getenv("FS_SL_ATR_MULT", "2.0")),
+            tp_rr=float(os.getenv("FS_TP_RR", "2.0")),
+            max_hold_hours=int(os.getenv("FS_MAX_HOLD_HOURS", "24")),
+            cooldown_hours=int(os.getenv("FS_COOLDOWN_HOURS", "8")),
+            macro_sma_days=int(os.getenv("FS_MACRO_SMA_DAYS", "200")),
+            slope_days=int(os.getenv("FS_SLOPE_DAYS", "30")),
+            entry_window_min=int(os.getenv("FS_ENTRY_WINDOW_MIN", "60")),
+        )
+
+
 class Config:
     """Global configuration class"""
 
@@ -327,18 +413,30 @@ class Config:
         if os.getenv("BRINGS_ENABLED", "false").lower() == "true":
             cls.STRATEGIES.append(BringsStrategyConfig.from_env())
 
-        # --- Nuove strategie volumetriche (abilitate per default) ---
-        if os.getenv("VB_ENABLED", "true").lower() == "true":
+        # --- Strategie volumetriche intraday: DISABILITATE di default ---
+        # Validazione multi-ciclo 4y (giu 2022 - giu 2026, proxy OHLCV +
+        # real backtest 60d): edge lordo ~0, perdita media ~= costi (20bps)
+        # in OGNI fase (bull e bear) e OGNI anno. Nessun set di parametri
+        # testato e' profittevole. Riabilitare solo per esperimenti
+        # (VB_ENABLED=true ecc.) — vedi data/research/multicycle_report.txt
+        if os.getenv("VB_ENABLED", "false").lower() == "true":
             cls.STRATEGIES.append(VolumeBreakoutConfig.from_env())
 
-        if os.getenv("MR_ENABLED", "true").lower() == "true":
+        if os.getenv("MR_ENABLED", "false").lower() == "true":
             cls.STRATEGIES.append(MeanReversionConfig.from_env())
 
-        if os.getenv("LIQ_ENABLED", "true").lower() == "true":
+        if os.getenv("LIQ_ENABLED", "false").lower() == "true":
             cls.STRATEGIES.append(LiqSqueezeConfig.from_env())
 
-        if os.getenv("IS_ENABLED", "true").lower() == "true":
+        if os.getenv("IS_ENABLED", "false").lower() == "true":
             cls.STRATEGIES.append(ImbalanceScalpConfig.from_env())
+
+        # --- Strategie quantitative validate (Sep 2025 - Jun 2026) ---
+        if os.getenv("TB_ENABLED", "true").lower() == "true":
+            cls.STRATEGIES.append(TrendBreakdownConfig.from_env())
+
+        if os.getenv("FS_ENABLED", "true").lower() == "true":
+            cls.STRATEGIES.append(FundingSqueezeConfig.from_env())
 
     @classmethod
     def validate(cls) -> bool:

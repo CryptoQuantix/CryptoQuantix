@@ -69,6 +69,16 @@ except ImportError as e:
     HAS_NEW_STRATEGIES = False
     logging.warning(f"New strategies not available: {e}")
 
+# Quant-validated strategies (TrendBreakdown, FundingSqueeze)
+try:
+    from src.strategies.trend_breakdown import TrendBreakdownStrategy
+    from src.strategies.funding_squeeze import FundingSqueezeStrategy
+    from src.data.kline_provider import BinanceKlineProvider
+    HAS_QUANT_STRATEGIES = True
+except ImportError as e:
+    HAS_QUANT_STRATEGIES = False
+    logging.warning(f"Quant strategies not available: {e}")
+
 try:
     from src.monitoring.alerts import TelegramAlerts
     HAS_ALERTS = True
@@ -93,6 +103,12 @@ try:
     HAS_NEW_CONFIGS = True
 except ImportError:
     HAS_NEW_CONFIGS = False
+
+try:
+    from config import TrendBreakdownConfig, FundingSqueezeConfig
+    HAS_QUANT_CONFIGS = True
+except ImportError:
+    HAS_QUANT_CONFIGS = False
 
 logger = logging.getLogger(__name__)
 
@@ -193,6 +209,9 @@ class AsyncTradingBot:
                 db_path=os.getenv("SIGNAL_LOG_DB_PATH", "data/signal_log.db")
             )
 
+        # Shared REST kline/funding provider (1h candles for trend strategies)
+        self.kline_provider = BinanceKlineProvider() if HAS_QUANT_STRATEGIES else None
+
         # --- Build dependencies dict for strategies ---
         self.dependencies = {
             "order_manager": self.order_manager,
@@ -204,6 +223,7 @@ class AsyncTradingBot:
             "data_ingestion": self.data_ingestion,
             "trade_logger": self.trade_logger,
             "signal_log": self.signal_log,
+            "kline_provider": self.kline_provider,
         }
 
         # --- Load strategies ---
@@ -244,6 +264,12 @@ class AsyncTradingBot:
                     strategy = LiquidationSqueezeStrategy(self.client, strategy_config, self.dependencies)
                 elif isinstance(strategy_config, ImbalanceScalpConfig):
                     strategy = ImbalanceScalpStrategy(self.client, strategy_config, self.dependencies)
+
+            if strategy is None and HAS_QUANT_CONFIGS and HAS_QUANT_STRATEGIES:
+                if isinstance(strategy_config, TrendBreakdownConfig):
+                    strategy = TrendBreakdownStrategy(self.client, strategy_config, self.dependencies)
+                elif isinstance(strategy_config, FundingSqueezeConfig):
+                    strategy = FundingSqueezeStrategy(self.client, strategy_config, self.dependencies)
 
             if strategy:
                 self.strategies.append(strategy)

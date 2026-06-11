@@ -64,6 +64,7 @@ def build_mock_dependencies(with_orderflow=True):
         "order_manager": mock_order_manager,
         "position_monitor": mock_position_monitor,
         "risk_manager": mock_risk_manager,
+        "kline_provider": FakeKlineProvider(),
     }
 
     if with_orderflow:
@@ -135,6 +136,60 @@ def build_mock_dependencies(with_orderflow=True):
             logger.warning(f"Orderflow not available: {e}")
 
     return mock_client, deps
+
+
+class FakeKlineProvider:
+    """Offline 1h/1d kline + funding provider engineered to trigger:
+    - TrendBreakdown SHORT: macro bear + close below 48h low + sellers
+    - FundingSqueeze SHORT: funding above threshold + price below SMA(48)"""
+
+    def __init__(self):
+        # Align the fake clock to 10 min after a funding settlement so the
+        # FundingSqueeze entry window check passes deterministically.
+        real_ms = int(time.time() * 1000)
+        window_ms = 8 * 3600 * 1000
+        self._now_ms = (real_ms // window_ms) * window_ms + 10 * 60_000
+        self.candles_1h = []
+        price = 60000.0
+        for i in range(200):
+            price -= 80.0  # steady downtrend
+            close = price
+            if i == 199:
+                close = price - 500.0  # breakdown below the 48h low
+            ts = self._now_ms - (200 - i) * 3_600_000
+            self.candles_1h.append({
+                "ts_ms": ts,
+                "open": price + 80.0, "high": price + 120.0,
+                "low": close - 60.0, "close": close,
+                "volume": 1000.0, "buy_volume": 350.0,
+                "buy_ratio": 0.35,  # sellers in control
+                "close_ts_ms": ts + 3_600_000,
+            })
+        # 240 daily candles declining -> close < SMA200 and SMA200 falling
+        # (macro BEAR accelerating: covers the 200+30 slope-gate requirement)
+        self.candles_1d = []
+        dprice = 100000.0
+        for i in range(240):
+            dprice -= 150.0
+            ts = self._now_ms - (240 - i) * 86_400_000
+            self.candles_1d.append({
+                "ts_ms": ts,
+                "open": dprice + 150.0, "high": dprice + 300.0,
+                "low": dprice - 300.0, "close": dprice,
+                "volume": 50000.0, "buy_volume": 22000.0,
+                "buy_ratio": 0.44,
+                "close_ts_ms": ts + 86_400_000,
+            })
+
+    def get_klines(self, symbol, interval="1h", limit=60):
+        frame = self.candles_1d if interval == "1d" else self.candles_1h
+        return frame[-limit:]
+
+    def get_funding_rate(self, symbol):
+        return 0.0001  # 0.01% per 8h — above the 0.005% threshold
+
+    def now_ms(self):
+        return self._now_ms
 
 
 def _build_synthetic_candles(n: int = 50):
@@ -295,7 +350,7 @@ def run_backtest_test():
 
 def main():
     parser = argparse.ArgumentParser(description="Strategy dry run")
-    parser.add_argument("--strategy", default="all", help="Strategy to test (all|volume_breakout|mean_reversion|liq_squeeze|imbalance_scalp)")
+    parser.add_argument("--strategy", default="all", help="Strategy to test (all|volume_breakout|mean_reversion|liq_squeeze|imbalance_scalp|trend_breakdown|funding_squeeze)")
     parser.add_argument("--backtest", action="store_true", help="Run backtest test")
     args = parser.parse_args()
 
@@ -362,6 +417,32 @@ def main():
             ))
         except ImportError as e:
             print(f"  [FAIL] ImbalanceScalp import: {e}")
+
+    if args.strategy in ("all", "trend_breakdown"):
+        try:
+            from src.strategies.trend_breakdown import TrendBreakdownStrategy
+            from config import TrendBreakdownConfig
+            strategies_to_test.append((
+                "TrendBreakdown",
+                TrendBreakdownStrategy,
+                TrendBreakdownConfig,
+                {"name": "TrendBreakdown Test", "enabled": True},
+            ))
+        except ImportError as e:
+            print(f"  [FAIL] TrendBreakdown import: {e}")
+
+    if args.strategy in ("all", "funding_squeeze"):
+        try:
+            from src.strategies.funding_squeeze import FundingSqueezeStrategy
+            from config import FundingSqueezeConfig
+            strategies_to_test.append((
+                "FundingSqueeze",
+                FundingSqueezeStrategy,
+                FundingSqueezeConfig,
+                {"name": "FundingSqueeze Test", "enabled": True},
+            ))
+        except ImportError as e:
+            print(f"  [FAIL] FundingSqueeze import: {e}")
 
     if not strategies_to_test:
         print("No strategies available to test")
