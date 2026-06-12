@@ -20,6 +20,7 @@ def main():
         "Trade in corso": "live",
         "Rischio & Esposizione": "risk",
         "Storico Operazioni": "history",
+        "Contesto Mercato": "context",
         "Impostazioni": "settings",
         "Azioni": "actions",
     }
@@ -37,6 +38,9 @@ def main():
     elif pages[choice] == "risk":
         from src.monitoring.dashboard_app import page_risk
         page_risk.render()
+    elif pages[choice] == "context":
+        from src.monitoring.dashboard_app import page_context
+        page_context.render()
     elif pages[choice] == "settings":
         from src.monitoring.dashboard_app import page_settings
         page_settings.render()

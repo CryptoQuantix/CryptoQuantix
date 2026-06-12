@@ -320,6 +320,10 @@ class AsyncTradingBot:
         if self.signal_log:
             tasks.append(asyncio.create_task(self._outcome_tracker_loop(), name="outcome_tracker"))
 
+        # C8 positioning collector (archivio dati 30d-window di Binance)
+        if os.getenv("POSITIONING_ENABLED", "true").lower() == "true":
+            tasks.append(asyncio.create_task(self._positioning_loop(), name="positioning"))
+
         self._tasks = tasks  # per lo shutdown su richiesta (restart flag)
         logger.info("Bot running. Tasks:")
         for t in tasks:
@@ -380,6 +384,24 @@ class AsyncTradingBot:
                 logger.error(f"[Management] restart flag check error: {e}")
 
             await asyncio.sleep(self._management_interval_sec)
+
+    async def _positioning_loop(self):
+        """C8: archivia top trader L/S ratio, OI e taker ratio (Binance li
+        espone solo per ~30 giorni) ogni 12h. Mai impatto sul trading:
+        ogni errore e' un warning. Vedi microevolutive/C8_POSITIONING_EXTREMES.md."""
+        await asyncio.sleep(60)  # non competere col bootstrap
+        collector = None
+        while self.running:
+            try:
+                if collector is None:
+                    from src.data.positioning_collector import PositioningCollector
+                    collector = PositioningCollector()
+                await asyncio.get_event_loop().run_in_executor(
+                    None, collector.collect_once
+                )
+            except Exception as e:
+                logger.warning(f"[Positioning] loop error (non bloccante): {e}")
+            await asyncio.sleep(12 * 3600)
 
     async def _scan_loop(self):
         """Strategy scanning every N minutes."""

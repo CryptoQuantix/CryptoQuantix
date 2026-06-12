@@ -102,6 +102,11 @@ def run_apptest():
     print(f"[OK] pagina 'Storico Operazioni': {len(at.metric)} metriche, "
           f"{len(at.dataframe)} tabelle, nessuna eccezione")
 
+    at.sidebar.radio[0].set_value("Contesto Mercato")
+    at.run(timeout=180)
+    assert not at.exception, f"Pagina contesto: eccezione {at.exception}"
+    print(f"[OK] pagina 'Contesto Mercato': {len(at.metric)} metriche, nessuna eccezione")
+
     at.sidebar.radio[0].set_value("Impostazioni")
     at.run(timeout=120)
     assert not at.exception, f"Pagina impostazioni: eccezione {at.exception}"
