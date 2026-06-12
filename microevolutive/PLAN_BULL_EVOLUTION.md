@@ -118,16 +118,25 @@ più simboli = più trade indipendenti = più rendimento totale a parità di edg
    trattarli come ~1 posizione ai fini del rischio totale
 5. Stesso esercizio per FundingSqueeze su ETH (funding cap diversi — verificare)
 
-### C4 — Sizing evolution (più rendimento senza nuove strategie)
-**Ipotesi**: il modo più sicuro di "guadagnare di più" è dimensionare meglio
-ciò che già funziona.
-**Micro-step**:
-1. Simulatore di equity con sizing reale (oggi i backtest sono full-equity):
-   estendere strategy_lab con equity compounding + risk_pct per trade
-2. Testare: rischio fisso 1% vs 1,5% in regime favorevole (scoring engine) vs
-   frazione di Kelly (cap 0,25×Kelly) su WR/payoff rolling
-3. Drawdown-based de-risking: dimezza il rischio sotto -10% di DD equity
-4. Gate: maxDD simulato < 20% con rendimento ≥ baseline
+### C4 — Sizing evolution · ✅ COMPLETATA (2026-06-12)
+**Esito** (`scripts/equity_sim.py`: portafoglio TB+FS+MC su equity composta
+giornaliera, sizing a rischio sui trade tattici, m2m daily su MacroCore,
+griglia 18 varianti):
+- Baseline (risk 1% / MC expo fissa): **+770%/4y**, maxDD 29,6%, CAGR 72%
+- **Vol-target 30% su MacroCore: ADOTTATO** — migliora il Calmar in OGNI
+  config (2.43→2.61; 2.68→2.87 con risk 1,5%), maxDD 29,6%→21,5%,
+  peggior anno →0%. Implementato in macro_core.py: expo =
+  clip(0.30/vol_30d, 0, 1) quantizzata 0,25, ribilancio daily in
+  manage_positions (MC_VOL_TARGET, 0=off)
+- **Kelly 0,25×: BOCCIATO** — Calmar peggiore del rischio fisso su 222
+  trade (rumore, non segnale)
+- **De-risk su DD -10%: BOCCIATO** — distrugge più rendimento del DD che
+  salva (Calmar giù in ogni confronto)
+- Rischio 1,5%: Calmar migliore (2.87) ma DD 23,1% — opzione aggressiva,
+  default resta BASE_RISK_PCT=0.01
+- **Nota gate**: maxDD<20% E rendimento ≥ baseline è irraggiungibile (ogni
+  riduzione di rischio riduce il totale); il punto efficiente adottato è
+  1%/volT30 → +491%, maxDD 21,5%, Calmar 2.61, peggior anno 0,0%
 
 ### C5 — Dip-buy v2 (parcheggiata — riprovare con trigger diversi)
 v1 bocciata (instabile: 2023 +47%, 2024 -15%). Se si riprova:
@@ -183,8 +192,9 @@ fallisce, documentare nel report e lasciare OFF per sempre.
 
 1. ~~C1 (MacroCore)~~ ✅ FATTA — chandelier k=5, +315%/4y, in produzione
 2. ~~C2 (trailing TB)~~ ❌ BOCCIATA — peggiore delle baseline su entrambi i lati
-3. **PROSSIMA SESSIONE → C4** (equity simulator + sizing; include il
-   vol-targeting giornaliero rinviato da C1: su MacroCore porta il maxDD
-   a 18-22% — numeri già in scripts/sweep_macrocore.py step 2)
-4. C3 (ETH multi-symbol) quando C4 stabile
+3. ~~C4 (equity sim + sizing)~~ ✅ FATTA — volT30 su MC adottato (DD 21,5%);
+   Kelly e DD-derisk bocciati coi dati
+4. **PROSSIMA SESSIONE → C3** (ETH multi-symbol: parametrizzare
+   download_multicycle, rivalidare TB/FS/MC su ETH con gli STESSI parametri,
+   cap rischio aggregato BTC+ETH nel RiskManager)
 5. C7 (validazione legacy) in parallelo quando c'è tempo

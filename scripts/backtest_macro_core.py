@@ -42,9 +42,9 @@ class FakeExecClient:
         return {"order_id": "sim"}
 
 
-def main():
-    print("Loading 4y dataset...")
-    m1 = load_4y()
+def run_macro(m1):
+    """Drive the real MacroCoreStrategy over m1. Returns (trades_df, eq_series).
+    trades_df includes entry price for daily mark-to-market in equity sims."""
     h1 = resample(m1, "1h")
     d1 = resample(m1, "1D")
     provider = HistoricalKlineProvider(
@@ -97,6 +97,7 @@ def main():
             trades.append({
                 "entry_ts": pd.Timestamp(open_tr["entry_ms"], unit="ms", tz="UTC"),
                 "exit_ts": pd.Timestamp(int(ts_arr[i]), unit="ms", tz="UTC"),
+                "entry": open_tr["entry"],
                 "net_pct": net * 100, "reason": "chandelier",
             })
             equity *= (1 + net)
@@ -110,6 +111,7 @@ def main():
             trades.append({
                 "entry_ts": pd.Timestamp(open_tr["entry_ms"], unit="ms", tz="UTC"),
                 "exit_ts": pd.Timestamp(bar_close_ms, unit="ms", tz="UTC"),
+                "entry": open_tr["entry"],
                 "net_pct": net * 100, "reason": "disaster_sl",
             })
             equity *= (1 + net)
@@ -141,13 +143,22 @@ def main():
         net = (exit_price - open_tr["entry"]) / open_tr["entry"] - 2 * TAKER_FEE
         trades.append({
             "entry_ts": pd.Timestamp(open_tr["entry_ms"], unit="ms", tz="UTC"),
-            "exit_ts": m1.index[-1], "net_pct": net * 100, "reason": "end_of_data",
+            "exit_ts": m1.index[-1], "entry": open_tr["entry"],
+            "net_pct": net * 100, "reason": "end_of_data",
         })
         equity *= (1 + net)
 
     t = pd.DataFrame(trades)
     eq = pd.Series([e for _, e in eq_curve],
                    index=pd.to_datetime([ts for ts, _ in eq_curve], unit="ms", utc=True))
+    return t, eq
+
+
+def main():
+    print("Loading 4y dataset...")
+    m1 = load_4y()
+    t, eq = run_macro(m1)
+    equity = (1 + t["net_pct"] / 100).prod() if len(t) else 1.0
     peak = eq.cummax()
     mdd = ((peak - eq) / peak).max() * 100
 

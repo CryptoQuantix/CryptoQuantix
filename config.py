@@ -363,6 +363,11 @@ class MacroCoreConfig(StrategyConfig):
     chandelier_k: float = 5.0      # exit: close < max_close - k * ATR20d
     disaster_sl_pct: float = 0.25  # venue stop at entry*(1-25%) (crash guard)
     exposure_fraction: float = 1.0 # core size = equity * fraction
+    # C4 equity sim: vol-target 30% cuts portfolio maxDD 29.6% -> 21.5% and
+    # worst year to 0% while keeping the best Calmar. 0 disables.
+    vol_target: float = 0.30       # annualized target vol (0 = fixed expo)
+    vol_lookback_days: int = 30    # realized vol window (daily closes)
+    expo_step: float = 0.25        # exposure quantization (limits churn)
     state_path: str = "data/macro_core_state.json"
     persist_state: bool = True
 
@@ -378,6 +383,9 @@ class MacroCoreConfig(StrategyConfig):
             chandelier_k=float(os.getenv("MC_CHANDELIER_K", "5.0")),
             disaster_sl_pct=float(os.getenv("MC_DISASTER_SL_PCT", "0.25")),
             exposure_fraction=float(os.getenv("MC_EXPOSURE_FRACTION", "1.0")),
+            vol_target=float(os.getenv("MC_VOL_TARGET", "0.30")),
+            vol_lookback_days=int(os.getenv("MC_VOL_LOOKBACK_DAYS", "30")),
+            expo_step=float(os.getenv("MC_EXPO_STEP", "0.25")),
             state_path=os.getenv("MC_STATE_PATH", "data/macro_core_state.json"),
         )
 

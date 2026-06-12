@@ -55,6 +55,11 @@ class MacroCoreStrategy(BaseStrategy):
         self.chandelier_k = getattr(config, "chandelier_k", 5.0)
         self.disaster_sl_pct = getattr(config, "disaster_sl_pct", 0.25)
         self.exposure_fraction = getattr(config, "exposure_fraction", 1.0)
+        # C4 equity sim: vol-target 30% migliora il Calmar in ogni config
+        # (DD portafoglio 29.6% -> 21.5%, peggior anno -> 0%). 0 = disattivo.
+        self.vol_target = getattr(config, "vol_target", 0.30)
+        self.vol_lookback_days = getattr(config, "vol_lookback_days", 30)
+        self.expo_step = getattr(config, "expo_step", 0.25)
         self.state_path = getattr(config, "state_path", "data/macro_core_state.json")
         self.persist_state = getattr(config, "persist_state", True)
 
@@ -122,7 +127,8 @@ class MacroCoreStrategy(BaseStrategy):
         try:
             if not self.order_manager:
                 return False
-            quantity = self._compute_quantity(signal["price"])
+            expo = self._target_exposure()
+            quantity = self._compute_quantity(signal["price"], expo)
             if quantity <= 0:
                 return False
             signal["_qty_usd"] = quantity
@@ -144,6 +150,7 @@ class MacroCoreStrategy(BaseStrategy):
                     "direction": "buy",
                     "quantity": quantity,
                     "entry_price": signal["price"],
+                    "exposure": expo,
                 }
                 self._save_state()
                 self._log_executed("BUY", signal["price"], signal["stop_loss"],
@@ -183,7 +190,11 @@ class MacroCoreStrategy(BaseStrategy):
                     stats["exits"] = 1
                     stats["state"] = "chandelier_exit"
                     return stats
-            stats["state"] = "holding"
+
+            # Vol-target rebalance (daily, quantized: orders only when the
+            # exposure bucket actually changes — churn stays minimal)
+            rebalanced = self._rebalance_exposure()
+            stats["state"] = "rebalanced" if rebalanced else "holding"
         except Exception as e:
             self.logger.error(f"[MacroCore] manage error: {e}", exc_info=True)
         return stats
@@ -267,8 +278,66 @@ class MacroCoreStrategy(BaseStrategy):
                 return r.regime.value
         return "UNKNOWN"
 
-    def _compute_quantity(self, price: float) -> float:
-        """Core exposure = equity * exposure_fraction (USD, step 10)."""
+    def _target_exposure(self) -> float:
+        """Vol-targeted exposure in [expo_step, 1], quantized to expo_step.
+        expo = clip(vol_target / realized_vol_30d, 0, 1). 1.0 if disabled."""
+        if self.vol_target <= 0:
+            return 1.0
+        try:
+            daily = self.kline_provider.get_klines(
+                self.symbol, "1d", self.vol_lookback_days + 2)
+            if len(daily) < self.vol_lookback_days + 1:
+                return 1.0
+            closes = [c["close"] for c in daily[-(self.vol_lookback_days + 1):]]
+            rets = [closes[i] / closes[i - 1] - 1 for i in range(1, len(closes))]
+            mean = sum(rets) / len(rets)
+            var = sum((r - mean) ** 2 for r in rets) / (len(rets) - 1)
+            realized = (var ** 0.5) * (365 ** 0.5)
+            if realized <= 0:
+                return 1.0
+            expo = min(1.0, self.vol_target / realized)
+            expo = round(expo / self.expo_step) * self.expo_step
+            return max(self.expo_step, expo)
+        except Exception as e:
+            self.logger.warning(f"[MacroCore] vol target error: {e}")
+            return 1.0
+
+    def _rebalance_exposure(self) -> bool:
+        """Adjust position size to the current vol-target bucket (daily).
+        Returns True if an adjustment order was sent."""
+        if self.vol_target <= 0 or self._open_trade is None:
+            return False
+        target = self._target_exposure()
+        current = self._open_trade.get("exposure", 1.0)
+        if abs(target - current) < self.expo_step:
+            return False
+        equity = self._equity()
+        target_qty = max(10, int(equity * self.exposure_fraction * target / 10) * 10)
+        current_qty = self._open_trade["quantity"]
+        delta = target_qty - current_qty
+        if abs(delta) < 10:
+            return False
+        try:
+            if delta > 0:
+                order = self.client.buy(self.instrument, delta, type="market",
+                                        label="mc_rebal_up")
+            else:
+                order = self.client.sell(self.instrument, -delta, type="market",
+                                         label="mc_rebal_down", reduce_only=True)
+            if order and "error" not in order:
+                self.logger.info(
+                    f"[MacroCore] rebalance {current:.2f} -> {target:.2f} "
+                    f"({'buy' if delta > 0 else 'sell'} {abs(delta)} USD)")
+                self._open_trade["quantity"] = target_qty
+                self._open_trade["exposure"] = target
+                self._save_state()
+                return True
+            self.logger.error(f"[MacroCore] rebalance failed: {order}")
+        except Exception as e:
+            self.logger.error(f"[MacroCore] rebalance error: {e}", exc_info=True)
+        return False
+
+    def _equity(self) -> float:
         equity = 10_000.0
         try:
             if self.risk_manager and hasattr(self.risk_manager, "get_risk_summary"):
@@ -276,7 +345,11 @@ class MacroCoreStrategy(BaseStrategy):
                 equity = float(summary.get("equity", equity))
         except Exception:
             pass
-        qty_usd = equity * self.exposure_fraction
+        return equity
+
+    def _compute_quantity(self, price: float, expo: float = 1.0) -> float:
+        """Core size = equity * exposure_fraction * vol-target expo (step 10)."""
+        qty_usd = self._equity() * self.exposure_fraction * expo
         return max(10, int(qty_usd / 10) * 10)
 
     # ------------------------------------------------------------------

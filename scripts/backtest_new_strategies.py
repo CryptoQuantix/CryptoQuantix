@@ -125,6 +125,7 @@ def run(strategy_cls, config, m1, provider, scan_every_min=60):
                     "reason": reason, "gross_pct": gross * 100, "net_pct": net * 100,
                     "r": d * (exit_price - open_tr["entry"]) / risk if risk > 0 else 0,
                     "hold_min": (bar_close_ms - open_tr["entry_ms"]) / 60_000,
+                    "sl_dist_pct": risk / open_tr["entry"] * 100,
                 })
                 open_tr = None
                 strategy._open_trade = None   # sync internal state (SL/TP fill)
