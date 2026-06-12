@@ -26,3 +26,11 @@ Thumbs.db
 
 # Claude Code local settings (per-machine permissions)
 .claude/settings.local.json
+
+# Dashboard test artifacts
+data/journal_test.db
+data/journal_test_export.json
+logs/positions_test.log
+
+# Trade journal (runtime)
+data/*.db

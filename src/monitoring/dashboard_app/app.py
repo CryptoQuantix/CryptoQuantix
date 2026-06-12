@@ -1,0 +1,40 @@
+"""
+Entry point della dashboard multipagina.
+
+Avvio: streamlit run scripts/run_dashboard.py
+"""
+from datetime import datetime, timezone
+
+import streamlit as st
+
+
+def main():
+    st.set_page_config(
+        page_title="CoinMaker Quant — Dashboard",
+        page_icon="📊",
+        layout="wide",
+        initial_sidebar_state="expanded",
+    )
+
+    pages = {
+        "Trade in corso": "live",
+        "Storico Operazioni": "history",
+    }
+    with st.sidebar:
+        st.title("CoinMaker Quant")
+        choice = st.radio("Pagina", list(pages.keys()))
+        st.caption(
+            f"UTC {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} — "
+            "dashboard in sola lettura, processo separato dal bot"
+        )
+
+    if pages[choice] == "live":
+        from src.monitoring.dashboard_app import page_live
+        page_live.render()
+    else:
+        from src.monitoring.dashboard_app import page_history
+        page_history.render()
+
+
+if __name__ == "__main__":
+    main()

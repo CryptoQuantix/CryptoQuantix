@@ -1,6 +1,6 @@
 # Piano microevolutivo — Dashboard Streamlit di gestione e monitoraggio
 
-> **Data**: 2026-06-12 · **Stato**: pianificato, da implementare nelle prossime sessioni
+> **Data**: 2026-06-12 · **Stato**: Fase 1 IMPLEMENTATA (12/06) — restano Fasi 2-5
 > **Obiettivo**: un cockpit unico per (a) gestire TUTTE le impostazioni del bot,
 > (b) monitorare i trade in corso in tempo reale, (c) consultare uno storico
 > CHIARO di tutte le operazioni chiuse con importi precisi per operazione.
@@ -28,7 +28,15 @@ files) che il bot rilegge — mai chiamate dirette dentro il processo bot.
 
 ---
 
-## Fase 1 — STORICO OPERAZIONI + TRADE LIVE (priorità massima, sola lettura)
+## Fase 1 — STORICO OPERAZIONI + TRADE LIVE — ✅ FATTA (2026-06-12)
+
+> Implementata in `src/monitoring/dashboard_app/` (app.py, data_access.py,
+> page_history.py, page_live.py). Avvio: `scripts\run_dashboard.bat` oppure
+> `streamlit run scripts/run_dashboard.py`. Smoke test:
+> `python scripts/test_dashboard_smoke.py` (semina journal_test.db sintetico
+> e renderizza entrambe le pagine con AppTest — passa).
+> In più rispetto al piano: vista "trade aperti secondo il journal" con
+> warning sui trade open senza posizione sul venue (desincronizzazione).
 
 **Deliverable**: la richiesta esplicita dell'utente — storico chiaro con
 importi precisi per operazione.
