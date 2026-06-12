@@ -284,6 +284,7 @@ class TrendBreakdownConfig(StrategyConfig):
     max_hold_long_hours: int = 168  # time exit for longs (7 days)
     flow_confirm: float = 0.50    # taker buy_ratio gate (<x short, >1-x long)
     enable_long: bool = True      # macro-gated: inactive until macro bull
+    enable_short: bool = True     # BTC only — ETH short failed validation
     macro_sma_days: int = 200     # daily SMA gate: bear=shorts, bull=longs
 
     @staticmethod
@@ -473,15 +474,51 @@ class Config:
         if os.getenv("IS_ENABLED", "false").lower() == "true":
             cls.STRATEGIES.append(ImbalanceScalpConfig.from_env())
 
-        # --- Strategie quantitative validate (Sep 2025 - Jun 2026) ---
+        # --- Strategie quantitative validate (multi-symbol via *_SYMBOLS) ---
+        # Ogni simbolo extra crea un'istanza separata della strategia con
+        # strumento Deribit derivato (BTCUSDT -> BTC-PERPETUAL).
+        def _symbols(env_key: str, default: str = "BTCUSDT") -> List[str]:
+            return [s.strip().upper()
+                    for s in os.getenv(env_key, default).split(",") if s.strip()]
+
+        def _instrument(sym: str) -> str:
+            return sym.replace("USDT", "") + "-PERPETUAL"
+
         if os.getenv("TB_ENABLED", "true").lower() == "true":
-            cls.STRATEGIES.append(TrendBreakdownConfig.from_env())
+            # Validazione C3 (stessi parametri): long 7d-high OK su BTC e ETH;
+            # short 48h-low OK SOLO su BTC (ETH: PF 0.87) -> TB_SHORT_SYMBOLS
+            short_syms = [s.strip().upper() for s in
+                          os.getenv("TB_SHORT_SYMBOLS", "BTCUSDT").split(",")]
+            for sym in _symbols("TB_SYMBOLS", "BTCUSDT,ETHUSDT"):
+                cfg = TrendBreakdownConfig.from_env()
+                cfg.symbol, cfg.instrument = sym, _instrument(sym)
+                cfg.enable_short = sym in short_syms
+                if sym != "BTCUSDT":
+                    cfg.name = f"Trend Breakdown {sym.replace('USDT', '')}"
+                cls.STRATEGIES.append(cfg)
 
         if os.getenv("FS_ENABLED", "true").lower() == "true":
-            cls.STRATEGIES.append(FundingSqueezeConfig.from_env())
+            for sym in _symbols("FS_SYMBOLS", "BTCUSDT,ETHUSDT"):
+                cfg = FundingSqueezeConfig.from_env()
+                cfg.symbol, cfg.instrument = sym, _instrument(sym)
+                if sym != "BTCUSDT":
+                    cfg.name = f"Funding Squeeze {sym.replace('USDT', '')}"
+                cls.STRATEGIES.append(cfg)
 
         if os.getenv("MC_ENABLED", "true").lower() == "true":
-            cls.STRATEGIES.append(MacroCoreConfig.from_env())
+            mc_syms = _symbols("MC_SYMBOLS")
+            for sym in mc_syms:
+                cfg = MacroCoreConfig.from_env()
+                cfg.symbol, cfg.instrument = sym, _instrument(sym)
+                # BTC/ETH correlano ~0.8: il budget di esposizione core e'
+                # CONDIVISO — ogni simbolo riceve 1/N della frazione totale
+                cfg.exposure_fraction = cfg.exposure_fraction / len(mc_syms)
+                if sym != "BTCUSDT":
+                    sfx = sym.replace("USDT", "").lower()
+                    cfg.name = f"Macro Core {sym.replace('USDT', '')}"
+                    cfg.state_path = cfg.state_path.replace(
+                        ".json", f"_{sfx}.json")
+                cls.STRATEGIES.append(cfg)
 
     @classmethod
     def validate(cls) -> bool:

@@ -38,18 +38,24 @@ FUNDING_4Y = "data/research/btc_funding_4y.json"
 # Data
 # ------------------------------------------------------------------ #
 
-def load_4y():
-    """Load the 4y dataset from yearly chunks (repo-friendly <11MB files),
-    falling back to the legacy single file."""
+def load_4y(symbol: str = "BTC"):
+    """Load a 4y dataset from yearly chunks (repo-friendly <11MB files).
+    symbol: 'BTC' | 'ETH' | ... (matches data/research/<sym>_1m_4y/)."""
     import glob
-    chunks = sorted(glob.glob(os.path.join(KLINES_4Y_DIR, "btc_1m_*.csv.gz")))
+    sym = symbol.replace("USDT", "").lower()
+    chunks = sorted(glob.glob(
+        os.path.join(f"data/research/{sym}_1m_4y", f"{sym}_1m_*.csv.gz")))
     if chunks:
         df = pd.concat(
             [pd.read_csv(p, compression="gzip") for p in chunks],
             ignore_index=True,
         )
-    else:
+    elif sym == "btc" and os.path.exists(KLINES_4Y):
         df = pd.read_csv(KLINES_4Y, compression="gzip")
+    else:
+        raise FileNotFoundError(
+            f"no 4y dataset for {symbol} — run "
+            f"scripts/download_multicycle.py --symbol {sym.upper()}USDT")
     df["ts"] = pd.to_datetime(df["t"], unit="ms", utc=True)
     df = df.set_index("ts").sort_index()
     df = df.rename(columns={"o": "open", "h": "high", "l": "low",
@@ -58,10 +64,12 @@ def load_4y():
     return df
 
 
-def load_funding_4y():
-    if not os.path.exists(FUNDING_4Y):
+def load_funding_4y(symbol: str = "BTC"):
+    sym = symbol.replace("USDT", "").lower()
+    path = f"data/research/{sym}_funding_4y.json"
+    if not os.path.exists(path):
         return None
-    with open(FUNDING_4Y) as f:
+    with open(path) as f:
         raw = json.load(f)
     fr = pd.DataFrame(raw)
     fr["ts"] = pd.to_datetime(fr["t"], unit="ms", utc=True)

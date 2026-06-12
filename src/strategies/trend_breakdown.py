@@ -67,6 +67,10 @@ class TrendBreakdownStrategy(BaseStrategy):
         self.max_hold_long_hours = getattr(config, "max_hold_long_hours", 48)
         self.flow_confirm = getattr(config, "flow_confirm", 0.50)
         self.enable_long = getattr(config, "enable_long", True)
+        # C3 multi-symbol: lo short 48h-low e' validato solo su BTC
+        # (ETH: -17bps PF 0.87); il long 7d-high vale su entrambi
+        # (ETH: +183bps PF 2.32).
+        self.enable_short = getattr(config, "enable_short", True)
         self.macro_sma_days = getattr(config, "macro_sma_days", 200)
 
         # One signal per closed 1h bar; one open trade at a time
@@ -116,7 +120,8 @@ class TrendBreakdownStrategy(BaseStrategy):
             breakdown_level = min(c["low"] for c in prev_short)
 
             # --- SHORT: 48h-low breakdown, only in macro BEAR ---
-            if (not macro_bull and close < breakdown_level and close < sma
+            if (self.enable_short and not macro_bull
+                    and close < breakdown_level and close < sma
                     and last["buy_ratio"] < self.flow_confirm):
                 sl = close + self.sl_atr_mult * atr
                 risk = sl - close

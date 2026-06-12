@@ -106,17 +106,25 @@ Il chandelier funziona solo a scala daily (MacroCore). **Niente trailing
 engine live** — complessità order-edit evitata. Il supporto `trail` nel
 simulatore resta per test futuri.
 
-### C3 — TrendBreakdown multi-symbol (ETH, poi SOL)
-**Ipotesi**: l'edge Donchian+macro è strutturale, non BTC-specifico;
-più simboli = più trade indipendenti = più rendimento totale a parità di edge.
-**Micro-step**:
-1. `download_multicycle.py --symbol ETHUSDT` (parametrizzare SYMBOL/OUT)
-2. Rivalidare TB short+long su ETH 4y con la stessa griglia (NO ri-ottimizzare
-   i parametri per simbolo: stessi parametri = test di robustezza)
-3. Se gate ok: config TB con lista simboli, instrument ETH-PERPETUAL su Deribit
-4. Cap di rischio aggregato: BTC ed ETH correlano ~0.8 → il RiskManager deve
-   trattarli come ~1 posizione ai fini del rischio totale
-5. Stesso esercizio per FundingSqueeze su ETH (funding cap diversi — verificare)
+### C3 — Multi-symbol ETH · ✅ COMPLETATA (2026-06-12)
+**Esito** (stessi parametri di BTC su ETH 4y, zero ri-ottimizzazione —
+`scripts/validate_symbol.py --symbol ETH`, report `data/research/eth_validation.txt`):
+- **TB LONG (7d-high): PROMOSSA su ETH** — +183bps/trade, PF 2.32, 58 trade,
+  2023 +18% / 2024 +60% / 2025 +29% (3/3 anni positivi). L'edge long è
+  strutturale.
+- **TB SHORT (48h-low): BOCCIATA su ETH** — -17bps, PF 0.87: edge
+  BTC-specifico → nuovo flag `enable_short` per config, gestito da
+  `TB_SHORT_SYMBOLS=BTCUSDT`
+- **FS: PROMOSSA su ETH** — +64bps, PF 1.82, 39 trade (il funding ETH non è
+  clampato al cap: max 0.10% vs 0.01% BTC, la soglia lega più spesso)
+- **MC: BOCCIATA su ETH** — +38.7% = buy&hold, maxDD 58%, 2025 -18%: il
+  trend ETH è troppo choppy per SMA200+chandelier → MC_SYMBOLS=BTCUSDT
+- Infrastruttura: `*_SYMBOLS` in config (istanza per simbolo, strumento
+  derivato BTCUSDT→BTC-PERPETUAL), state path MacroCore per simbolo,
+  **budget esposizione MC diviso tra i simboli** (corr ~0.8 = ~1 posizione)
+- Bug fix: il FakeExecClient del backtest MacroCore interpretava i sell di
+  ribilanciamento vol-target come exit → ora distingue per label (mc_exit)
+- Default produzione: TB su BTC+ETH (short solo BTC), FS su BTC+ETH, MC solo BTC
 
 ### C4 — Sizing evolution · ✅ COMPLETATA (2026-06-12)
 **Esito** (`scripts/equity_sim.py`: portafoglio TB+FS+MC su equity composta
@@ -194,7 +202,9 @@ fallisce, documentare nel report e lasciare OFF per sempre.
 2. ~~C2 (trailing TB)~~ ❌ BOCCIATA — peggiore delle baseline su entrambi i lati
 3. ~~C4 (equity sim + sizing)~~ ✅ FATTA — volT30 su MC adottato (DD 21,5%);
    Kelly e DD-derisk bocciati coi dati
-4. **PROSSIMA SESSIONE → C3** (ETH multi-symbol: parametrizzare
-   download_multicycle, rivalidare TB/FS/MC su ETH con gli STESSI parametri,
-   cap rischio aggregato BTC+ETH nel RiskManager)
-5. C7 (validazione legacy) in parallelo quando c'è tempo
+4. ~~C3 (ETH multi-symbol)~~ ✅ FATTA — TB long + FS promosse su ETH;
+   TB short e MC bocciate su ETH (BTC-only)
+5. **PROSSIMA SESSIONE → C7** (validazione legacy: W/M e Brings prima,
+   backtestabili subito sui dataset 4y BTC+ETH già nel repo)
+6. Backlog restante: C5 (dip-buy v2, gate severo), C6 (FS long mirror,
+   monitorare via signal_log), SOL come terzo simbolo per TB long

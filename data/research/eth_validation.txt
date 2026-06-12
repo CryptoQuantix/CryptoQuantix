@@ -1,0 +1,35 @@
+C:\Users\hp\Documents\GitHub\coinmaker-quant\scripts\multicycle_research.py:93: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  bull = (d1 > sma200).shift(1).fillna(False)
+Loading ETH 4y dataset...
+Data: 2022-06-13 -> 2026-06-12  (2,102,400 1m bars)  price 1,213 -> 1,683 (+39%)
+Funding: N=4380  q50=0.000060  q90=0.000100  max=0.001017
+
+--- TB ETH ---
+  BULL: N=   58  WR= 31.0%  avg= +183.3bps  PF= 2.32  sum=  +106.3%
+  BEAR: N=  161  WR= 36.0%  avg=  -17.4bps  PF= 0.87  sum=   -28.1%
+  ALL : N=  219  WR= 34.7%  avg=  +35.7bps  PF= 1.26  sum=   +78.2%
+  years: 2023:34tr/+11%  2024:59tr/+60%  2025:75tr/-14%  2026:51tr/+22%
+  SHORT: N=161  avg=-17.4bps  sum=-28.1%
+  LONG: N=58  avg=+183.3bps  sum=+106.3%
+
+--- FS ETH ---
+  BULL: N=   0
+  BEAR: N=   39  WR= 51.3%  avg=  +63.9bps  PF= 1.82  sum=   +24.9%
+  ALL : N=   39  WR= 51.3%  avg=  +63.9bps  PF= 1.82  sum=   +24.9%
+  years: 2023:3tr/+0%  2024:26tr/+17%  2025:8tr/+4%  2026:2tr/+4%
+  SHORT: N=39  avg=+63.9bps  sum=+24.9%
+
+--- MacroCore ETH ---
+  Trade: 11  Equity: +38.7%  (buy&hold +38.7%)  maxDD(m2m): 58.2%
+  per anno: 2022:+0%  2023:+38%  2024:+24%  2025:-18%  2026:+1%
+    2023-01-13 -> 2023-05-26   +27.23%  (chandelier)
+    2023-05-27 -> 2023-08-14    +0.53%  (chandelier)
+    2023-08-15 -> 2023-09-12   -16.11%  (chandelier)
+    2023-10-25 -> 2024-04-14   +68.17%  (chandelier)
+    2024-04-15 -> 2024-07-05    -3.17%  (chandelier)
+    2024-07-13 -> 2024-08-05   -14.41%  (chandelier)
+    2024-11-09 -> 2025-01-13   +10.04%  (chandelier)
+    2025-01-14 -> 2025-02-03   -25.17%  (disaster_sl)
+    2025-06-10 -> 2025-09-26   +44.32%  (chandelier)
+    2025-09-27 -> 2025-11-04   -10.81%  (chandelier)
+    2025-11-06 -> 2026-01-02   -12.47%  (chandelier)

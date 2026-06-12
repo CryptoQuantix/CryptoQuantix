@@ -30,12 +30,14 @@ from config import MacroCoreConfig
 
 
 class FakeExecClient:
-    """Records reduce-only exits issued by the real strategy code."""
+    """Records exits issued by the real strategy code. Distinguishes the
+    chandelier exit (label mc_exit) from vol-target rebalance sells."""
     def __init__(self):
         self.exit_requested = False
 
     def sell(self, *a, **k):
-        self.exit_requested = True
+        if k.get("label") == "mc_exit":
+            self.exit_requested = True
         return {"order_id": "sim"}
 
     def buy(self, *a, **k):
@@ -52,7 +54,9 @@ def run_macro(m1):
         pd.Series([0.0], index=[m1.index[0]]),
     )
 
-    cfg = MacroCoreConfig(name="Macro Core", persist_state=False)
+    # vol_target=0: this harness validates the CHANDELIER mechanics at full
+    # exposure; the vol-target sizing layer is validated in equity_sim.py
+    cfg = MacroCoreConfig(name="Macro Core", persist_state=False, vol_target=0.0)
     fake_client = FakeExecClient()
     deps = {k: None for k in ["order_manager", "position_monitor", "risk_manager",
                               "orderflow_engine", "regime_detector",

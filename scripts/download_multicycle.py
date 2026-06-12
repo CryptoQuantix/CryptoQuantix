@@ -4,11 +4,14 @@ Download multi-cycle dataset: 4 years of BTCUSDT 1m klines + funding.
 Covers bear 2022, bull 2023-2025, bear 2025-2026 — needed to validate
 strategies across BOTH market phases (single-phase backtests mislead).
 
-Output:
-  data/research/btc_1m_4y/btc_1m_<year>.csv.gz  (yearly chunks, <11MB each,
-                                                 repo-friendly; t,o,h,l,c,v,bv)
-  data/research/btc_funding_4y.json
+Output (per <sym> = symbol minuscolo senza USDT, es. btc/eth):
+  data/research/<sym>_1m_4y/<sym>_1m_<year>.csv.gz  (yearly chunks <11MB,
+                                                     repo-friendly; t,o,h,l,c,v,bv)
+  data/research/<sym>_funding_4y.json
+
+Usage: python scripts/download_multicycle.py [--symbol ETHUSDT] [--days 1460]
 """
+import argparse
 import gzip
 import io
 import json
@@ -25,12 +28,19 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 logger = logging.getLogger("multicycle_dl")
 
 BINANCE_BASE = "https://fapi.binance.com"
-SYMBOL = "BTCUSDT"
-DAYS = 1460
 LIMIT = 1500
 OUT_DIR = "data/research"
-KLINES_DIR = os.path.join(OUT_DIR, "btc_1m_4y")   # yearly chunks
-FUNDING_PATH = os.path.join(OUT_DIR, "btc_funding_4y.json")
+
+_parser = argparse.ArgumentParser()
+_parser.add_argument("--symbol", default="BTCUSDT")
+_parser.add_argument("--days", type=int, default=1460)
+_args = _parser.parse_args()
+
+SYMBOL = _args.symbol.upper()
+DAYS = _args.days
+_SYM = SYMBOL.replace("USDT", "").lower()
+KLINES_DIR = os.path.join(OUT_DIR, f"{_SYM}_1m_4y")   # yearly chunks
+FUNDING_PATH = os.path.join(OUT_DIR, f"{_SYM}_funding_4y.json")
 
 
 def _build_ssl_context():
@@ -127,7 +137,7 @@ def main():
         year = datetime.fromtimestamp(ts_ms / 1000, tz=timezone.utc).year
         by_year.setdefault(year, []).append(row)
     for year, yr_rows in sorted(by_year.items()):
-        path = os.path.join(KLINES_DIR, f"btc_1m_{year}.csv.gz")
+        path = os.path.join(KLINES_DIR, f"{_SYM}_1m_{year}.csv.gz")
         with gzip.open(path, "wt") as f:
             f.write("t,o,h,l,c,v,bv\n")
             f.write("\n".join(yr_rows))
