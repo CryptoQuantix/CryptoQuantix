@@ -1,7 +1,10 @@
 site_name: Coinmaker Quant — Documentazione
-site_description: Bot di trading futures volumetrico su Deribit con dati Binance
+site_description: Bot di trading quantitativo su futures/perpetual — Deribit + dati Binance
 site_author: Coinmaker Team
 docs_dir: docs
+# L'archivio storico non fa parte del sito (link interni superati)
+exclude_docs: |
+  archive/
 
 theme:
   name: material
@@ -34,15 +37,12 @@ markdown_extensions:
 
 nav:
   - Home: index.md
-  - Architettura:
-      - Overview Sistema: 01_architecture.md
+  - Architettura: 01_architecture.md
+  - Strategie attive: 02_strategies.md
+  - Configurazione (.env): 03_configuration.md
+  - Risk & Sizing: 05_risk_sizing.md
+  - Infrastruttura:
       - Dati & Microstruttura: 02_data_microstructure.md
       - Orderflow & CVD: 03_orderflow_math.md
-  - Strategie:
-      - Regime & Strategie Quantitative: 04_regime_strategies.md
-      - Contesto di Mercato — Quando Accendere: 08_market_context.md
-  - Risk & Sizing: 05_risk_sizing.md
-  - Backtest:
       - Backtest Engine & Monte Carlo: 06_backtest_montecarlo.md
-      - Piano di Validazione & Profittabilita: 09_profitability_plan.md
-  - Deployment: 07_execution_ops.md
+      - Esecuzione & Deployment: 07_execution_ops.md

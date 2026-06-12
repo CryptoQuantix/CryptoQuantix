@@ -1,68 +1,43 @@
-# Coinmaker Quant
+# coinmaker-quant — Documentazione
 
-Bot di trading futures volumetrico su **Deribit** con dati tick-by-tick da **Binance Futures**.
+Bot di trading quantitativo su futures/perpetual: esecuzione **Deribit**,
+dati **Binance Futures**. Tre strategie validate su 4 anni multi-ciclo,
+macro-gating automatico, risk management di portafoglio, dashboard.
 
----
+> Aggiornato: giugno 2026 (ribaltamento completo: dalle strategie
+> volumetriche intraday alle quantitative validate TB/FS/MC).
 
-## Architettura
+## Documenti correnti
 
-- [Overview Sistema](01_architecture.md) — componenti core, asyncio tasks, pipeline
-- [Dati & Microstruttura](02_data_microstructure.md) — BinanceDataIngestion, OrderBookEngine
-- [Orderflow & CVD](03_orderflow_math.md) — Delta, CVD multi-timeframe, Kyle's Lambda
+| Documento | Contenuto |
+|---|---|
+| [01_architecture.md](01_architecture.md) | Architettura: bot async, layer, dashboard, invarianti |
+| [02_strategies.md](02_strategies.md) | Trend Breakdown, Funding Squeeze, Macro Core + bocciate |
+| [03_configuration.md](03_configuration.md) | Il `.env` completo: operativo, attive, disattivate |
+| [05_risk_sizing.md](05_risk_sizing.md) | Sizing 3-factor, gross cap, kill switch, vol-target |
 
-## Strategie
+## Infrastruttura (validi, pre-ribaltamento)
 
-- [Regime & Strategie Quantitative](04_regime_strategies.md) — RegimeDetector, 4 strategie
-- [Contesto di Mercato — Quando Accendere](08_market_context.md) — playbook attivazione/disattivazione
+| Documento | Contenuto |
+|---|---|
+| [02_data_microstructure.md](02_data_microstructure.md) | Binance WS, order book L2, microstruttura |
+| [03_orderflow_math.md](03_orderflow_math.md) | Delta, CVD, Kyle's Lambda (alimentano il regime) |
+| [06_backtest_montecarlo.md](06_backtest_montecarlo.md) | BacktestEngine, metriche, Monte Carlo |
+| [07_execution_ops.md](07_execution_ops.md) | API Deribit, ordini, deploy |
 
-## Risk & Backtest
+## Ricerca e validazione (fonte di verità per i numeri)
 
-- [Risk & Sizing](05_risk_sizing.md) — RiskManager 3-factor, position sizing
-- [Backtest Engine & Monte Carlo](06_backtest_montecarlo.md) — architettura backtest
-- [Piano di Validazione & Profittabilita](09_profitability_plan.md) — 60gg testnet, Signal Log, analisi SQLite
+| Risorsa | Contenuto |
+|---|---|
+| [../microevolutive/PLAN_BULL_EVOLUTION.md](../microevolutive/PLAN_BULL_EVOLUTION.md) | Pipeline di validazione + risultati C1-C7 |
+| [../microevolutive/PLAN_DASHBOARD.md](../microevolutive/PLAN_DASHBOARD.md) | Piano dashboard (fasi 1-2 fatte, 3-5 future) |
+| `../data/research/multicycle_report.txt` | Validazione 4y delle strategie |
+| `../data/research/eth_validation.txt` | Multi-symbol ETH (C3) |
+| `../data/research/legacy_validation_btc.txt` | Bocciatura legacy (C7) |
 
-## Deployment
+## Storico
 
-- [Esecuzione & Ops](07_execution_ops.md) — Deribit API, Docker, Raspberry Pi
-
----
-
-## Quick Start
-
-```bash
-# 1. Configura le credenziali
-cp .env.example .env
-# Edita .env con API keys Deribit
-
-# 2. Avvia con Docker
-./docker-start.sh
-
-# 3. Controlla i log
-docker logs -f coinmaker-bot
-```
-
-## Comandi Utili
-
-```bash
-# Stato del Signal Log (opportunita perse)
-docker exec coinmaker-bot python -c "
-from src.journal.signal_log import SignalLog
-SignalLog('data/signal_log.db').print_report()
-"
-
-# Scarica i database per analisi (al giorno 60)
-docker cp coinmaker-bot:/app/data/signal_log.db ./signal_log.db
-docker cp coinmaker-bot:/app/data/journal.db    ./journal.db
-
-# Chiudi tutte le posizioni (emergenza)
-python close_all_positions.py
-```
-
-## Documentazione Locale
-
-```bash
-pip install mkdocs-material
-mkdocs serve
-```
-
-Poi apri `http://127.0.0.1:8000`.
+[archive/](archive/) contiene i documenti superati dal ribaltamento di
+giugno 2026 (vecchia architettura, strategie volumetriche, smart money,
+piani di profittabilità, guide setup originali). Utili solo come storia
+del progetto.

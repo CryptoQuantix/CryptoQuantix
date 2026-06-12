@@ -1,6 +1,6 @@
 # Piano microevolutivo — Dashboard Streamlit di gestione e monitoraggio
 
-> **Data**: 2026-06-12 · **Stato**: Fasi 1-2 IMPLEMENTATE (12/06) — restano Fasi 3-5
+> **Data**: 2026-06-12 · **Stato**: Fasi 1, 2 e 5 FATTE (12/06) — restano Fasi 3-4 (settings editor + azioni)
 > **Obiettivo**: un cockpit unico per (a) gestire TUTTE le impostazioni del bot,
 > (b) monitorare i trade in corso in tempo reale, (c) consultare uno storico
 > CHIARO di tutte le operazioni chiuse con importi precisi per operazione.
@@ -102,7 +102,14 @@ importi precisi per operazione.
 3. Pulizia orfani on-demand (richiama la logica di check_orphan_orders)
 4. Accettazione: ogni azione scrive un audit log (chi/cosa/quando)
 
-## Fase 5 — RIBALTAMENTO DOCS (richiesto: "ribaltare completamente")
+## Fase 5 — RIBALTAMENTO DOCS — ✅ FATTA (2026-06-12)
+
+> README riscritto (3 strategie validate coi numeri, quickstart, dashboard);
+> docs/ rigenerati: index, 01_architecture, 02_strategies, 03_configuration,
+> 05_risk_sizing; mkdocs.yml aggiornato; 15 .md sparsi in root + 6 docs
+> superati spostati in docs/archive/ (con README esplicativo). Restano
+> validi come infrastruttura: 02_data_microstructure, 03_orderflow_math,
+> 06_backtest_montecarlo, 07_execution_ops.
 
 Il funzionamento del bot è cambiato radicalmente (giu 2026): strategie
 volumetriche → TB/FS/MC validate, multi-symbol, macro gating, vol-target.
