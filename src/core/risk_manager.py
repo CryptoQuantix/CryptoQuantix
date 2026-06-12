@@ -30,7 +30,8 @@ class RiskManager:
         max_portfolio_risk: float = 0.03,
         base_risk_pct: float = 0.01,
         max_daily_loss_pct: float = 0.03,
-        max_open_trades: int = 3
+        max_open_trades: int = 3,
+        max_gross_exposure: float = 1.5,
     ):
         """
         Args:
@@ -42,6 +43,9 @@ class RiskManager:
             base_risk_pct:        Rischio base per trade futures (es. 0.01 = 1%)
             max_daily_loss_pct:   Kill switch giornaliero (es. 0.03 = -3%)
             max_open_trades:      Max trade aperti contemporaneamente
+            max_gross_exposure:   Cap nozionale LORDO aggregato (x equity).
+                                  Anti-oversizing quando piu' strategie aprono
+                                  insieme (MacroCore core + tattiche multi-symbol)
         """
         self.client = client
         self.position_monitor = position_monitor
@@ -51,6 +55,7 @@ class RiskManager:
         self.base_risk_pct = base_risk_pct
         self.max_daily_loss_pct = max_daily_loss_pct
         self.max_open_trades = max_open_trades
+        self.max_gross_exposure = max_gross_exposure
 
         # Daily tracking
         self._daily_pnl: float = 0.0
@@ -224,6 +229,19 @@ class RiskManager:
             effective_leverage = max_leverage
             adj_risk = quantity_btc * price_diff
 
+        # Gross exposure cap: il nozionale del nuovo trade non deve portare
+        # l'esposizione lorda aggregata oltre max_gross_exposure x equity
+        available = self.available_gross_usd()
+        if quantity_usd > available:
+            logger.warning(
+                f"[Risk] Gross cap: size ${quantity_usd:,.0f} -> ${available:,.0f} "
+                f"(esposizione aggregata al limite {self.max_gross_exposure:.1f}x)"
+            )
+            quantity_usd = available
+            quantity_btc = quantity_usd / entry_price if entry_price > 0 else 0
+            effective_leverage = quantity_usd / equity if equity > 0 else 0
+            adj_risk = quantity_btc * price_diff
+
         logger.info(
             f"[Risk] Dynamic sizing {instrument_name}: "
             f"vol_scalar={vol_scalar:.2f} regime_scalar={regime_scalar:.2f} "
@@ -323,42 +341,59 @@ class RiskManager:
         logger.info(f"Risk per condor: ${risk_amount:.2f} ({self.risk_per_condor:.1%} of ${equity:,.2f})")
         return risk_amount
 
+    # ==================================================================
+    # GROSS EXPOSURE CAP (anti-oversizing multi-strategia)
+    # ==================================================================
+
+    def get_gross_exposure_usd(self) -> float:
+        """Somma del nozionale ASSOLUTO di tutte le posizioni futures aperte.
+        Su Deribit perpetual/futures lineari-inversi `size` e' in USD."""
+        try:
+            positions = self.position_monitor.get_open_futures_positions()
+            return float(sum(abs(p.get("size", 0)) for p in positions))
+        except Exception as e:
+            logger.error(f"[Risk] get_gross_exposure_usd: {e}")
+            return 0.0
+
+    def available_gross_usd(self) -> float:
+        """Nozionale ancora apribile prima del cap lordo aggregato."""
+        equity = self.get_total_equity()
+        cap = equity * self.max_gross_exposure
+        return max(0.0, cap - self.get_gross_exposure_usd())
+
     def can_open_new_position(self) -> Tuple[bool, str]:
         """
-        Check if we can open a new position based on risk limits
+        Gate di portafoglio per le strategie futures:
+          1. kill switch giornaliero
+          2. numero massimo di posizioni aperte (max_open_trades)
+          3. cap di esposizione lorda aggregata (max_gross_exposure x equity)
 
         Returns:
             Tuple of (can_open, reason)
         """
-        # Get current equity
+        if self.is_kill_switch_active():
+            return False, "Kill switch giornaliero attivo"
+
+        try:
+            positions = self.position_monitor.get_open_futures_positions()
+        except Exception as e:
+            return True, f"position check failed ({e}) — gate bypassed"
+
+        n_open = len(positions)
+        if n_open >= self.max_open_trades:
+            return False, (f"Max posizioni aperte raggiunto: "
+                           f"{n_open}/{self.max_open_trades}")
+
         equity = self.get_total_equity()
+        gross = float(sum(abs(p.get("size", 0)) for p in positions))
+        cap = equity * self.max_gross_exposure
+        if gross >= cap:
+            return False, (f"Cap esposizione lorda raggiunto: "
+                           f"${gross:,.0f} >= ${cap:,.0f} "
+                           f"({self.max_gross_exposure:.1f}x equity)")
 
-        # Get current risk exposure
-        current_risk = self.position_monitor.get_total_risk_exposure()
-
-        # Calculate max allowed risk
-        max_risk = equity * self.max_portfolio_risk
-
-        # Calculate risk for new condor
-        new_condor_risk = self.calculate_position_size(equity)
-
-        # Check if adding new position would exceed limit
-        total_risk_after = current_risk + new_condor_risk
-
-        if total_risk_after > max_risk:
-            return False, (
-                f"Would exceed max portfolio risk: "
-                f"${total_risk_after:.2f} > ${max_risk:.2f} "
-                f"(current: ${current_risk:.2f})"
-            )
-
-        available_risk = max_risk - current_risk
-        logger.info(
-            f"Can open new position: "
-            f"${available_risk:.2f} available of ${max_risk:.2f} max risk"
-        )
-
-        return True, f"Available risk: ${available_risk:.2f}"
+        return True, (f"OK — posizioni {n_open}/{self.max_open_trades}, "
+                      f"gross ${gross:,.0f}/${cap:,.0f}")
 
     def get_max_condors_allowed(self) -> int:
         """

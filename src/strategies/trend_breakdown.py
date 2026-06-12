@@ -176,7 +176,9 @@ class TrendBreakdownStrategy(BaseStrategy):
                 instrument_name=self.instrument,
                 direction=signal["direction"].lower(),
                 quantity=quantity,
-                entry_type="limit",
+                # market: il backtest assume fill immediato + slippage; una
+                # limit non fillata lascerebbe ordini appesi e SL/TP orfani
+                entry_type="market",
                 price=signal["price"],
                 stop_loss=signal["stop_loss"],
                 take_profit=signal["take_profit"],

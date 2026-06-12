@@ -590,34 +590,48 @@ class OrderManager:
             sl_order_id = None
             tp_order_id = None
 
-            # 2. Place Stop Loss if specified
+            # 2. Place Stop Loss if specified — con RETRY e chiusura di
+            #    emergenza: una posizione aperta NON deve mai restare senza
+            #    stop (ordini appesi nel nulla / posizioni nude).
             if stop_loss:
                 sl_side = "sell" if direction == "buy" else "buy"
                 sl_label = label.replace("entry", "sl") if "entry" in label else f"{label}_sl"
+                sl_fn = self.client.buy if sl_side == "buy" else self.client.sell
 
-                sl_order = None
-                if sl_side == "buy":
-                    sl_order = self.client.buy(
+                for attempt in range(3):
+                    sl_order = sl_fn(
                         instrument_name, quantity,
                         type="stop_market", trigger="mark_price",
                         price=None, trigger_price=stop_loss,
                         label=sl_label, reduce_only=True
                     )
-                else:
-                    sl_order = self.client.sell(
-                        instrument_name, quantity,
-                        type="stop_market", trigger="mark_price",
-                        price=None, trigger_price=stop_loss,
-                        label=sl_label, reduce_only=True
-                    )
+                    if sl_order and "order_id" in sl_order:
+                        sl_order_id = sl_order["order_id"]
+                        logger.info(f"Stop Loss placed: {stop_loss} | order_id={sl_order_id}")
+                        break
+                    err = sl_order.get("error") if sl_order else "order object None"
+                    logger.error(f"SL placement failed (attempt {attempt + 1}/3): {err}")
+                    time.sleep(0.5)
 
-                if sl_order and "order_id" in sl_order:
-                    sl_order_id = sl_order["order_id"]
-                    logger.info(f"Stop Loss placed: {stop_loss} | order_id={sl_order_id}")
-                elif sl_order and "error" in sl_order:
-                    logger.error(f"SL placement error: {sl_order['error']}")
-                else:
-                    logger.error("Failed to place Stop Loss — order object None")
+                if sl_order_id is None:
+                    # Posizione senza stop = rischio inaccettabile: chiusura
+                    # di emergenza reduce-only della quantita' appena aperta
+                    logger.critical(
+                        f"SL non piazzabile su {instrument_name} — EMERGENCY CLOSE "
+                        f"della posizione appena aperta ({quantity})"
+                    )
+                    close_fn = self.client.sell if direction == "buy" else self.client.buy
+                    close_order = close_fn(
+                        instrument_name, quantity, type="market",
+                        label=f"{label}_emergency_close", reduce_only=True
+                    )
+                    if close_order and "error" not in close_order:
+                        return False, "SL failed 3x — position emergency-closed"
+                    logger.critical(
+                        f"EMERGENCY CLOSE FALLITA su {instrument_name}: {close_order} — "
+                        f"INTERVENTO MANUALE RICHIESTO"
+                    )
+                    return False, "SL failed AND emergency close failed — MANUAL ACTION"
 
             # 3. Place Take Profit if specified (Limit Reduce Only)
             if take_profit:

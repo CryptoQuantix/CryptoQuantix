@@ -137,7 +137,8 @@ class MacroCoreStrategy(BaseStrategy):
                 instrument_name=self.instrument,
                 direction="buy",
                 quantity=quantity,
-                entry_type="limit",
+                # market: fill garantito (vedi nota in trend_breakdown)
+                entry_type="market",
                 price=signal["price"],
                 stop_loss=signal["stop_loss"],
                 take_profit=None,
@@ -348,9 +349,21 @@ class MacroCoreStrategy(BaseStrategy):
         return equity
 
     def _compute_quantity(self, price: float, expo: float = 1.0) -> float:
-        """Core size = equity * exposure_fraction * vol-target expo (step 10)."""
+        """Core size = equity * exposure_fraction * vol-target expo (step 10),
+        capped dal limite di esposizione lorda aggregata del RiskManager."""
         qty_usd = self._equity() * self.exposure_fraction * expo
-        return max(10, int(qty_usd / 10) * 10)
+        try:
+            if self.risk_manager and hasattr(self.risk_manager, "available_gross_usd"):
+                available = float(self.risk_manager.available_gross_usd())
+                if qty_usd > available:
+                    self.logger.warning(
+                        f"[MacroCore] gross cap: ${qty_usd:,.0f} -> ${available:,.0f}")
+                    qty_usd = available
+        except Exception:
+            pass
+        if qty_usd < 10:
+            return 0
+        return int(qty_usd / 10) * 10
 
     # ------------------------------------------------------------------
     # State persistence (position lives for months across restarts)

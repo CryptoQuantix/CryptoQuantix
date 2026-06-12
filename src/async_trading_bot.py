@@ -155,6 +155,7 @@ class AsyncTradingBot:
             base_risk_pct=float(os.getenv("BASE_RISK_PCT", 0.01)),
             max_daily_loss_pct=float(os.getenv("MAX_DAILY_LOSS_PCT", 0.03)),
             max_open_trades=int(os.getenv("MAX_OPEN_TRADES", 3)),
+            max_gross_exposure=float(os.getenv("MAX_GROSS_EXPOSURE", 1.5)),
         )
         self.failure_handler = FailureHandler(
             client=self.client,

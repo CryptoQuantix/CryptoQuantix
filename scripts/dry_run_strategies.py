@@ -59,6 +59,8 @@ def build_mock_dependencies(with_orderflow=True):
         "adj_risk_usd": 100.0,
         "base_risk_usd": 100.0,
     }
+    mock_risk_manager.available_gross_usd.return_value = 15000.0
+    mock_risk_manager.can_open_new_position.return_value = (True, "OK")
 
     deps = {
         "order_manager": mock_order_manager,

@@ -161,7 +161,8 @@ class FundingSqueezeStrategy(BaseStrategy):
                 instrument_name=self.instrument,
                 direction="sell",
                 quantity=quantity,
-                entry_type="limit",
+                # market: fill garantito (vedi nota in trend_breakdown)
+                entry_type="market",
                 price=signal["price"],
                 stop_loss=signal["stop_loss"],
                 take_profit=signal["take_profit"] or None,
