@@ -1,0 +1,3 @@
+# Script shell: sempre LF (CRLF rompe bash sul Raspberry)
+*.sh text eol=lf
+Dockerfile text eol=lf
