@@ -192,6 +192,27 @@ class FakeKlineProvider:
         return self._now_ms
 
 
+class FakeBullKlineProvider(FakeKlineProvider):
+    """Macro-BULL variant: rising daily closes (close > SMA200) so the
+    MacroCore entry fires in the dry run."""
+
+    def __init__(self):
+        super().__init__()
+        self.candles_1d = []
+        dprice = 40000.0
+        for i in range(240):
+            dprice += 120.0
+            ts = self._now_ms - (240 - i) * 86_400_000
+            self.candles_1d.append({
+                "ts_ms": ts,
+                "open": dprice - 120.0, "high": dprice + 250.0,
+                "low": dprice - 250.0, "close": dprice,
+                "volume": 50000.0, "buy_volume": 28000.0,
+                "buy_ratio": 0.56,
+                "close_ts_ms": ts + 86_400_000,
+            })
+
+
 def _build_synthetic_candles(n: int = 50):
     """Build synthetic candle features for testing."""
     try:
@@ -444,13 +465,33 @@ def main():
         except ImportError as e:
             print(f"  [FAIL] FundingSqueeze import: {e}")
 
+    if args.strategy in ("all", "macro_core"):
+        try:
+            from src.strategies.macro_core import MacroCoreStrategy
+            from config import MacroCoreConfig
+            # MacroCore needs a macro-BULL provider (rising dailies) to fire;
+            # persist_state=False keeps the dry run from writing state files
+            deps_bull = dict(deps)
+            deps_bull["kline_provider"] = FakeBullKlineProvider()
+            strategies_to_test.append((
+                "MacroCore",
+                MacroCoreStrategy,
+                MacroCoreConfig,
+                {"name": "MacroCore Test", "enabled": True, "persist_state": False},
+                deps_bull,
+            ))
+        except ImportError as e:
+            print(f"  [FAIL] MacroCore import: {e}")
+
     if not strategies_to_test:
         print("No strategies available to test")
         sys.exit(1)
 
     print(f"\nTesting {len(strategies_to_test)} strategies...")
-    for name, cls, cfg_cls, cfg_kwargs in strategies_to_test:
-        result = test_strategy(name, cls, cfg_cls, cfg_kwargs, mock_client, deps)
+    for entry in strategies_to_test:
+        name, cls, cfg_cls, cfg_kwargs = entry[:4]
+        strategy_deps = entry[4] if len(entry) > 4 else deps
+        result = test_strategy(name, cls, cfg_cls, cfg_kwargs, mock_client, strategy_deps)
         results.append(result)
 
     # Summary

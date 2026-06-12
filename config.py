@@ -348,6 +348,40 @@ class FundingSqueezeConfig(StrategyConfig):
         )
 
 
+@dataclass
+class MacroCoreConfig(StrategyConfig):
+    """Configuration for Macro Core strategy (regime-following long core).
+
+    4y validation (Jun 2022 - Jun 2026, daily, costs 0.10%/side):
+    entry daily close > SMA200d, exit chandelier 5xATR20d from max close:
+    +315% vs +136% buy&hold, maxDD 24.8%, 9 trades, 2025 -1%.
+    Robust plateau k in [4.5, 6]."""
+    symbol: str = "BTCUSDT"
+    instrument: str = "BTC-PERPETUAL"
+    sma_days: int = 200            # macro trend filter (daily SMA)
+    atr_days: int = 20             # daily ATR period for the chandelier
+    chandelier_k: float = 5.0      # exit: close < max_close - k * ATR20d
+    disaster_sl_pct: float = 0.25  # venue stop at entry*(1-25%) (crash guard)
+    exposure_fraction: float = 1.0 # core size = equity * fraction
+    state_path: str = "data/macro_core_state.json"
+    persist_state: bool = True
+
+    @staticmethod
+    def from_env():
+        return MacroCoreConfig(
+            name="Macro Core",
+            enabled=os.getenv("MC_ENABLED", "true").lower() == "true",
+            symbol=os.getenv("MC_SYMBOL", "BTCUSDT"),
+            instrument=os.getenv("MC_INSTRUMENT", "BTC-PERPETUAL"),
+            sma_days=int(os.getenv("MC_SMA_DAYS", "200")),
+            atr_days=int(os.getenv("MC_ATR_DAYS", "20")),
+            chandelier_k=float(os.getenv("MC_CHANDELIER_K", "5.0")),
+            disaster_sl_pct=float(os.getenv("MC_DISASTER_SL_PCT", "0.25")),
+            exposure_fraction=float(os.getenv("MC_EXPOSURE_FRACTION", "1.0")),
+            state_path=os.getenv("MC_STATE_PATH", "data/macro_core_state.json"),
+        )
+
+
 class Config:
     """Global configuration class"""
 
@@ -437,6 +471,9 @@ class Config:
 
         if os.getenv("FS_ENABLED", "true").lower() == "true":
             cls.STRATEGIES.append(FundingSqueezeConfig.from_env())
+
+        if os.getenv("MC_ENABLED", "true").lower() == "true":
+            cls.STRATEGIES.append(MacroCoreConfig.from_env())
 
     @classmethod
     def validate(cls) -> bool:

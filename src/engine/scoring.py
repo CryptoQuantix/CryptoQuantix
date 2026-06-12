@@ -108,6 +108,12 @@ REGIME_RULES: Dict[str, Tuple[List[str], List[str]]] = {
         ["TREND_DOWN", "EXPANSION", "COMPRESSION", "RANGE"],
         ["TREND_UP"],
     ),
+    # MacroCore is a daily regime-following core: hourly regimes are noise
+    # at its timescale — no hourly gating.
+    "MacroCoreStrategy": (
+        ["TREND_DOWN", "TREND_UP", "EXPANSION", "COMPRESSION", "RANGE"],
+        [],
+    ),
 }
 
 

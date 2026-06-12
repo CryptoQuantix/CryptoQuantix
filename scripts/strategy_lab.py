@@ -76,6 +76,10 @@ def simulate(
     """
     events: DataFrame indexed by signal bar close-time with columns:
       direction (+1/-1), sl (price), tp (price, 0 = none)
+      trail (optional, price distance): chandelier trailing stop — the stop
+        ratchets to extreme_since_entry -/+ trail and replaces the static SL
+        once tighter. Checked against the PREVIOUS bars' extreme (the stop is
+        never moved by the same bar that hits it).
     Entry: next 1m open after the event timestamp, with slippage.
     Returns trades DataFrame.
     """
@@ -84,6 +88,7 @@ def simulate(
     lows = m1["low"].values
     closes = m1["close"].values
     idx = m1.index
+    has_trail = "trail" in events.columns
 
     trades = []
     last_exit_time = None
@@ -105,12 +110,14 @@ def simulate(
         entry = opens[p0] * (1 + d * SLIPPAGE)
         sl = float(ev["sl"])
         tp = float(ev["tp"])
+        trail = float(ev["trail"]) if has_trail and not np.isnan(ev["trail"]) else 0.0
         risk = abs(entry - sl)
         if risk <= 0 or entry <= 0:
             continue
 
         p_end = min(p0 + max_hold_min, len(idx) - 1)
         exit_price, exit_reason, p_exit = None, "time", p_end
+        ext = entry  # extreme favorable price since entry (for trailing)
         for p in range(p0, p_end):
             if d > 0:
                 if lows[p] <= sl:
@@ -119,6 +126,9 @@ def simulate(
                 if tp > 0 and highs[p] >= tp:
                     exit_price, exit_reason, p_exit = tp, "tp", p
                     break
+                if trail > 0:
+                    ext = max(ext, highs[p])
+                    sl = max(sl, ext - trail)
             else:
                 if highs[p] >= sl:
                     exit_price, exit_reason, p_exit = sl, "sl", p
@@ -126,6 +136,9 @@ def simulate(
                 if tp > 0 and lows[p] <= tp:
                     exit_price, exit_reason, p_exit = tp, "tp", p
                     break
+                if trail > 0:
+                    ext = min(ext, lows[p])
+                    sl = min(sl, ext + trail)
         if exit_price is None:
             exit_price = closes[p_end]
         exit_price *= (1 - d * SLIPPAGE)

@@ -60,8 +60,18 @@ pullback long su SMA oraria, momentum 3 giorni, stagionalità oraria/settimanale
 
 ## 2. Candidati in ordine di priorità
 
-### C1 — MacroCore (il "guadagnare di più" vero) · PRIORITÀ MASSIMA
-**Ipotesi**: nel bull la maggior parte del rendimento è drift; un'esposizione core
+### C1 — MacroCore · ✅ COMPLETATA (2026-06-12)
+**Esito**: implementata in `src/strategies/macro_core.py` (MC_* in .env).
+Lo sweep anti-whipsaw ha trovato il vincitore: **exit chandelier k=5**
+(close < max_close dall'ingresso − 5×ATR20d) al posto dell'uscita SMA200:
+**+315%/4y** (vs +193% della naive, +136% buy&hold), maxDD 24,7%, 9 trade,
+2023 +108% · 2024 +100% · **2025 -1%** (whipsaw risolto). Plateau robusto
+k∈[4.5, 6]. Backtest codice reale = sweep (scripts/backtest_macro_core.py).
+Isteresi/slope/conferma-2gg: tutte peggiori del chandelier. Vol-targeting
+entry-fixed non lega (expo media 0,94) → ribilanciamento giornaliero rinviato
+a C4. Stato persistente su data/macro_core_state.json, stop disastro -25%.
+
+**Ipotesi originale**: nel bull la maggior parte del rendimento è drift; un'esposizione core
 con filtro di tendenza cattura più di qualsiasi strategia tattica.
 **Pre-validazione (round 6, 2026-06-11)**: long se daily close > SMA200d:
 **+193% in 4 anni** (buy&hold +136%), 16 roundtrip totali, maxDD 31,7%,
@@ -86,17 +96,15 @@ con filtro di tendenza cattura più di qualsiasi strategia tattica.
      nel RiskManager (vedi C4)
 4. Gate: pipeline §1 + maxDD < 25% con sizing scelto
 
-### C2 — Trailing stop engine per TrendBreakdown
-**Ipotesi**: l'exit a tempo (168h) lascia profitti sul tavolo nei trend forti;
-un chandelier ATR cattura le code senza allargare le perdite.
-**Fatto finora**: noTP/168h ha già raddoppiato l'edge long (+22→+68bps).
-**Micro-step**:
-1. Estendere `strategy_lab.simulate()` con trailing: SL dinamico =
-   max(SL, max_close_since_entry − k×ATR), k ∈ {3, 4, 5} long; simmetrico short
-2. Se i gate passano (PF e cumulato ≥ baseline noTP/168h, 2025 non peggiorato):
-   implementare in `manage_positions()` (modifica SL via order_manager —
-   verificare API per edit/cancel-replace dello stop su Deribit)
-3. Testare anche su lato SHORT (oggi TP 2R/24h)
+### C2 — Trailing stop engine per TrendBreakdown · ❌ BOCCIATA (2026-06-12)
+**Esito**: trailing implementato nel simulatore (`strategy_lab.simulate()`,
+colonna `trail`) e testato su TB con k∈{3,4,5}, hold fino a 336h:
+- LONG: migliore variante (k=5/336h) +53,2% cumulato vs **+59,2% baseline**
+  noTP/168h → gate "cumulato ≥ baseline" FALLITO
+- SHORT: tutte negative o ≈0 vs +22bps baseline TP 2R/24h → FALLITO
+Il chandelier funziona solo a scala daily (MacroCore). **Niente trailing
+engine live** — complessità order-edit evitata. Il supporto `trail` nel
+simulatore resta per test futuri.
 
 ### C3 — TrendBreakdown multi-symbol (ETH, poi SOL)
 **Ipotesi**: l'edge Donchian+macro è strutturale, non BTC-specifico;
@@ -171,12 +179,12 @@ fallisce, documentare nel report e lasciare OFF per sempre.
 
 ---
 
-## 5. Ordine di esecuzione suggerito (prossima sessione)
+## 5. Ordine di esecuzione (aggiornato 2026-06-12)
 
-1. C1 step 1-2 (sweep MacroCore + vol targeting) — solo ricerca, zero rischio
-2. C2 step 1 (trailing nel simulatore) — sblocca anche C1 exit
-3. C1 step 3 (implementazione MacroCore) se i gate passano
-4. C4 step 1-2 (equity simulator + sizing)
-5. C3 (ETH) quando 1-4 stabili
-
-Stima: C1+C2 in una sessione; C3+C4 nella successiva.
+1. ~~C1 (MacroCore)~~ ✅ FATTA — chandelier k=5, +315%/4y, in produzione
+2. ~~C2 (trailing TB)~~ ❌ BOCCIATA — peggiore delle baseline su entrambi i lati
+3. **PROSSIMA SESSIONE → C4** (equity simulator + sizing; include il
+   vol-targeting giornaliero rinviato da C1: su MacroCore porta il maxDD
+   a 18-22% — numeri già in scripts/sweep_macrocore.py step 2)
+4. C3 (ETH multi-symbol) quando C4 stabile
+5. C7 (validazione legacy) in parallelo quando c'è tempo

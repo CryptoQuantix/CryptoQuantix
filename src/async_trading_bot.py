@@ -69,10 +69,11 @@ except ImportError as e:
     HAS_NEW_STRATEGIES = False
     logging.warning(f"New strategies not available: {e}")
 
-# Quant-validated strategies (TrendBreakdown, FundingSqueeze)
+# Quant-validated strategies (TrendBreakdown, FundingSqueeze, MacroCore)
 try:
     from src.strategies.trend_breakdown import TrendBreakdownStrategy
     from src.strategies.funding_squeeze import FundingSqueezeStrategy
+    from src.strategies.macro_core import MacroCoreStrategy
     from src.data.kline_provider import BinanceKlineProvider
     HAS_QUANT_STRATEGIES = True
 except ImportError as e:
@@ -105,7 +106,7 @@ except ImportError:
     HAS_NEW_CONFIGS = False
 
 try:
-    from config import TrendBreakdownConfig, FundingSqueezeConfig
+    from config import TrendBreakdownConfig, FundingSqueezeConfig, MacroCoreConfig
     HAS_QUANT_CONFIGS = True
 except ImportError:
     HAS_QUANT_CONFIGS = False
@@ -270,6 +271,8 @@ class AsyncTradingBot:
                     strategy = TrendBreakdownStrategy(self.client, strategy_config, self.dependencies)
                 elif isinstance(strategy_config, FundingSqueezeConfig):
                     strategy = FundingSqueezeStrategy(self.client, strategy_config, self.dependencies)
+                elif isinstance(strategy_config, MacroCoreConfig):
+                    strategy = MacroCoreStrategy(self.client, strategy_config, self.dependencies)
 
             if strategy:
                 self.strategies.append(strategy)
