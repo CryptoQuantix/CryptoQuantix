@@ -13,6 +13,7 @@ import json
 import logging
 import os
 import sqlite3
+from datetime import datetime
 from typing import Any, Dict, List, Optional, Tuple
 
 import pandas as pd
@@ -232,6 +233,145 @@ def reconcile(positions: List[Dict], orders: List[Dict]) -> Dict[str, Any]:
         "orders_by_instr": orders_by_instr,
         "issues": issues,
     }
+
+
+# ----------------------------------------------------------------------
+# Rischio / esposizione (Fase 2) — stessi numeri del RiskManager
+# ----------------------------------------------------------------------
+
+def load_risk_env() -> Dict[str, float]:
+    """Parametri rischio dal .env, stessi nomi e default di async_trading_bot."""
+    from dotenv import load_dotenv
+    load_dotenv()
+    return {
+        "max_gross_exposure": float(os.getenv("MAX_GROSS_EXPOSURE", 1.5)),
+        "max_daily_loss_pct": float(os.getenv("MAX_DAILY_LOSS_PCT", 0.03)),
+        "max_open_trades": int(os.getenv("MAX_OPEN_TRADES", 3)),
+        "base_risk_pct": float(os.getenv("BASE_RISK_PCT", 0.01)),
+        "initial_equity": float(os.getenv("INITIAL_EQUITY", 10000)),
+    }
+
+
+def equity_like_bot(live: Dict[str, Any]) -> float:
+    """Equity totale USD come RiskManager.get_total_equity: somma BTC+ETH
+    convertita al prezzo indice, con il cap testnet di $50k sul sizing."""
+    total = sum(
+        acct["equity"] * live["index_usd"].get(cur, 0.0)
+        for cur, acct in live["accounts"].items()
+    )
+    if live["env"] == "test" and total > 50000.0:
+        total = 50000.0
+    return total
+
+
+def daily_pnl_from_journal(closed: pd.DataFrame) -> Dict[str, Any]:
+    """P&L del giorno corrente ricostruito dal journal (trade chiusi oggi,
+    data locale come RiskManager._check_daily_reset che usa date.today())."""
+    if closed.empty:
+        return {"pnl_usd": 0.0, "n_trades": 0}
+    local_tz = datetime.now().astimezone().tzinfo
+    today = datetime.now().date()
+    exits_local = closed["exit_time"].dt.tz_convert(local_tz)
+    today_mask = exits_local.dt.date == today
+    return {
+        "pnl_usd": float(closed.loc[today_mask, "pnl_usd"].sum()),
+        "n_trades": int(today_mask.sum()),
+    }
+
+
+@st.cache_resource
+def get_kline_provider():
+    from src.data.kline_provider import BinanceKlineProvider
+    return BinanceKlineProvider()
+
+
+@st.cache_data(ttl=60)
+def fetch_macro_state(
+    symbols: Tuple[str, ...] = ("BTCUSDT", "ETHUSDT"),
+    sma_days: int = 200,
+    slope_days: int = 30,
+    vol_lookback: int = 30,
+) -> Dict[str, Dict[str, Any]]:
+    """
+    Stato macro per simbolo da klines daily Binance (dati pubblici).
+    Stessa matematica dei gate nelle strategie:
+      - bull: ultimo close daily CHIUSO > SMA(sma_days)        (TB/MC)
+      - sma_declining: SMA oggi < SMA slope_days fa            (FS)
+      - realized_vol: vol 30d annualizzata sqrt(365)           (MC vol-target)
+    """
+    kp = get_kline_provider()
+    out: Dict[str, Dict[str, Any]] = {}
+    for sym in symbols:
+        daily = kp.get_klines(sym, "1d", sma_days + slope_days + 2)
+        if len(daily) < sma_days + 1:
+            out[sym] = {"ok": False}
+            continue
+        closes = [c["close"] for c in daily]
+        close = closes[-1]
+        sma_now = sum(closes[-sma_days:]) / sma_days
+        sma_past = None
+        if len(closes) >= sma_days + slope_days:
+            past = closes[-(sma_days + slope_days):-slope_days]
+            sma_past = sum(past) / len(past)
+        vol = None
+        if len(closes) >= vol_lookback + 1:
+            cl = closes[-(vol_lookback + 1):]
+            rets = [cl[i] / cl[i - 1] - 1 for i in range(1, len(cl))]
+            mean = sum(rets) / len(rets)
+            var = sum((r - mean) ** 2 for r in rets) / (len(rets) - 1)
+            vol = (var ** 0.5) * (365 ** 0.5)
+        out[sym] = {
+            "ok": True,
+            "close": close,
+            "sma200": sma_now,
+            "bull": close > sma_now,
+            "dist_pct": (close - sma_now) / sma_now * 100,
+            "sma_declining": sma_past is not None and sma_now < sma_past,
+            "funding": kp.get_funding_rate(sym),
+            "realized_vol": vol,
+        }
+    return out
+
+
+def vol_target_bucket(realized_vol: Optional[float], vol_target: float,
+                      step: float = 0.25) -> Optional[float]:
+    """Bucket esposizione vol-target, identico a MacroCore._target_exposure."""
+    if vol_target <= 0:
+        return 1.0
+    if not realized_vol or realized_vol <= 0:
+        return None
+    expo = min(1.0, vol_target / realized_vol)
+    expo = round(expo / step) * step
+    return max(step, expo)
+
+
+def load_strategy_instances() -> List[Dict[str, Any]]:
+    """Istanze strategia attive ESATTAMENTE come le costruisce il bot
+    (Config.load_strategies dal .env). Sola lettura, nessun side effect."""
+    try:
+        from dotenv import load_dotenv
+        load_dotenv()
+        from config import Config
+        Config.load_strategies()
+        out = []
+        for cfg in Config.STRATEGIES:
+            out.append({
+                "name": getattr(cfg, "name", cfg.__class__.__name__),
+                "class": cfg.__class__.__name__,
+                "symbol": getattr(cfg, "symbol",
+                                  getattr(cfg, "binance_symbol", "?")),
+                "instrument": getattr(cfg, "instrument", "?"),
+                "enable_long": getattr(cfg, "enable_long", None),
+                "enable_short": getattr(cfg, "enable_short", None),
+                "funding_threshold": getattr(cfg, "funding_threshold", None),
+                "vol_target": getattr(cfg, "vol_target", None),
+                "exposure_fraction": getattr(cfg, "exposure_fraction", None),
+                "state_path": getattr(cfg, "state_path", None),
+            })
+        return out
+    except Exception as e:
+        logger.warning(f"[Dashboard] load_strategies fallita: {e}")
+        return []
 
 
 def attribute_strategy(

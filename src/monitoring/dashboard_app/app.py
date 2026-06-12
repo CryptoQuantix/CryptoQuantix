@@ -18,6 +18,7 @@ def main():
 
     pages = {
         "Trade in corso": "live",
+        "Rischio & Esposizione": "risk",
         "Storico Operazioni": "history",
     }
     with st.sidebar:
@@ -31,6 +32,9 @@ def main():
     if pages[choice] == "live":
         from src.monitoring.dashboard_app import page_live
         page_live.render()
+    elif pages[choice] == "risk":
+        from src.monitoring.dashboard_app import page_risk
+        page_risk.render()
     else:
         from src.monitoring.dashboard_app import page_history
         page_history.render()

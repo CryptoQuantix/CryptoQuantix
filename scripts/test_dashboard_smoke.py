@@ -86,6 +86,12 @@ def run_apptest():
     if errors:
         print(f"     (st.error mostrati, attesi senza venue/chiavi: {errors})")
 
+    at.sidebar.radio[0].set_value("Rischio & Esposizione")
+    at.run()
+    assert not at.exception, f"Pagina rischio: eccezione {at.exception}"
+    print(f"[OK] pagina 'Rischio & Esposizione': {len(at.metric)} metriche, "
+          f"{len(at.dataframe)} tabelle, nessuna eccezione")
+
     at.sidebar.radio[0].set_value("Storico Operazioni")
     at.run()
     assert not at.exception, f"Pagina storico: eccezione {at.exception}"

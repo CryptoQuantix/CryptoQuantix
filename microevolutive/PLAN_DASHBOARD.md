@@ -1,6 +1,6 @@
 # Piano microevolutivo — Dashboard Streamlit di gestione e monitoraggio
 
-> **Data**: 2026-06-12 · **Stato**: Fase 1 IMPLEMENTATA (12/06) — restano Fasi 2-5
+> **Data**: 2026-06-12 · **Stato**: Fasi 1-2 IMPLEMENTATE (12/06) — restano Fasi 3-5
 > **Obiettivo**: un cockpit unico per (a) gestire TUTTE le impostazioni del bot,
 > (b) monitorare i trade in corso in tempo reale, (c) consultare uno storico
 > CHIARO di tutte le operazioni chiuse con importi precisi per operazione.
@@ -62,7 +62,14 @@ importi precisi per operazione.
    storico entro 60s con P&L identico al positions.log; un ordine orfano
    creato a mano viene evidenziato.
 
-## Fase 2 — PANNELLO RISCHIO ed ESPOSIZIONE
+## Fase 2 — PANNELLO RISCHIO ed ESPOSIZIONE — ✅ FATTA (2026-06-12)
+
+> Implementata in `page_risk.py`: barra utilizzo gross cap con breakdown per
+> strumento/strategia, kill switch ricostruito dal journal (P&L oggi vs
+> MAX_DAILY_LOSS_PCT), vol-target MacroCore (bucket target ORA vs bucket
+> posizione dallo state file), stato macro per simbolo (close vs SMA200d,
+> slope, funding) e matrice istanza x lato abilitato ai gate correnti.
+> Le istanze vengono da `Config.load_strategies()` — stessa fonte del bot.
 
 1. Esposizione lorda corrente vs cap (`MAX_GROSS_EXPOSURE`): barra di
    utilizzo, breakdown per strumento e per strategia
