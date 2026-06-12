@@ -2,7 +2,7 @@
 
 > Aggiornato: giugno 2026, dopo il ribaltamento verso le strategie
 > quantitative validate (TB/FS/MC). La versione precedente di questo
-> documento è in [archive/01_architecture.md](archive/01_architecture.md).
+> documento è in `docs/archive/` (repo privato).
 
 ## Vista d'insieme
 
@@ -107,7 +107,7 @@ Legge journal.db (sqlite `mode=ro`), state JSON, `.env` e Deribit via REST
 Le azioni di scrittura passano da **flag file** (`src/core/flags.py`,
 `data/flags/`) che il bot rilegge nei suoi loop — la dashboard non chiama
 mai il processo bot. Piano completo:
-[../microevolutive/PLAN_DASHBOARD.md](../microevolutive/PLAN_DASHBOARD.md).
+`microevolutive/PLAN_DASHBOARD.md` (repo privato).
 
 ## Backtest e validazione
 

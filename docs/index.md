@@ -29,15 +29,15 @@ macro-gating automatico, risk management di portafoglio, dashboard.
 
 | Risorsa | Contenuto |
 |---|---|
-| [../microevolutive/PLAN_BULL_EVOLUTION.md](../microevolutive/PLAN_BULL_EVOLUTION.md) | Pipeline di validazione + risultati C1-C7 |
-| [../microevolutive/PLAN_DASHBOARD.md](../microevolutive/PLAN_DASHBOARD.md) | Piano dashboard (fasi 1-2 fatte, 3-5 future) |
+| `microevolutive/PLAN_BULL_EVOLUTION.md` (repo privato) | Pipeline di validazione + risultati C1-C7 |
+| `microevolutive/PLAN_DASHBOARD.md` (repo privato) | Piano dashboard (fasi 1-2 fatte, 3-5 future) |
 | `../data/research/multicycle_report.txt` | Validazione 4y delle strategie |
 | `../data/research/eth_validation.txt` | Multi-symbol ETH (C3) |
 | `../data/research/legacy_validation_btc.txt` | Bocciatura legacy (C7) |
 
 ## Storico
 
-[archive/](archive/) contiene i documenti superati dal ribaltamento di
+La cartella `archive/` del repo privato contiene i documenti superati dal ribaltamento di
 giugno 2026 (vecchia architettura, strategie volumetriche, smart money,
 piani di profittabilità, guide setup originali). Utili solo come storia
 del progetto.

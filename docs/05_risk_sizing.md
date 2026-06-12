@@ -2,7 +2,7 @@
 
 > Aggiornato: giugno 2026. Implementazione: `src/core/risk_manager.py`.
 > La versione precedente (focalizzata su Kelly teorico e condor) è in
-> [archive/05_risk_sizing.md](archive/05_risk_sizing.md).
+> `docs/archive/` (repo privato).
 
 Il rischio è gestito su **quattro livelli indipendenti**: per-trade
 (sizing), per-portafoglio (cap lordo + max posizioni), per-giornata (kill
@@ -84,7 +84,7 @@ Ribilancio solo quando il bucket cambia (churn minimo, ordini
 29.6% → 21.5%, Calmar 2.43 → 2.61, peggior anno 0.0%, a fronte di
 rendimento +770% → +491%. **Adottato**; testati e bocciati: Kelly 0.25×
 e de-risk su drawdown (entrambi Calmar peggiore).
-Numeri completi: [../microevolutive/PLAN_BULL_EVOLUTION.md](../microevolutive/PLAN_BULL_EVOLUTION.md) (sezione C4).
+Numeri completi: `microevolutive/PLAN_BULL_EVOLUTION.md` (repo privato) (sezione C4).
 
 ## 6. Equity e testnet
 

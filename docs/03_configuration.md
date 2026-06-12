@@ -70,7 +70,7 @@ STRATEGY_IRON_CONDOR_ENABLED=false   # opzioni, fuori direzione progetto
 
 ## Note
 
-- `Config.load_strategies()` ([../config.py](../config.py)) è l'unico punto
+- `Config.load_strategies()` (`config.py`) è l'unico punto
   che traduce il `.env` in istanze: la dashboard usa la stessa funzione,
   quindi vede esattamente le istanze del bot.
 - Testnet: l'equity di sizing è cappata a $50k (i faucet testnet gonfiano
