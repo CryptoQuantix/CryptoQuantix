@@ -1,8 +1,8 @@
 @echo off
-REM Script to start the Coinmaker bot with Docker Compose (Windows)
+REM Script to start the CryptoQuantix bot with Docker Compose (Windows)
 
 echo ==========================================
-echo   Starting Coinmaker Trading Bot
+echo   Starting CryptoQuantix Trading Bot
 echo ==========================================
 
 REM Check if .env exists

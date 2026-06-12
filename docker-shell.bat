@@ -6,7 +6,7 @@ echo   Opening shell in bot container
 echo ==========================================
 echo.
 
-docker-compose ps | findstr "coinmaker-bot.*Up" >nul
+docker-compose ps | findstr "cryptoquantix-bot.*Up" >nul
 if errorlevel 1 (
     echo ERROR: Bot container is not running!
     echo Start it first with: docker-start.bat
@@ -14,4 +14,4 @@ if errorlevel 1 (
     exit /b 1
 )
 
-docker-compose exec coinmaker-bot /bin/bash
+docker-compose exec cryptoquantix-bot /bin/bash

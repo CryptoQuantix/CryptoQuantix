@@ -1,5 +1,5 @@
 ================================================================================
-    COINMAKER - IRON CONDOR TRADING BOT
+    CRYPTOQUANTIX - IRON CONDOR TRADING BOT
     Progetto Completato e Pronto all'Uso!
 ================================================================================
 

@@ -300,7 +300,7 @@ CMD ["python", "-c", "import asyncio; from src.async_trading_bot import AsyncTra
 # docker-compose.yml
 version: "3.8"
 services:
-  coinmaker-quant:
+  cryptoquantix:
     build: .
     env_file: .env
     volumes:
@@ -316,7 +316,7 @@ services:
 
 ```bash
 docker-compose up -d                    # avvia in background
-docker-compose logs -f coinmaker-quant  # segui i log
+docker-compose logs -f cryptoquantix  # segui i log
 docker-compose down                     # stop
 ```
 

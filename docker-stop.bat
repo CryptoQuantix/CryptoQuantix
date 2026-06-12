@@ -1,8 +1,8 @@
 @echo off
-REM Script to stop the Coinmaker bot (Windows)
+REM Script to stop the CryptoQuantix bot (Windows)
 
 echo ==========================================
-echo   Stopping Coinmaker Trading Bot
+echo   Stopping CryptoQuantix Trading Bot
 echo ==========================================
 
 docker-compose stop

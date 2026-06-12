@@ -6,10 +6,10 @@ echo "  Opening shell in bot container"
 echo "=========================================="
 echo ""
 
-if ! docker compose ps | grep -q "coinmaker-bot.*Up"; then
+if ! docker compose ps | grep -q "cryptoquantix-bot.*Up"; then
     echo "❌ Bot container is not running!"
     echo "Start it first with: ./docker-start.sh"
     exit 1
 fi
 
-docker compose exec coinmaker-bot /bin/bash
+docker compose exec cryptoquantix-bot /bin/bash

@@ -4,7 +4,7 @@
 set -e
 
 echo "=========================================="
-echo "  Restarting Coinmaker Trading Bot"
+echo "  Restarting CryptoQuantix Trading Bot"
 echo "=========================================="
 
 docker compose restart

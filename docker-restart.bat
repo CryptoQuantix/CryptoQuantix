@@ -2,7 +2,7 @@
 REM Script to restart the bot (Windows)
 
 echo ==========================================
-echo   Restarting Coinmaker Trading Bot
+echo   Restarting CryptoQuantix Trading Bot
 echo ==========================================
 
 docker-compose restart

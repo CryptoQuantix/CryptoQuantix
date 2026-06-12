@@ -1,1 +1,1 @@
-# Coinmaker - Iron Condor Trading Bot for Deribit
+# CryptoQuantix - Iron Condor Trading Bot for Deribit

@@ -10,7 +10,7 @@ import streamlit as st
 
 def main():
     st.set_page_config(
-        page_title="CoinMaker Quant — Dashboard",
+        page_title="CryptoQuantix — Dashboard",
         page_icon="📊",
         layout="wide",
         initial_sidebar_state="expanded",
@@ -25,7 +25,7 @@ def main():
         "Azioni": "actions",
     }
     with st.sidebar:
-        st.title("CoinMaker Quant")
+        st.title("CryptoQuantix")
         choice = st.radio("Pagina", list(pages.keys()))
         st.caption(
             f"UTC {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} — "

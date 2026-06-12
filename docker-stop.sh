@@ -1,10 +1,10 @@
 #!/bin/bash
-# Script to stop the Coinmaker bot
+# Script to stop the CryptoQuantix bot
 
 set -e
 
 echo "=========================================="
-echo "  Stopping Coinmaker Trading Bot"
+echo "  Stopping CryptoQuantix Trading Bot"
 echo "=========================================="
 
 docker compose stop

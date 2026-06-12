@@ -1,6 +1,7 @@
-site_name: Coinmaker Quant — Documentazione
+site_name: CryptoQuantix — Documentazione
 site_description: Bot di trading quantitativo su futures/perpetual — Deribit + dati Binance
-site_author: Coinmaker Team
+site_author: CryptoQuantix Team
+site_url: https://cryptoquantix.github.io/docs/
 docs_dir: docs
 # L'archivio storico non fa parte del sito (link interni superati)
 exclude_docs: |

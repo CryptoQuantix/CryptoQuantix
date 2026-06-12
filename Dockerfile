@@ -1,4 +1,4 @@
-# Coinmaker Quant — Dockerfile (multi-arch: amd64 + arm64/Raspberry Pi)
+# CryptoQuantix — Dockerfile (multi-arch: amd64 + arm64/Raspberry Pi)
 # Stessa immagine per i 3 servizi (bot, dashboard, collector): cambia solo
 # il command nel docker-compose.yml.
 

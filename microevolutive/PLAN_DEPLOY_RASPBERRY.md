@@ -1,7 +1,7 @@
 # Piano di deploy — Raspberry Pi + Docker + Cloudflare Tunnel
 
 > **Data**: 2026-06-12 · **Esecuzione prevista**: 2026-06-13
-> **Obiettivo**: sostituire il coinmaker attuale sul Raspberry con la
+> **Obiettivo**: sostituire il cryptoquantix attuale sul Raspberry con la
 > versione nuova (bot async TB/FS/MC + dashboard 6 pagine + collector C8),
 > dashboard raggiungibile da un sottodominio via Cloudflare Tunnel.
 > **Vincolo non negoziabile**: i dati (journal, positioning C8, state,
@@ -66,7 +66,7 @@ df -h               # >= 5GB liberi (immagine ~1.5GB + dati + backup)
 cancella i container, `docker compose up -d` → tutto riparte con gli
 stessi dati.
 
-## 3. Migrazione dal coinmaker attuale
+## 3. Migrazione dal cryptoquantix attuale
 
 > Il vecchio container gira con `main.py` (bot sync legacy). Da sostituire
 > integralmente. **Punto delicato: lo stato.**
@@ -75,10 +75,10 @@ stessi dati.
    stato del trade in memoria: si perde comunque a ogni restart; gli SL/TP
    sul venue proteggono, ma il time-exit del trade in corso andrebbe perso).
    MacroCore invece persiste su file → va portato.
-2. Sul Pi, nella dir del VECCHIO coinmaker:
+2. Sul Pi, nella dir del VECCHIO cryptoquantix:
    ```bash
    docker compose down            # o docker stop <vecchio container>
-   tar czf ~/coinmaker_old_$(date +%Y%m%d).tar.gz data/ logs/ .env   # cintura di sicurezza
+   tar czf ~/cryptoquantix_old_$(date +%Y%m%d).tar.gz data/ logs/ .env   # cintura di sicurezza
    ```
 3. Decidere cosa portare nel nuovo deployment:
    - `data/macro_core_state.json` — **SÌ se MC è in posizione** (altrimenti il bot non sa di avere il core aperto)
@@ -91,14 +91,14 @@ stessi dati.
 
 ### 4.1 Codice
 ```bash
-cd ~ && git clone <URL_REPO> coinmaker-quant && cd coinmaker-quant
+cd ~ && git clone <URL_REPO> cryptoquantix && cd cryptoquantix
 # (o git pull se gia' clonato)
 ```
 
 ### 4.2 Configurazione
 ```bash
 # Trasferisci il .env dal PC (gitignored, non viaggia con git) — via scp:
-#   scp .env pi@raspberry:~/coinmaker-quant/.env
+#   scp .env pi@raspberry:~/cryptoquantix/.env
 nano .env    # verifica: DERIBIT_ENV (test finche' non validi il deploy!),
              # chiavi presenti, TB/FS/MC_ENABLED, POSITIONING_ENABLED=true
 chmod 600 .env
@@ -108,9 +108,9 @@ chmod 600 .env
 ```bash
 mkdir -p data logs
 # ARCHIVIO C8 dal PC (contiene il backfill 31gg del 12/06 — da non perdere):
-#   scp data/positioning_history.db pi@raspberry:~/coinmaker-quant/data/
+#   scp data/positioning_history.db pi@raspberry:~/cryptoquantix/data/
 # Stato/journal dal vecchio deployment (vedi §3.3):
-#   cp ~/vecchio-coinmaker/data/macro_core_state.json data/  (se MC in posizione)
+#   cp ~/vecchio-cryptoquantix/data/macro_core_state.json data/  (se MC in posizione)
 ```
 
 ### 4.4 Build e avvio
@@ -145,14 +145,14 @@ nano /etc/cloudflared/config.yml
 ```
 ```yaml
 ingress:
-  - hostname: coinmaker.TUODOMINIO.com
+  - hostname: cryptoquantix.TUODOMINIO.com
     service: http://localhost:8501
   # ... eventuali altri hostname esistenti ...
   - service: http_status:404
 ```
 ```bash
 # 2. Rotta DNS per il sottodominio sul tunnel esistente:
-cloudflared tunnel route dns <NOME_TUNNEL> coinmaker.TUODOMINIO.com
+cloudflared tunnel route dns <NOME_TUNNEL> cryptoquantix.TUODOMINIO.com
 # 3. Riavvia il servizio:
 sudo systemctl restart cloudflared
 ```
@@ -161,7 +161,7 @@ sudo systemctl restart cloudflared
 Decommentare il blocco `cloudflared` nel docker-compose.yml, creare
 `.env.cloudflared` con `TUNNEL_TOKEN=...` (dashboard Zero Trust → Tunnels),
 e nel tunnel remoto configurare il public hostname
-`coinmaker.TUODOMINIO.com → http://dashboard:8501` (nome del servizio
+`cryptoquantix.TUODOMINIO.com → http://dashboard:8501` (nome del servizio
 compose, stessa network).
 
 ## 6. ⚠️ SICUREZZA — OBBLIGATORIO PRIMA DI ANDARE ONLINE
@@ -173,7 +173,7 @@ sottodominio pubblico senza protezione = chiunque può operare sul conto.
 **Cloudflare Access (Zero Trust, gratuito fino a 50 utenti):**
 1. Dashboard Cloudflare → Zero Trust → Access → Applications → **Add an
    application** → Self-hosted
-2. Application domain: `coinmaker.TUODOMINIO.com`
+2. Application domain: `cryptoquantix.TUODOMINIO.com`
 3. Policy: *Allow* → Include → **Emails** → la tua email (lantoniotrento@gmail.com)
 4. Session duration: 24h. Login via OTP email (o Google SSO se configurato).
 
@@ -189,10 +189,10 @@ conferma doppia + audit log (`logs/dashboard_actions.log`).
 
 ```bash
 chmod +x scripts/backup_data.sh
-./scripts/backup_data.sh                  # test manuale: crea ~/backups/coinmaker/coinmaker_data_<ts>.tar.gz
+./scripts/backup_data.sh                  # test manuale: crea ~/backups/cryptoquantix/cryptoquantix_data_<ts>.tar.gz
 crontab -e
 # aggiungi:
-15 3 * * * /home/pi/coinmaker-quant/scripts/backup_data.sh >> /home/pi/backups/coinmaker/backup.log 2>&1
+15 3 * * * /home/pi/cryptoquantix/scripts/backup_data.sh >> /home/pi/backups/cryptoquantix/backup.log 2>&1
 ```
 - Snapshot **consistenti** dei .db via `sqlite3 .backup` (sicuro anche a bot acceso)
 - Retention 14 giorni, dentro l'archivio: tutti i .db, state JSON,
@@ -201,7 +201,7 @@ crontab -e
   non protegge dalla morte della SD (causa #1 di morte dei Raspberry).
   Decommentare la riga `rclone` nello script dopo `rclone config`
   (Drive/Dropbox/S3), oppure montare una USB e puntare
-  `COINMAKER_BACKUP_DIR` lì.
+  `CRYPTOQUANTIX_BACKUP_DIR` lì.
 - Il check trimestrale C8 (set 2026) include la verifica che questi
   backup esistano e siano ripristinabili.
 
@@ -216,7 +216,7 @@ docker compose up -d           # ricrea da zero
 - [ ] `python scripts/collect_positioning.py --status` dentro il container
       (`docker compose exec collector python scripts/collect_positioning.py --status`)
       → giorni coperti invariati
-- [ ] estrai un backup di prova: `tar tzf ~/backups/coinmaker/coinmaker_data_*.tar.gz | head`
+- [ ] estrai un backup di prova: `tar tzf ~/backups/cryptoquantix/cryptoquantix_data_*.tar.gz | head`
 
 ## 9. Operatività quotidiana (cheat sheet)
 
@@ -249,7 +249,7 @@ git pull && docker compose build && docker compose up -d
 ## Checklist stampabile per domani
 
 1. ⬜ Prerequisiti Pi verificati (§0, in particolare `aarch64`)
-2. ⬜ Vecchio coinmaker fermato + tar di sicurezza (§3)
+2. ⬜ Vecchio cryptoquantix fermato + tar di sicurezza (§3)
 3. ⬜ Clone repo + `.env` via scp + `chmod 600` (§4.1-4.2)
 4. ⬜ `positioning_history.db` copiato dal PC (§4.3) ← **archivio C8!**
 5. ⬜ State da migrare copiati (MC state se in posizione) (§3.3)

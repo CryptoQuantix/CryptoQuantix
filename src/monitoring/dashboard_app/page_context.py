@@ -270,14 +270,14 @@ def _render_ai_export():
     st.code(payload, language="json")
     st.download_button(
         "Scarica JSON", data=payload.encode("utf-8"),
-        file_name=f"coinmaker_snapshot_{datetime.now(timezone.utc):%Y%m%d_%H%M}.json",
+        file_name=f"cryptoquantix_snapshot_{datetime.now(timezone.utc):%Y%m%d_%H%M}.json",
         mime="application/json")
 
 
 def _build_snapshot() -> dict:
     snap = {
         "generated_utc": datetime.now(timezone.utc).isoformat(),
-        "note": ("Snapshot read-only del bot coinmaker-quant. Strategie "
+        "note": ("Snapshot read-only del bot cryptoquantix. Strategie "
                  "validate: TrendBreakdown, FundingSqueeze, MacroCore."),
     }
     try:

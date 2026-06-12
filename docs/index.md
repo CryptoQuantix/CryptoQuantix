@@ -1,4 +1,4 @@
-# coinmaker-quant — Documentazione
+# cryptoquantix — Documentazione
 
 Bot di trading quantitativo su futures/perpetual: esecuzione **Deribit**,
 dati **Binance Futures**. Tre strategie validate su 4 anni multi-ciclo,

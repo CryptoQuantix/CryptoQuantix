@@ -1,4 +1,4 @@
-# coinmaker-quant
+# cryptoquantix
 
 **Bot di trading quantitativo su futures/perpetual crypto** — Deribit per
 l'esecuzione, Binance Futures per i dati. Tre strategie validate su 4 anni
@@ -56,7 +56,7 @@ Dettagli: [docs/05_risk_sizing.md](docs/05_risk_sizing.md).
 
 ```bash
 git clone <repo>
-cd coinmaker-quant
+cd cryptoquantix
 pip install -r requirements.txt
 cp .env.example .env   # poi inserire le chiavi Deribit
 ```
@@ -125,7 +125,7 @@ scripts/run_dry_run.bat full --duration 120   # paper trading completo
 ## Struttura progetto
 
 ```
-coinmaker-quant/
+cryptoquantix/
 ├── src/
 │   ├── core/          deribit_client, order_manager, order_registry,
 │   │                  position_monitor, risk_manager, failure_handler

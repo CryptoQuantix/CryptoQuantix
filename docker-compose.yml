@@ -1,4 +1,4 @@
-# Coinmaker Quant — docker-compose (deploy Raspberry Pi)
+# CryptoQuantix — docker-compose (deploy Raspberry Pi)
 # Guida completa: microevolutive/PLAN_DEPLOY_RASPBERRY.md
 #
 # PERSISTENZA: ./data, ./logs e ./.env sono BIND MOUNT del filesystem host.
@@ -17,7 +17,7 @@ x-base: &base
   build:
     context: .
     dockerfile: Dockerfile
-  image: coinmaker-quant:latest
+  image: cryptoquantix:latest
   restart: unless-stopped
   logging:
     driver: "json-file"
@@ -28,7 +28,7 @@ x-base: &base
     - 8.8.8.8
     - 1.1.1.1
   networks:
-    - coinmaker-network
+    - cryptoquantix-network
 
 services:
   # ------------------------------------------------------------------
@@ -37,7 +37,7 @@ services:
   # ------------------------------------------------------------------
   bot:
     <<: *base
-    container_name: coinmaker-bot
+    container_name: cryptoquantix-bot
     command: ["python", "-m", "src.async_trading_bot"]
     volumes:
       - ./data:/app/data:rw
@@ -68,7 +68,7 @@ services:
   # ------------------------------------------------------------------
   dashboard:
     <<: *base
-    container_name: coinmaker-dashboard
+    container_name: cryptoquantix-dashboard
     command: ["python", "-m", "streamlit", "run", "scripts/run_dashboard.py",
               "--server.address=0.0.0.0", "--server.port=8501",
               "--server.headless=true"]
@@ -102,7 +102,7 @@ services:
   # ------------------------------------------------------------------
   collector:
     <<: *base
-    container_name: coinmaker-collector
+    container_name: cryptoquantix-collector
     command: ["sh", "-c",
               "while true; do python scripts/collect_positioning.py; sleep 21600; done"]
     volumes:
@@ -119,14 +119,14 @@ services:
   # ------------------------------------------------------------------
   # cloudflared:
   #   image: cloudflare/cloudflared:latest
-  #   container_name: coinmaker-cloudflared
+  #   container_name: cryptoquantix-cloudflared
   #   restart: unless-stopped
   #   command: tunnel --no-autoupdate run
   #   env_file:
   #     - .env.cloudflared
   #   networks:
-  #     - coinmaker-network
+  #     - cryptoquantix-network
 
 networks:
-  coinmaker-network:
+  cryptoquantix-network:
     driver: bridge

@@ -1,10 +1,10 @@
 #!/bin/bash
-# Script to start the Coinmaker bot with Docker Compose
+# Script to start the CryptoQuantix bot with Docker Compose
 
 set -e
 
 echo "=========================================="
-echo "  Starting Coinmaker Trading Bot"
+echo "  Starting CryptoQuantix Trading Bot"
 echo "=========================================="
 
 # Check if .env exists

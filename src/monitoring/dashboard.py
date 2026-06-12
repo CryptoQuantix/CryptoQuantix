@@ -58,7 +58,7 @@ class TradingDashboard:
         self,
         bot=None,
         refresh_interval_sec: float = 5.0,
-        title: str = "CoinMaker Quant — Live Dashboard",
+        title: str = "CryptoQuantix — Live Dashboard",
     ):
         self.bot = bot
         self.refresh_interval_sec = refresh_interval_sec

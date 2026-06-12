@@ -145,7 +145,7 @@ mezza per H-C9.3 (serve fetch storico difficulty).
 ## Nota operativa sul progetto scanner
 
 `microevolutive/bitcoin-quant-scanner/` è un repo git ANNIDATO e
-indipendente (gitignored da coinmaker). Resta utile come terminale
+indipendente (gitignored da cryptoquantix). Resta utile come terminale
 discrezionale standalone (`streamlit run dashboard.py` + `monitor.py`).
 Le idee valide sono state importate QUI come codice nostro — non
 dipendiamo dai suoi file.
