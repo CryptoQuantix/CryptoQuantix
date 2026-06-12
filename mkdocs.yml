@@ -6,6 +6,10 @@ docs_dir: docs
 # L'archivio storico non fa parte del sito (link interni superati)
 exclude_docs: |
   archive/
+# Pagina riservata: buildata ma NON in nav (esclusa anche da ricerca via
+# front matter e dalla sitemap via publish_docs)
+not_in_nav: |
+  strategie-1130b67ca8af0c353cdb.md
 
 theme:
   name: material

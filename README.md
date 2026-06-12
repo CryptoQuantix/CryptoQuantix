@@ -157,3 +157,12 @@ Imbalance Scalp, NY Brings, W/M, Smart Money, Iron Condor) sono state
 validate con la stessa pipeline e **bocciate coi dati** — restano nel
 codice ma disattivate, col verdetto documentato nel `.env` e nei report
 `data/research/multicycle_report.txt` e `data/research/legacy_validation_btc.txt`.
+
+## Licenza
+
+**Source-available con doppia licenza** (testo completo in [LICENSE](LICENSE)):
+
+- **Uso non commerciale** — libero sotto [PolyForm Noncommercial 1.0.0](https://polyformproject.org/licenses/noncommercial/1.0.0/): studio, modifica, redistribuzione e trading del **proprio** capitale personale.
+- **Uso commerciale** — **richiede una licenza a pagamento**: trading di capitale di terzi, servizi/segnali basati sul software, integrazione in prodotti, operatività per conto clienti. La licenza commerciale include le specifiche operative complete delle strategie e i report di validazione integrali.
+
+Contatto: **lantoniotrento@gmail.com**

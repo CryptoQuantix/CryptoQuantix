@@ -13,7 +13,15 @@ BUILD_DIR="$(mktemp -d)"
 trap 'rm -rf "$BUILD_DIR"' EXIT
 python -m mkdocs build -d "$BUILD_DIR"
 
-echo "[2/3] Copia in $PAGES_REPO/docs ..."
+echo "[2/3] Copia in $PAGES_REPO/docs (+ strip pagina riservata da sitemap)..."
+# la pagina riservata resta raggiungibile via URL ma NON in sitemap
+python - "$BUILD_DIR/sitemap.xml" <<'PYEOF'
+import re, sys
+p = sys.argv[1]
+s = open(p, encoding="utf-8").read()
+s = re.sub(r"\s*<url>(?:(?!</url>).)*strategie-1130b67ca8af0c353cdb(?:(?!</url>).)*</url>", "", s, flags=re.S)
+open(p, "w", encoding="utf-8", newline="\n").write(s)
+PYEOF
 rm -rf "$PAGES_REPO/docs"
 cp -r "$BUILD_DIR" "$PAGES_REPO/docs"
 

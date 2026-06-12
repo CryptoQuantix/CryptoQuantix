@@ -34,69 +34,23 @@ TELEGRAM_CHAT_ID=
 
 ## Strategie attive
 
-I parametri di default sono quelli VALIDATI sui 4 anni. I range provati e i
-risultati sono nei report (`data/research/`); cambiare un parametro
-significa uscire dalla validazione → ripassare la pipeline
-([../microevolutive/PLAN_BULL_EVOLUTION.md](../microevolutive/PLAN_BULL_EVOLUTION.md) §1).
+Ogni strategia si abilita con `TB_ENABLED` / `FS_ENABLED` / `MC_ENABLED` e
+ha il proprio blocco di parametri nel `.env` (prefissi `TB_`, `FS_`, `MC_`).
+I default sono i valori **validati sui 4 anni**: cambiare un parametro
+significa uscire dalla validazione → ripassare la pipeline prima di
+fidarsi dei risultati.
 
 ### Multi-symbol
 `TB_SYMBOLS` / `FS_SYMBOLS` / `MC_SYMBOLS` accettano una lista
 (`BTCUSDT,ETHUSDT`): il bot crea UN'ISTANZA per simbolo con lo strumento
-Deribit derivato (`ETHUSDT` → `ETH-PERPETUAL`). Limitazioni validate:
+Deribit derivato (`ETHUSDT` → `ETH-PERPETUAL`). Ogni lato di ogni
+strategia è abilitato solo sui simboli dove la validazione è positiva.
 
-- `TB_SHORT_SYMBOLS=BTCUSDT` — lo short TB su ETH è bocciato (PF 0.87)
-- `MC_SYMBOLS=BTCUSDT` — MacroCore su ETH bocciata; con più simboli il
-  budget di esposizione core si divide per N
-
-### Trend Breakdown (prefisso `TB_`)
-
-| Variabile | Default | Note |
-|---|---|---|
-| `TB_ENABLED` | true | |
-| `TB_SYMBOLS` | BTCUSDT,ETHUSDT | un'istanza per simbolo |
-| `TB_SHORT_SYMBOLS` | BTCUSDT | short solo dove validato |
-| `TB_LOOKBACK_H` | 48 | Donchian low short (barre 1h) |
-| `TB_LOOKBACK_LONG_H` | 168 | Donchian high long (7 giorni) |
-| `TB_SMA_H` | 48 | filtro trend orario |
-| `TB_SL_ATR_MULT` | 2.0 | stop = 2×ATR(1h,14) |
-| `TB_RR_RATIO` | 2.0 | TP short = 2R |
-| `TB_RR_LONG` | 0 | 0 = nessun TP sui long (let winners run) |
-| `TB_MAX_HOLD_HOURS` | 24 | time exit short |
-| `TB_MAX_HOLD_LONG_HOURS` | 168 | time exit long |
-| `TB_FLOW_CONFIRM` | 0.50 | gate buy_ratio |
-| `TB_MACRO_SMA_DAYS` | 200 | gate macro daily |
-
-### Funding Squeeze (prefisso `FS_`)
-
-| Variabile | Default | Note |
-|---|---|---|
-| `FS_ENABLED` | true | |
-| `FS_SYMBOLS` | BTCUSDT,ETHUSDT | |
-| `FS_FUNDING_THRESHOLD` | 0.0001 | 0.01%/8h = cap exchange su BTC |
-| `FS_SMA_H` | 48 | prezzo sotto SMA48 oraria |
-| `FS_SL_ATR_MULT` | 2.0 | |
-| `FS_TP_RR` | 2.0 | |
-| `FS_MAX_HOLD_HOURS` | 24 | |
-| `FS_COOLDOWN_HOURS` | 8 | un trade per finestra funding |
-| `FS_MACRO_SMA_DAYS` | 200 | gate bear |
-| `FS_SLOPE_DAYS` | 30 | SMA200d più bassa di 30gg fa |
-| `FS_ENTRY_WINDOW_MIN` | 60 | entra solo dopo il settlement (00/08/16 UTC) |
-
-### Macro Core (prefisso `MC_`)
-
-| Variabile | Default | Note |
-|---|---|---|
-| `MC_ENABLED` | true | |
-| `MC_SYMBOLS` | BTCUSDT | solo BTC (ETH bocciata) |
-| `MC_SMA_DAYS` | 200 | filtro macro daily |
-| `MC_ATR_DAYS` | 20 | ATR per il chandelier |
-| `MC_CHANDELIER_K` | 5.0 | plateau robusto 4.5-6 |
-| `MC_DISASTER_SL_PCT` | 0.25 | stop venue -25% (bot offline) |
-| `MC_EXPOSURE_FRACTION` | 1.0 | size core = equity × frazione |
-| `MC_VOL_TARGET` | 0.30 | vol-target annualizzata (0 = off) |
-| `MC_VOL_LOOKBACK_DAYS` | 30 | finestra vol realizzata |
-| `MC_EXPO_STEP` | 0.25 | bucket di esposizione |
-| `MC_STATE_PATH` | data/macro_core_state.json | stato persistente |
+> 🔒 **Le tabelle complete dei parametri di strategia** (lookback, soglie,
+> moltiplicatori e relativi range validati) **sono riservate** —
+> disponibili con la licenza commerciale (contatto:
+> lantoniotrento@gmail.com). L'editor della dashboard le espone comunque
+> all'operatore con i range validati come bound.
 
 ## Strategie disattivate
 

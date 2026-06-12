@@ -14,7 +14,8 @@ if not exist "%PAGES_REPO%\.git" (
 echo [1/3] Build mkdocs...
 python -m mkdocs build -d "%TEMP%\cqx_docs_build" || exit /b 1
 
-echo [2/3] Copia in %PAGES_REPO%\docs ...
+echo [2/3] Strip pagina riservata da sitemap + copia in %PAGES_REPO%\docs ...
+python -c "import re;p=r'%TEMP%\cqx_docs_build\sitemap.xml';s=open(p,encoding='utf-8').read();s=re.sub(r'\s*<url>(?:(?!</url>).)*strategie-1130b67ca8af0c353cdb(?:(?!</url>).)*</url>','',s,flags=re.S);open(p,'w',encoding='utf-8',newline='\n').write(s)" || exit /b 1
 if exist "%PAGES_REPO%\docs" rmdir /s /q "%PAGES_REPO%\docs"
 xcopy /e /i /q "%TEMP%\cqx_docs_build" "%PAGES_REPO%\docs\" >nul || exit /b 1
 rmdir /s /q "%TEMP%\cqx_docs_build"
