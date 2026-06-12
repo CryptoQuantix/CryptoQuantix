@@ -1,22 +1,20 @@
-# Coinmaker Trading Bot - Dockerfile
-# Multi-stage build for optimized image size
+# Coinmaker Quant — Dockerfile (multi-arch: amd64 + arm64/Raspberry Pi)
+# Stessa immagine per i 3 servizi (bot, dashboard, collector): cambia solo
+# il command nel docker-compose.yml.
 
 # Build stage
-FROM python:3.11-slim as builder
+FROM python:3.11-slim AS builder
 
-# Set working directory
 WORKDIR /app
 
-# Install system dependencies
+# gcc/g++ servono solo se manca una wheel aarch64 e pip compila da sorgente
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     g++ \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements first for better caching
 COPY requirements.txt .
 
-# Create virtual environment and install dependencies
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 RUN pip install --no-cache-dir --upgrade pip && \
@@ -25,41 +23,34 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Production stage
 FROM python:3.11-slim
 
-# Set working directory
 WORKDIR /app
 
-# Copy virtual environment from builder
 COPY --from=builder /opt/venv /opt/venv
 
-# Set environment variables
+# TZ Europe/Rome: il reset giornaliero del kill switch usa date.today()
 ENV PATH="/opt/venv/bin:$PATH" \
     PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
-    TZ=Europe/Rome
+    TZ=Europe/Rome \
+    STREAMLIT_BROWSER_GATHER_USAGE_STATS=false
 
-# Create non-root user for security
 RUN useradd -m -u 1000 -s /bin/bash botuser && \
     chown -R botuser:botuser /app
 
-# Create necessary directories
+# data/ e logs/ sono BIND MOUNT dal host (persistenza fuori dal container)
 RUN mkdir -p logs data && \
     chown -R botuser:botuser logs data
 
-# Copy application code
 COPY --chown=botuser:botuser src/ ./src/
 COPY --chown=botuser:botuser config.py .
-COPY --chown=botuser:botuser test_connection.py .
-
-# Copy scripts
 COPY --chown=botuser:botuser main.py .
 COPY --chown=botuser:botuser scripts/ ./scripts/
 
-# Switch to non-root user
 USER botuser
 
-# Health check
-HEALTHCHECK --interval=5m --timeout=10s --start-period=30s --retries=3 \
-    CMD python -c "import sys; sys.exit(0)"
+# Porta dashboard Streamlit (esposta solo su localhost dal compose;
+# l'accesso esterno passa da Cloudflare Tunnel + Access)
+EXPOSE 8501
 
-# Default command
-CMD ["python", "main.py"]
+# Default: bot async. Gli altri servizi sovrascrivono il command.
+CMD ["python", "-m", "src.async_trading_bot"]

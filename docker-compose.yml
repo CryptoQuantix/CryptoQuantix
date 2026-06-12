@@ -1,64 +1,132 @@
-version: '3.8'
+# Coinmaker Quant — docker-compose (deploy Raspberry Pi)
+# Guida completa: microevolutive/PLAN_DEPLOY_RASPBERRY.md
+#
+# PERSISTENZA: ./data, ./logs e ./.env sono BIND MOUNT del filesystem host.
+# Cancellare/ricreare i container (o l'intera installazione docker) NON
+# tocca questi file. `docker compose down -v` e `docker system prune` non
+# li toccano: i bind mount non sono volumi gestiti da Docker.
+#
+# .ENV: NIENTE `env_file:` di proposito. Il bot legge il FILE .env con
+# load_dotenv() a ogni avvio; env_file inietterebbe i valori nell'ambiente
+# del container alla CREAZIONE e load_dotenv non li sovrascriverebbe mai
+# -> le modifiche dall'editor della dashboard verrebbero ignorate.
+# Col mount del file, il flusso "edit -> richiesta riavvio -> restart"
+# funziona end-to-end (restart: unless-stopped fa da supervisor).
+
+x-base: &base
+  build:
+    context: .
+    dockerfile: Dockerfile
+  image: coinmaker-quant:latest
+  restart: unless-stopped
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10m"
+      max-file: "3"
+  dns:
+    - 8.8.8.8
+    - 1.1.1.1
+  networks:
+    - coinmaker-network
 
 services:
-  # Main trading bot
-  coinmaker-bot:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  # ------------------------------------------------------------------
+  # Bot di trading (async): strategie TB/FS/MC + risk + orphan cleanup
+  # + positioning collector interno (ogni 12h)
+  # ------------------------------------------------------------------
+  bot:
+    <<: *base
     container_name: coinmaker-bot
-    restart: unless-stopped
-
-    # Environment variables from .env file
-    env_file:
-      - .env
-
-    # Volumes for persistent data
+    command: ["python", "-m", "src.async_trading_bot"]
     volumes:
-      - ./logs:/app/logs:rw
       - ./data:/app/data:rw
-      # Optional: mount config for hot-reload during development
-      # - ./src:/app/src:ro
-
-    # Logging configuration
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-
-    # Resource limits (adjust based on your needs)
+      - ./logs:/app/logs:rw
+      # bind mount di SINGOLO FILE: l'editor della dashboard scrive in
+      # place (stesso inode) proprio per non rompere questo mount
+      - ./.env:/app/.env:rw
     deploy:
       resources:
         limits:
-          cpus: '1.0'
-          memory: 512M
+          memory: 1024M
         reservations:
-          cpus: '0.5'
           memory: 256M
-
-    networks:
-      - coinmaker-network
-
-    # DNS Configuration (Fix for name resolution errors)
-    dns:
-      - 8.8.8.8
-      - 1.1.1.1
-
-    # Health check
     healthcheck:
-      test: ["CMD", "python", "-c", "import sys; sys.exit(0)"]
+      # vivo = il log del bot e' stato scritto negli ultimi 15 minuti
+      test: ["CMD", "python", "-c",
+             "import os,sys,time; p='logs/async_bot.log'; sys.exit(0 if os.path.exists(p) and time.time()-os.path.getmtime(p)<900 else 1)"]
       interval: 5m
       timeout: 10s
       retries: 3
-      start_period: 30s
+      start_period: 2m
+
+  # ------------------------------------------------------------------
+  # Dashboard Streamlit (processo separato, 6 pagine).
+  # Porta SOLO su localhost: l'esterno passa da Cloudflare Tunnel,
+  # OBBLIGATORIAMENTE dietro Cloudflare Access (la dashboard puo'
+  # chiudere posizioni e modificare il .env!)
+  # ------------------------------------------------------------------
+  dashboard:
+    <<: *base
+    container_name: coinmaker-dashboard
+    command: ["python", "-m", "streamlit", "run", "scripts/run_dashboard.py",
+              "--server.address=0.0.0.0", "--server.port=8501",
+              "--server.headless=true"]
+    volumes:
+      - ./data:/app/data:rw
+      - ./logs:/app/logs:rw
+      - ./.env:/app/.env:rw
+    environment:
+      # backup del .env dentro data/ -> bind mount -> sopravvivono al container
+      - ENV_BACKUP_DIR=data/env_backups
+    ports:
+      - "127.0.0.1:8501:8501"
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
+        reservations:
+          memory: 256M
+    healthcheck:
+      test: ["CMD", "python", "-c",
+             "import urllib.request,sys; urllib.request.urlopen('http://localhost:8501/_stcore/health', timeout=5); sys.exit(0)"]
+      interval: 2m
+      timeout: 10s
+      retries: 3
+      start_period: 1m
+
+  # ------------------------------------------------------------------
+  # Collector C8 ridondante (ogni 6h). Il bot lo fa gia' ogni 12h:
+  # questo container indipendente protegge la serie storica se il bot
+  # resta giu' a lungo (microevolutive/C8_POSITIONING_EXTREMES.md).
+  # ------------------------------------------------------------------
+  collector:
+    <<: *base
+    container_name: coinmaker-collector
+    command: ["sh", "-c",
+              "while true; do python scripts/collect_positioning.py; sleep 21600; done"]
+    volumes:
+      - ./data:/app/data:rw
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+
+  # ------------------------------------------------------------------
+  # OPZIONALE: cloudflared come servizio compose (alternativa al
+  # cloudflared gia' attivo sul host — vedi piano §5, opzione B).
+  # Decommentare e creare .env.cloudflared con TUNNEL_TOKEN=...
+  # ------------------------------------------------------------------
+  # cloudflared:
+  #   image: cloudflare/cloudflared:latest
+  #   container_name: coinmaker-cloudflared
+  #   restart: unless-stopped
+  #   command: tunnel --no-autoupdate run
+  #   env_file:
+  #     - .env.cloudflared
+  #   networks:
+  #     - coinmaker-network
 
 networks:
   coinmaker-network:
     driver: bridge
-
-volumes:
-  logs:
-    driver: local
-  data:
-    driver: local

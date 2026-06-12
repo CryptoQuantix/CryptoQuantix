@@ -22,7 +22,13 @@ from typing import Dict, List, Optional, Tuple
 logger = logging.getLogger(__name__)
 
 ENV_PATH = ".env"
-BACKUP_DIR = "."  # accanto al .env, come da piano (.env.bak con timestamp)
+
+
+def _backup_dir(path: str) -> str:
+    """Cartella dei backup: ENV_BACKUP_DIR se impostata (in Docker punta a
+    data/env_backups, bind-mounted -> sopravvive al container), altrimenti
+    accanto al .env come da piano originale."""
+    return os.getenv("ENV_BACKUP_DIR", "") or (os.path.dirname(path) or ".")
 
 # Riga "KEY=value" con eventuale commento inline (# preceduto da spazi)
 _LINE_RE = re.compile(r"^(?P<key>[A-Za-z_][A-Za-z0-9_]*)=(?P<value>[^#]*?)(?P<comment>\s+#.*)?$")
@@ -42,16 +48,20 @@ def parse_env(path: str = ENV_PATH) -> Dict[str, str]:
 
 
 def make_backup(path: str = ENV_PATH) -> str:
-    """Copia .env -> .env.bak.YYYYMMDD_HHMMSS. Ritorna il path del backup."""
+    """Copia .env -> <backup_dir>/.env.bak.YYYYMMDD_HHMMSS. Ritorna il path."""
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-    backup_path = f"{path}.bak.{ts}"
+    d = _backup_dir(path)
+    os.makedirs(d, exist_ok=True)
+    backup_path = os.path.join(d, f"{os.path.basename(path)}.bak.{ts}")
     shutil.copy2(path, backup_path)
     return backup_path
 
 
 def list_backups(path: str = ENV_PATH) -> List[str]:
     base = os.path.basename(path) + ".bak."
-    d = os.path.dirname(path) or "."
+    d = _backup_dir(path)
+    if not os.path.isdir(d):
+        return []
     return sorted(
         (os.path.join(d, f) for f in os.listdir(d) if f.startswith(base)),
         reverse=True,
@@ -79,6 +89,9 @@ def write_env_changes(changes: Dict[str, str], path: str = ENV_PATH) -> List[str
         else:
             out_lines.append(line)
 
+    # NB: scrittura IN PLACE (open 'w', stesso inode) e mai os.replace:
+    # in Docker il .env e' un bind mount di SINGOLO FILE e sostituire
+    # l'inode romperebbe il mount. Non "ottimizzare" in atomic-replace.
     with open(path, "w", encoding="utf-8", newline="") as f:
         f.writelines(out_lines)
     return list(pending.keys())
