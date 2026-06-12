@@ -7,9 +7,6 @@ management and an operations dashboard.
 
 > Updated: June 2026 (complete overhaul: from intraday volumetric
 > strategies to the validated quantitative strategies).
->
-> Some infrastructure pages are currently available in Italian only —
-> the language switcher always brings you back here.
 
 ## Current documents
 
@@ -20,7 +17,7 @@ management and an operations dashboard.
 | [03_configuration.md](03_configuration.md) | The `.env` file: operational, active, disabled |
 | [05_risk_sizing.md](05_risk_sizing.md) | 3-factor sizing, gross cap, kill switch, vol-targeting |
 
-## Infrastructure (Italian)
+## Infrastructure
 
 | Document | Contents |
 |---|---|

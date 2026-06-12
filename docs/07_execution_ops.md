@@ -268,17 +268,14 @@ class TelegramAlerts:
 ### 4.2 Dashboard Streamlit
 
 ```bash
-# Avvio dashboard (in finestra separata)
-streamlit run src/monitoring/dashboard.py -- --bot-module src.async_trading_bot
+# Avvio dashboard (processo separato dal bot)
+streamlit run scripts/run_dashboard.py
 ```
 
-Panel disponibili:
-1. **Equity Curve**: grafico rendimento in tempo reale
-2. **Regime corrente**: TREND/RANGE con confidenza
-3. **Orderflow live**: CVD, imbalance, aggression ratio, Kyle's Lambda
-4. **Posizioni aperte**: strumento, direzione, size, P&L float
-5. **Scoring strategie**: punteggio per ogni strategia
-6. **Trade log**: ultimi 20 trade con dettagli
+Sei pagine: Trade in corso (con riconciliazione ordini), Rischio &
+Esposizione, Storico Operazioni, Contesto Mercato, Impostazioni (editor
+.env con guardrail), Azioni (kill switch, chiusure manuali) — dettagli in
+[01_architecture.md](01_architecture.md).
 
 ---
 
@@ -286,38 +283,25 @@ Panel disponibili:
 
 ### 5.1 Docker
 
-```dockerfile
-# Dockerfile
-FROM python:3.11-slim
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-COPY . .
-CMD ["python", "-c", "import asyncio; from src.async_trading_bot import AsyncTradingBot; asyncio.run(AsyncTradingBot().start())"]
-```
+Il deploy di riferimento usa il `docker-compose.yml` del repo: **tre
+servizi** dalla stessa immagine — `bot` (trading async), `dashboard`
+(Streamlit su localhost:8501, da esporre solo dietro tunnel +
+autenticazione) e `collector` (archivio dati di posizionamento).
 
-```yaml
-# docker-compose.yml
-version: "3.8"
-services:
-  cryptoquantix:
-    build: .
-    env_file: .env
-    volumes:
-      - ./data:/app/data
-      - ./logs:/app/logs
-    restart: unless-stopped
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "5"
-```
+Punti chiave del design:
+- `./data`, `./logs` e `./.env` sono **bind mount**: i dati sopravvivono
+  alla ricreazione dei container
+- **niente `env_file:`** nel compose — il bot legge il FILE `.env` con
+  `load_dotenv()` a ogni avvio, così le modifiche dall'editor della
+  dashboard hanno effetto al riavvio
+- `restart: unless-stopped` fa da supervisor per il flusso
+  "modifica .env → richiesta riavvio → restart"
 
 ```bash
-docker-compose up -d                    # avvia in background
-docker-compose logs -f cryptoquantix  # segui i log
-docker-compose down                     # stop
+docker compose up -d           # avvia i 3 servizi
+docker compose ps              # stato + healthcheck
+docker compose logs -f bot     # segui i log del bot
+docker compose down            # stop (i dati restano sul host)
 ```
 
 ### 5.2 Checklist Pre-Live
@@ -326,7 +310,7 @@ Prima di passare da testnet a live, verificare:
 
 - [ ] `dry_run_strategies.py --backtest` passa senza errori
 - [ ] `dry_run_full.py --duration 120` genera almeno 1 segnale
-- [ ] `.env` ha `DERIBIT_ENV=live` (non testnet)
+- [ ] `.env` ha `DERIBIT_ENV=prod` (non testnet)
 - [ ] API keys live create su Deribit con permessi corretti (Trade, Read)
 - [ ] `INITIAL_EQUITY` impostato al saldo reale del conto
 - [ ] `MAX_DAILY_LOSS_PCT=0.02` (2%) per i primi giorni
