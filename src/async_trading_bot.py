@@ -320,6 +320,7 @@ class AsyncTradingBot:
         if self.signal_log:
             tasks.append(asyncio.create_task(self._outcome_tracker_loop(), name="outcome_tracker"))
 
+        self._tasks = tasks  # per lo shutdown su richiesta (restart flag)
         logger.info("Bot running. Tasks:")
         for t in tasks:
             logger.info(f"  - {t.get_name()}")
@@ -352,7 +353,9 @@ class AsyncTradingBot:
     # ------------------------------------------------------------------
 
     async def _management_loop(self):
-        """Position management + orphan cleanup every 30s."""
+        """Position management + orphan cleanup every 30s.
+        Onora anche la RESTART_REQUEST_FLAG scritta dalla dashboard:
+        shutdown pulito, il supervisor esterno (docker/bat loop) riavvia."""
         while self.running:
             try:
                 await asyncio.get_event_loop().run_in_executor(
@@ -360,6 +363,22 @@ class AsyncTradingBot:
                 )
             except Exception as e:
                 logger.error(f"[Management] Error: {e}", exc_info=True)
+
+            try:
+                from src.core.flags import RESTART_REQUEST_FLAG, clear_flag, flag_active
+                if flag_active(RESTART_REQUEST_FLAG):
+                    logger.critical(
+                        "[Management] RESTART REQUEST flag rilevata — "
+                        "shutdown pulito per riavvio"
+                    )
+                    clear_flag(RESTART_REQUEST_FLAG)
+                    self.running = False
+                    for t in getattr(self, "_tasks", []):
+                        t.cancel()
+                    return
+            except Exception as e:
+                logger.error(f"[Management] restart flag check error: {e}")
+
             await asyncio.sleep(self._management_interval_sec)
 
     async def _scan_loop(self):

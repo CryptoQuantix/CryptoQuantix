@@ -20,6 +20,8 @@ def main():
         "Trade in corso": "live",
         "Rischio & Esposizione": "risk",
         "Storico Operazioni": "history",
+        "Impostazioni": "settings",
+        "Azioni": "actions",
     }
     with st.sidebar:
         st.title("CoinMaker Quant")
@@ -35,6 +37,12 @@ def main():
     elif pages[choice] == "risk":
         from src.monitoring.dashboard_app import page_risk
         page_risk.render()
+    elif pages[choice] == "settings":
+        from src.monitoring.dashboard_app import page_settings
+        page_settings.render()
+    elif pages[choice] == "actions":
+        from src.monitoring.dashboard_app import page_actions
+        page_actions.render()
     else:
         from src.monitoring.dashboard_app import page_history
         page_history.render()

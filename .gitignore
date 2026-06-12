@@ -34,3 +34,10 @@ logs/positions_test.log
 
 # Trade journal (runtime)
 data/*.db
+
+# Dashboard runtime (Fasi 3-4)
+.env.bak.*
+data/flags/
+
+# Repo git annidato (clone locale, non parte del progetto)
+microevolutive/bitcoin-quant-scanner/

@@ -93,8 +93,7 @@ scripts/run_dry_run.bat full --duration 120   # paper trading completo
 
 ## Dashboard
 
-`streamlit run scripts/run_dashboard.py` — processo separato dal bot,
-**sola lettura**:
+`streamlit run scripts/run_dashboard.py` — processo separato dal bot:
 
 - **Trade in corso**: posizioni e ordini sul venue, P&L non realizzato,
   riconciliazione con evidenza in rosso di ordini orfani e posizioni senza SL
@@ -102,6 +101,11 @@ scripts/run_dry_run.bat full --duration 120   # paper trading completo
   vol-target, stato macro per simbolo e matrice di chi può tradare cosa ora
 - **Storico Operazioni**: ogni trade chiuso con importi precisi (size USD,
   P&L $, R, motivo uscita), filtri, aggregati, export CSV, equity curve
+- **Impostazioni**: editor `.env` con guardrail — range validati, diff con
+  conferma, backup automatico, validazione con ripristino; secrets mai a
+  schermo; richiesta riavvio bot via flag
+- **Azioni** (conferma doppia + audit log): kill switch manuale, chiusura
+  posizione reduce-only, pulizia ordini orfani on-demand
 
 ## Documentazione
 

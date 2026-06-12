@@ -1,6 +1,6 @@
 # Piano microevolutivo — Dashboard Streamlit di gestione e monitoraggio
 
-> **Data**: 2026-06-12 · **Stato**: Fasi 1, 2 e 5 FATTE (12/06) — restano Fasi 3-4 (settings editor + azioni)
+> **Data**: 2026-06-12 · **Stato**: ✅ TUTTE LE 5 FASI COMPLETATE (12/06)
 > **Obiettivo**: un cockpit unico per (a) gestire TUTTE le impostazioni del bot,
 > (b) monitorare i trade in corso in tempo reale, (c) consultare uno storico
 > CHIARO di tutte le operazioni chiuse con importi precisi per operazione.
@@ -80,7 +80,15 @@ importi precisi per operazione.
    cosa adesso (matrice strategia x lato abilitato)
 5. Accettazione: numeri identici a quelli loggati dal RiskManager
 
-## Fase 3 — GESTIONE IMPOSTAZIONI (.env editor con guardrail)
+## Fase 3 — GESTIONE IMPOSTAZIONI — ✅ FATTA (2026-06-12)
+
+> `page_settings.py` + `env_editor.py` + `settings_registry.py`: 40 widget
+> tipizzati coi range validati come bound e nota "validato: X", secrets solo
+> "impostata si'/no", diff prima/dopo con conferma, backup .env.bak.<ts>,
+> scrittura chirurgica (commenti intatti), validazione in SUBPROCESS con
+> load_dotenv(override=True) + Config.load_strategies + validate e RIPRISTINO
+> automatico se fallisce. Banner invalidazione backtest sui parametri
+> strategia. Richiesta riavvio via flag onorata dal management loop del bot.
 
 1. Editor settings raggruppato come il .env (Attive / Rischio / Disattivate):
    - widget tipizzati (slider/toggle/numero) con i RANGE VALIDATI come bound
@@ -95,7 +103,15 @@ importi precisi per operazione.
 4. Accettazione: modifica di un flag dalla UI → .env aggiornato e valido
    (Config.load_strategies() non solleva), backup creato
 
-## Fase 4 — CONTROLLI OPERATIVI (azioni, dietro conferma doppia)
+## Fase 4 — CONTROLLI OPERATIVI — ✅ FATTA (2026-06-12)
+
+> `page_actions.py` + `src/core/flags.py` + `audit.py`: kill switch manuale
+> via flag file (RiskManager.is_kill_switch_active la onora → blocco ingressi
+> mantenendo la gestione delle posizioni aperte), chiusura manuale posizione
+> con type-to-confirm (market reduce-only), pulizia orfani on-demand (stessa
+> definizione del cleanup automatico). Ogni azione → audit log JSON
+> (logs/dashboard_actions.log: chi/cosa/quando/esito) mostrato in pagina.
+> Accettazione testata in scripts/test_dashboard_smoke.py.
 
 1. Pulsante **kill switch manuale** (flag file → bot blocca nuovi ingressi)
 2. Chiusura manuale di una posizione (reduce-only market) con conferma

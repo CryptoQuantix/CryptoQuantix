@@ -101,8 +101,12 @@ Legge journal.db (sqlite `mode=ro`), state JSON, `.env` e Deribit via REST
 | Trade in corso | equity, posizioni con P&L non realizzato e strategia proprietaria, ordini sul venue, **riconciliazione**: ordini orfani e posizioni senza SL in rosso |
 | Rischio & Esposizione | utilizzo `MAX_GROSS_EXPOSURE`, kill switch, vol-target MC, stato macro per simbolo, matrice strategia×lato abilitato |
 | Storico Operazioni | trade chiusi con importi precisi, filtri, aggregati (WR/PF/expectancy), export CSV, equity curve |
+| Impostazioni | editor `.env` con guardrail: range validati come bound, diff + conferma, backup automatico, validazione in subprocess con ripristino, secrets mai mostrati, richiesta riavvio |
+| Azioni | kill switch manuale (flag onorata dal RiskManager), chiusura posizione type-to-confirm (reduce-only), pulizia orfani on-demand — tutto con conferma doppia e **audit log** |
 
-Piano completo (fasi 3-5 future: editor `.env`, azioni operative):
+Le azioni di scrittura passano da **flag file** (`src/core/flags.py`,
+`data/flags/`) che il bot rilegge nei suoi loop — la dashboard non chiama
+mai il processo bot. Piano completo:
 [../microevolutive/PLAN_DASHBOARD.md](../microevolutive/PLAN_DASHBOARD.md).
 
 ## Backtest e validazione

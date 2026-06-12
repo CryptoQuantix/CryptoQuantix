@@ -106,9 +106,18 @@ class RiskManager:
             )
 
     def is_kill_switch_active(self) -> bool:
-        """True se il kill switch giornaliero è attivo."""
+        """True se il kill switch è attivo: giornaliero (perdita oltre
+        soglia) OPPURE manuale (flag file scritta dalla dashboard)."""
         self._check_daily_reset()
-        return self._kill_switch_triggered
+        if self._kill_switch_triggered:
+            return True
+        try:
+            from src.core.flags import KILL_SWITCH_FLAG, flag_active
+            if flag_active(KILL_SWITCH_FLAG):
+                return True
+        except Exception:
+            pass
+        return False
 
     def get_daily_stats(self) -> Dict:
         """Statistiche del giorno corrente."""
@@ -372,7 +381,7 @@ class RiskManager:
             Tuple of (can_open, reason)
         """
         if self.is_kill_switch_active():
-            return False, "Kill switch giornaliero attivo"
+            return False, "Kill switch attivo (giornaliero o manuale)"
 
         try:
             positions = self.position_monitor.get_open_futures_positions()

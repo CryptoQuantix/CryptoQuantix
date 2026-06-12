@@ -102,8 +102,110 @@ def run_apptest():
     print(f"[OK] pagina 'Storico Operazioni': {len(at.metric)} metriche, "
           f"{len(at.dataframe)} tabelle, nessuna eccezione")
 
+    at.sidebar.radio[0].set_value("Impostazioni")
+    at.run(timeout=120)
+    assert not at.exception, f"Pagina impostazioni: eccezione {at.exception}"
+    n_widgets = len(at.slider) + len(at.toggle) + len(at.selectbox)
+    assert n_widgets > 20, f"widget settings mancanti: {n_widgets}"
+    print(f"[OK] pagina 'Impostazioni': {n_widgets} widget, nessuna eccezione")
+
+    at.sidebar.radio[0].set_value("Azioni")
+    at.run(timeout=120)
+    assert not at.exception, f"Pagina azioni: eccezione {at.exception}"
+    print("[OK] pagina 'Azioni' renderizzata senza eccezioni")
+
+
+def test_env_editor_acceptance():
+    """Accettazione Fase 3: modifica di un flag -> .env aggiornato e VALIDO
+    (Config.load_strategies non solleva), backup creato, commenti intatti.
+    Lavora sul .env reale ma ripristina lo stato esatto a fine test."""
+    import shutil
+    from src.monitoring.dashboard_app import env_editor
+
+    before = env_editor.parse_env()
+    old_level = before.get("LOG_LEVEL", "INFO")
+    new_level = "DEBUG" if old_level != "DEBUG" else "WARNING"
+
+    ok, msg, backup = env_editor.apply_changes_safely({"LOG_LEVEL": new_level})
+    try:
+        assert ok, f"apply_changes_safely fallita: {msg}"
+        assert backup and os.path.exists(backup), "backup non creato"
+        after = env_editor.parse_env()
+        assert after["LOG_LEVEL"] == new_level, "valore non aggiornato"
+        # i commenti inline devono sopravvivere alla scrittura chirurgica
+        with open(env_editor.ENV_PATH, encoding="utf-8") as f:
+            content = f.read()
+        assert "STRATEGIE ATTIVE" in content, "struttura/commenti persi"
+        print(f"[OK] env editor: LOG_LEVEL {old_level} -> {new_level}, "
+              f"validato in subprocess, backup {os.path.basename(backup)}")
+    finally:
+        if backup and os.path.exists(backup):
+            shutil.copy2(backup, env_editor.ENV_PATH)
+            os.remove(backup)
+    assert env_editor.parse_env().get("LOG_LEVEL") == old_level
+    print("[OK] env editor: stato originale ripristinato")
+
+
+def test_env_editor_rejects_invalid():
+    """Un valore che rompe la validazione deve causare RIPRISTINO automatico.
+    Rete di sicurezza nel finally: se l'editor regredisce, il test NON deve
+    lasciare il .env reale corrotto."""
+    import shutil
+    from src.monitoring.dashboard_app import env_editor
+
+    before = env_editor.parse_env()
+    safety_copy = env_editor.make_backup()
+    backup = None
+    try:
+        ok, msg, backup = env_editor.apply_changes_safely(
+            {"DERIBIT_ENV": "ambiente_inesistente"})
+        assert not ok, "valore invalido accettato!"
+        assert env_editor.parse_env().get("DERIBIT_ENV") == before.get("DERIBIT_ENV"), \
+            ".env non ripristinato dopo validazione fallita"
+        print(f"[OK] env editor: valore invalido respinto e ripristinato ({msg[:60]}...)")
+    finally:
+        if env_editor.parse_env().get("DERIBIT_ENV") != before.get("DERIBIT_ENV"):
+            shutil.copy2(safety_copy, env_editor.ENV_PATH)
+            print("[WARN] .env ripristinato dalla rete di sicurezza del test")
+        for f in (safety_copy, backup):
+            if f and os.path.exists(f):
+                os.remove(f)
+
+
+def test_kill_switch_flag():
+    """Accettazione Fase 4: la flag kill switch e' onorata dal RiskManager."""
+    from src.core import flags
+    from src.core.risk_manager import RiskManager
+
+    rm = RiskManager(client=None, position_monitor=None, initial_equity=10000)
+    flags.clear_flag(flags.KILL_SWITCH_FLAG)
+    assert rm.is_kill_switch_active() is False
+    flags.set_flag(flags.KILL_SWITCH_FLAG, reason="smoke test")
+    try:
+        assert rm.is_kill_switch_active() is True, "flag NON onorata"
+        can, why = rm.can_open_new_position()
+        assert can is False and "Kill switch" in why
+    finally:
+        flags.clear_flag(flags.KILL_SWITCH_FLAG)
+    assert rm.is_kill_switch_active() is False
+    print("[OK] kill switch flag: RiskManager blocca e sblocca correttamente")
+
+
+def test_audit_log():
+    """Accettazione Fase 4: ogni azione scrive chi/cosa/quando."""
+    from src.monitoring.dashboard_app.audit import audit, read_audit
+    audit("smoke_test", {"k": "v"}, "ok")
+    entries = read_audit(5)
+    assert entries and entries[0]["action"] == "smoke_test"
+    assert entries[0]["user"] and entries[0]["ts_utc"]
+    print("[OK] audit log: scrittura e rilettura chi/cosa/quando")
+
 
 if __name__ == "__main__":
     seed_test_journal()
     run_apptest()
+    test_env_editor_acceptance()
+    test_env_editor_rejects_invalid()
+    test_kill_switch_flag()
+    test_audit_log()
     print("[OK] smoke test dashboard PASSED")
