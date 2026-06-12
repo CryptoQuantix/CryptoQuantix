@@ -1,0 +1,47 @@
+BTC: 2022-06-12 -> 2026-06-11
+
+######################################################################
+# WM FORMATION (proxy fedele, parametri config)
+######################################################################
+  segnali: 429  (long 224, short 205)
+
+--- WM base hold 24h ---
+  BULL: N=  239  WR= 42.7%  avg=   +0.6bps  PF= 1.01  sum=    +1.3%
+  BEAR: N=  151  WR= 44.4%  avg=   +4.5bps  PF= 1.05  sum=    +6.8%
+  ALL : N=  390  WR= 43.3%  avg=   +2.1bps  PF= 1.03  sum=    +8.2%
+  years: 2022:49tr/+29%  2023:107tr/+14%  2024:119tr/-11%  2025:73tr/-22%  2026:42tr/-1%
+
+--- WM base hold 8h ---
+  BULL: N=  249  WR= 40.2%  avg=  -17.6bps  PF= 0.74  sum=   -43.9%
+  BEAR: N=  160  WR= 42.5%  avg=  -11.3bps  PF= 0.84  sum=   -18.1%
+  ALL : N=  409  WR= 41.1%  avg=  -15.2bps  PF= 0.78  sum=   -62.0%
+  years: 2022:54tr/+7%  2023:109tr/-12%  2024:126tr/-35%  2025:77tr/-16%  2026:43tr/-6%
+
+--- WM macro-gated (W=bull, M=bear) hold 24h ---
+  BULL: N=  126  WR= 44.4%  avg=  +16.6bps  PF= 1.21  sum=   +20.9%
+  BEAR: N=   71  WR= 45.1%  avg=  +16.6bps  PF= 1.21  sum=   +11.8%
+  ALL : N=  197  WR= 44.7%  avg=  +16.6bps  PF= 1.21  sum=   +32.7%
+  years: 2022:23tr/+19%  2023:52tr/+14%  2024:71tr/-8%  2025:32tr/+4%  2026:19tr/+3%
+
+######################################################################
+# NY BRINGS (proxy fedele, parametri config)
+######################################################################
+  segnali: 718  (long 376, short 342)
+
+--- BRINGS base hold 8h (fine giornata) ---
+  BULL: N=  420  WR= 38.8%  avg=  -17.0bps  PF= 0.63  sum=   -71.3%
+  BEAR: N=  298  WR= 37.6%  avg=  -18.2bps  PF= 0.64  sum=   -54.3%
+  ALL : N=  718  WR= 38.3%  avg=  -17.5bps  PF= 0.64  sum=  -125.6%
+  years: 2022:93tr/-15%  2023:164tr/-18%  2024:182tr/-21%  2025:197tr/-58%  2026:82tr/-13%
+
+--- BRINGS base hold 24h ---
+  BULL: N=  406  WR= 40.9%  avg=  -19.5bps  PF= 0.65  sum=   -79.2%
+  BEAR: N=  290  WR= 40.0%  avg=  -17.2bps  PF= 0.70  sum=   -50.0%
+  ALL : N=  696  WR= 40.5%  avg=  -18.6bps  PF= 0.67  sum=  -129.2%
+  years: 2022:91tr/-16%  2023:159tr/-16%  2024:177tr/-29%  2025:190tr/-57%  2026:79tr/-10%
+
+--- BRINGS macro-gated hold 8h ---
+  BULL: N=  213  WR= 38.0%  avg=  -20.3bps  PF= 0.57  sum=   -43.2%
+  BEAR: N=  135  WR= 36.3%  avg=  -19.8bps  PF= 0.61  sum=   -26.7%
+  ALL : N=  348  WR= 37.4%  avg=  -20.1bps  PF= 0.58  sum=   -69.8%
+  years: 2022:47tr/-2%  2023:83tr/-6%  2024:85tr/-15%  2025:101tr/-42%  2026:32tr/-5%

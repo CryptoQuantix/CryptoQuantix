@@ -157,18 +157,28 @@ Funding < -0,01% + macro bull: solo 4-11 eventi in 4 anni (N insufficiente).
 Riconsiderare solo se il prossimo bull produce abbastanza eventi (monitorare
 via signal_log senza tradare).
 
-### C7 — Validazione strategie LEGACY (mai testate quantitativamente)
-Iron Condor, Smart Money, W/M Formation, NY Brings: oggi OFF ma **mai
-passate dalla pipeline** — da validare e migliorare se valide, o bocciare
-con dati come le volumetriche.
-**Priorità**: W/M e Brings (backtestabili subito sul dataset 4y; per W/M
-esiste già `scripts/backtest_wm_strategy.py` — VERIFICARE lookahead) >
-Smart Money (proxy OHLCV parziale; nota: la stagionalità oraria è già
-risultata non robusta nella ricerca) > Iron Condor (servono dati storici
-opzioni/IV — valutare se vale lo sforzo).
-**Micro-step**: estrarre la regola core in forma vettoriale → test 4y con
-fase bull/bear e costi → gate §1 → se passa, gating macro come TB; se
-fallisce, documentare nel report e lasciare OFF per sempre.
+### C7 — Validazione strategie LEGACY · ❌ TUTTE BOCCIATE (2026-06-12)
+**Esito** (`scripts/test_legacy.py`, proxy fedeli del nucleo PVSRA su 4y
+BTC + out-of-sample ETH, report `data/research/legacy_validation_btc.txt`):
+- **NY Brings: MORTA** — reversal sessione NY: -17.5bps/trade (≈ costi),
+  PF 0.64, negativa OGNI anno su 718 trade; il macro-gating la peggiora.
+- **W/M Formation: BOCCIATA con rammarico** — è l'unica legacy con edge
+  lordo reale: base +2bps (breakeven), macro-gated (W=bull, M=bear)
+  **+16.6bps PF 1.21 su 197 trade** BTC. MA: 2024 -8% (gate "2023 E 2024
+  positivi" fallito) e soprattutto **ETH negativa in ogni variante**
+  (-18/-24bps, PF 0.8): l'edge non replica cross-asset → marginale/fortuna,
+  non strutturale. Se un giorno si riconsiderasse: SOLO BTC, size ridotta,
+  dopo conferma su dati nuovi.
+- **Smart Money: OFF motivato senza test** — i componenti testabili via
+  OHLCV (assorbimento, finestra oraria 14-17) sono già risultati non
+  robusti nella ricerca (stagionalità, MR absorption); i whale order
+  book data non esistono storicamente.
+- **Iron Condor: OFF definitivo** — strategia su OPZIONI: contraddice la
+  direzione del progetto (Deribit futures/perp only) e richiederebbe
+  dati storici IV/chain che non abbiamo.
+
+Conclusione: l'esposizione short-term del portafoglio resta TB (hold
+24h-7gg) e FS (24h). Le legacy non aggiungono trade profittevoli.
 
 ---
 
@@ -204,7 +214,8 @@ fallisce, documentare nel report e lasciare OFF per sempre.
    Kelly e DD-derisk bocciati coi dati
 4. ~~C3 (ETH multi-symbol)~~ ✅ FATTA — TB long + FS promosse su ETH;
    TB short e MC bocciate su ETH (BTC-only)
-5. **PROSSIMA SESSIONE → C7** (validazione legacy: W/M e Brings prima,
-   backtestabili subito sui dataset 4y BTC+ETH già nel repo)
-6. Backlog restante: C5 (dip-buy v2, gate severo), C6 (FS long mirror,
-   monitorare via signal_log), SOL come terzo simbolo per TB long
+5. ~~C7 (validazione legacy)~~ ❌ TUTTE BOCCIATE — Brings morta, W/M
+   marginale su BTC ma non replica su ETH, SmartMoney/IronCondor OFF motivato
+6. **PIANO COMPLETATO.** Backlog futuro: C5 (dip-buy v2, gate severo),
+   C6 (FS long mirror, monitorare via signal_log), SOL come terzo simbolo
+   per TB long, paper trading testnet 2-4 settimane prima del live
