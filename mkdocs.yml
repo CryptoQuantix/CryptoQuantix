@@ -26,6 +26,10 @@ theme:
     - toc.integrate
     - content.code.copy
 
+# Il click sul logo/titolo torna alla landing (non alla home dei docs)
+extra:
+  homepage: https://cryptoquantix.github.io
+
 plugins:
   - search:
       lang: it
@@ -52,6 +56,7 @@ plugins:
             Infrastruttura: Infrastructure
             Dati & Microstruttura: Data & Microstructure
             Esecuzione & Deployment: Execution & Deployment
+            ⬅ Torna al sito: ⬅ Back to site
 
 markdown_extensions:
   - admonition
@@ -75,3 +80,4 @@ nav:
       - Orderflow & CVD: 03_orderflow_math.md
       - Backtest Engine & Monte Carlo: 06_backtest_montecarlo.md
       - Esecuzione & Deployment: 07_execution_ops.md
+  - ⬅ Torna al sito: https://cryptoquantix.github.io
