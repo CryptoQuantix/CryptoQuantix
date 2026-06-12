@@ -1,4 +1,4 @@
-site_name: CryptoQuantix — Documentazione
+site_name: CryptoQuantix — Docs
 site_description: Bot di trading quantitativo su futures/perpetual — Deribit + dati Binance
 site_author: CryptoQuantix Team
 site_url: https://cryptoquantix.github.io/docs/
@@ -10,6 +10,7 @@ exclude_docs: |
 # front matter e dalla sitemap via publish_docs)
 not_in_nav: |
   strategie-1130b67ca8af0c353cdb.md
+  strategie-1130b67ca8af0c353cdb.en.md
 
 theme:
   name: material
@@ -28,6 +29,29 @@ theme:
 plugins:
   - search:
       lang: it
+  # Multilingua: IT default su /docs/, EN su /docs/en/ (suffix: file.en.md).
+  # Pagine senza traduzione -> fallback al contenuto italiano.
+  - i18n:
+      docs_structure: suffix
+      fallback_to_default: true
+      reconfigure_material: true
+      reconfigure_search: true
+      languages:
+        - locale: it
+          name: Italiano
+          default: true
+          build: true
+        - locale: en
+          name: English
+          build: true
+          site_name: "CryptoQuantix — Docs"
+          nav_translations:
+            Architettura: Architecture
+            Strategie attive: Active strategies
+            Configurazione (.env): Configuration (.env)
+            Infrastruttura: Infrastructure
+            Dati & Microstruttura: Data & Microstructure
+            Esecuzione & Deployment: Execution & Deployment
 
 markdown_extensions:
   - admonition
