@@ -260,3 +260,112 @@ git pull && docker compose build && docker compose up -d
 10. ⬜ Backup: script testato + cron + offsite (§7)
 11. ⬜ Collaudo disastro: down/up senza perdite (§8)
 12. ⬜ `DERIBIT_ENV`: decidere test/prod e annotare la decisione
+
+---
+
+## 11. Monitoraggio operativo — comandi log post-deploy
+
+Tutti i comandi si eseguono in `~/Documents/CryptoQuantix` sul Pi.
+
+### Stato generale (da fare ogni volta che controlli)
+```bash
+docker compose ps                        # 3 servizi healthy?
+docker compose logs --tail 30 bot        # ultimi eventi bot
+```
+
+### Verificare se il bot ha aperto posizioni
+```bash
+# Cerca aperture di ordini nei log (entry eseguite)
+docker compose logs bot | grep -E "order_id|entry|LONG|SHORT|submit|filled" | tail -30
+
+# Oppure cerca per strategia specifica
+docker compose logs bot | grep -i "trend breakdown" | tail -20
+docker compose logs bot | grep -i "funding squeeze" | tail -20
+docker compose logs bot | grep -i "macro core" | tail -20
+
+# Posizioni attive live (tramite il journal SQLite)
+docker compose exec bot python -c "
+import sqlite3, json
+c = sqlite3.connect('data/journal.db').cursor()
+c.execute(\"SELECT trade_id, strategy, symbol, side, entry_price, size_usd, ts_open FROM trades WHERE ts_close IS NULL ORDER BY ts_open DESC\")
+rows = c.fetchall()
+print(f'{len(rows)} posizioni aperte:') if rows else print('Nessuna posizione aperta')
+for r in rows: print(r)
+"
+
+# Storico trade chiusi (ultimi 20)
+docker compose exec bot python -c "
+import sqlite3
+c = sqlite3.connect('data/journal.db').cursor()
+c.execute(\"SELECT trade_id, strategy, symbol, side, pnl_usd, ts_close FROM trades WHERE ts_close IS NOT NULL ORDER BY ts_close DESC LIMIT 20\")
+for r in c.fetchall(): print(r)
+"
+```
+
+### Cercare errori e warning nei log
+```bash
+# Errori critici (eccezioni, crash)
+docker compose logs bot | grep -E "ERROR|Exception|Traceback|CRITICAL" | tail -30
+
+# Warning (possibili problemi non bloccanti)
+docker compose logs bot | grep "WARNING" | tail -30
+
+# Errori di connessione (Deribit o Binance)
+docker compose logs bot | grep -E "disconnect|reconnect|timeout|connection" | tail -20
+
+# Errori ordini (rifiuti exchange, size invalida, ecc.)
+docker compose logs bot | grep -E "reject|invalid|insufficient|error.*order" -i | tail -20
+```
+
+### Signal log — segnali eseguiti vs bloccati (analisi strategia)
+```bash
+docker compose exec bot python -c "
+import sys; sys.path.insert(0, '.')
+from src.journal.signal_log import SignalLog
+SignalLog('data/signal_log.db').print_report()
+"
+```
+
+### Stato MacroCore (posizione core long-term)
+```bash
+docker compose exec bot python -c "
+import json
+try:
+    s = json.load(open('data/macro_core_state.json'))
+    print(json.dumps(s, indent=2))
+except FileNotFoundError:
+    print('Nessuno stato MC salvato (flat)')
+"
+```
+
+### Regime di mercato corrente
+```bash
+# Il regime appare nel log STATUS ogni ~60s
+docker compose logs bot | grep "STATUS\|Regime\|TREND\|RANGE\|COMPRESSION\|EXPANSION" | tail -10
+```
+
+### Collector C8 — archivio positioning aggiornato?
+```bash
+docker compose logs --tail 20 collector
+
+# Righe nel DB per data odierna
+docker compose exec collector python -c "
+import sqlite3
+from datetime import date
+c = sqlite3.connect('data/positioning_history.db').cursor()
+c.execute(\"SELECT metric, symbol, COUNT(*) FROM positioning_data WHERE date(timestamp) = ? GROUP BY metric, symbol\", (str(date.today()),))
+for r in c.fetchall(): print(r)
+"
+```
+
+### Log continuo (segui il bot in tempo reale)
+```bash
+docker compose logs -f bot                        # tutto
+docker compose logs -f bot 2>&1 | grep -v DEBUG  # filtra i DEBUG REQ
+```
+
+### Se un servizio crasha — capire perché
+```bash
+docker compose logs bot --since 1h | grep -E "ERROR|Exception|Traceback" 
+docker inspect cryptoquantix-bot | grep -A5 '"State"'   # exit code e OOMKilled
+```
