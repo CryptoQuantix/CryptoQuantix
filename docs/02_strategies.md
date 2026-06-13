@@ -1,14 +1,19 @@
 # Le strategie attive — panoramica
 
-> Aggiornato: giugno 2026. CryptoQuantix esegue **tre strategie
-> quantitative validate** su 4 anni di dati multi-ciclo (giu 2022 → giu
-> 2026: bear, bull e di nuovo bear), con backtest eseguiti sul **codice di
-> produzione reale** — non su una reimplementazione — a costi realistici
-> (0.20% roundtrip) e senza lookahead.
->
-> 🔒 **Le specifiche operative complete** (regole esatte di ingresso/uscita
-> e parametri validati) **sono riservate** e disponibili nell'ambito di un
-> accordo di licenza commerciale — vedi [licenza](#licenza-e-accesso).
+!!! abstract "Validazione"
+
+    CryptoQuantix esegue **tre strategie quantitative validate** su 4
+    anni di dati multi-ciclo (giu 2022 → giu 2026: bear, bull e di nuovo
+    bear), con backtest eseguiti sul **codice di produzione reale** — non
+    su una reimplementazione — a costi realistici (0.20% roundtrip) e
+    senza lookahead.
+
+!!! warning "🔒 Specifiche riservate"
+
+    **Le specifiche operative complete** (regole esatte di
+    ingresso/uscita e parametri validati) **sono riservate** e
+    disponibili nell'ambito di un accordo di licenza commerciale — vedi
+    [licenza](#licenza-e-accesso).
 
 Tutte le strategie implementano l'interfaccia plugin `BaseStrategy`
 (`scan` / `execute_entry` / `manage_positions`) e ricevono un provider

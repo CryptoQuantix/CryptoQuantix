@@ -1,14 +1,18 @@
 # Active strategies — overview
 
-> Updated: June 2026. CryptoQuantix runs **three quantitatively validated
-> strategies** on 4 years of multi-cycle data (Jun 2022 → Jun 2026: bear,
-> bull and bear again), with backtests executed on the **actual production
-> code** — not a reimplementation — using realistic costs (0.20%
-> roundtrip) and no lookahead.
->
-> 🔒 **The complete operational specifications** (exact entry/exit rules
-> and validated parameters) **are proprietary** and available under a
-> commercial license agreement — see [license](#license-and-access).
+!!! abstract "Validation"
+
+    CryptoQuantix runs **three quantitatively validated strategies** on
+    4 years of multi-cycle data (Jun 2022 → Jun 2026: bear, bull and
+    bear again), with backtests executed on the **actual production
+    code** — not a reimplementation — using realistic costs (0.20%
+    roundtrip) and no lookahead.
+
+!!! warning "🔒 Proprietary specifications"
+
+    **The complete operational specifications** (exact entry/exit rules
+    and validated parameters) **are proprietary** and available under a
+    commercial license agreement — see [license](#license-and-access).
 
 All strategies implement the `BaseStrategy` plugin interface
 (`scan` / `execute_entry` / `manage_positions`) and receive an

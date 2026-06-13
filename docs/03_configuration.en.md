@@ -1,11 +1,12 @@
 # Configuration — the `.env` file
 
-> Updated: June 2026. The `.env` is organized in three blocks:
-> **operational** (API, risk, monitoring), **ACTIVE STRATEGIES**
-> (validated parameters — do not touch without re-validating) and
-> **DISABLED STRATEGIES** (rejected on the data, verdict in the
-> comments). The bot reads the `.env` ONLY at startup: every change
-> requires a restart.
+!!! info "Structure"
+
+    The `.env` is organized in three blocks: **operational** (API, risk,
+    monitoring), **ACTIVE STRATEGIES** (validated parameters — do not
+    touch without re-validating) and **DISABLED STRATEGIES** (rejected
+    on the data, verdict in the comments). The bot reads the `.env` ONLY
+    at startup: every change requires a restart.
 
 ## Operational block
 
@@ -13,7 +14,7 @@
 # Deribit
 DERIBIT_API_KEY=...           # never commit; the dashboard never shows them
 DERIBIT_API_SECRET=...
-DERIBIT_ENV=test              # test | live
+DERIBIT_ENV=test              # test | prod
 
 # Risk management (see 05_risk_sizing.md)
 INITIAL_EQUITY=10000
@@ -47,11 +48,13 @@ before trusting any result.
 derived Deribit instrument (`ETHUSDT` → `ETH-PERPETUAL`). Each side of
 each strategy is enabled only on the symbols where validation passed.
 
-> 🔒 **The complete strategy parameter tables** (lookbacks, thresholds,
-> multipliers and their validated ranges) **are proprietary** — available
-> under the commercial license (contact: lantoniotrento@gmail.com). The
-> dashboard editor still exposes them to the operator with the validated
-> ranges as bounds.
+!!! warning "🔒 Proprietary parameters"
+
+    **The complete strategy parameter tables** (lookbacks, thresholds,
+    multipliers and their validated ranges) **are proprietary** —
+    available under the commercial license (contact:
+    lantoniotrento@gmail.com). The dashboard editor still exposes them
+    to the operator with the validated ranges as bounds.
 
 ## Disabled strategies
 

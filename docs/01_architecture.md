@@ -6,28 +6,32 @@
 
 ## Vista d'insieme
 
-```
-BINANCE FUTURES (dati, gratuiti)              DERIBIT (esecuzione)
-  WS: aggTrade/depth/forceOrder                 REST privato
-  REST: klines 1h/1d, funding                        ^
-        |                |                           |
-        v                v                           |
-  BinanceDataIngestion  KlineProvider     OrderManager + OrderRegistry
-        |                |  (iniettabile)            ^
-        v                |                           |
-  OrderBookEngine        |                           |
-  OrderflowEngine        +-----> STRATEGIE ----------+
-  RegimeDetector ---------------> TB / FS / MC       |
-  ScoringEngine  ----------------^ (should_trade)    |
-                                                     |
-                              RiskManager (sizing + cap + kill switch)
-                              PositionMonitor (orfani, riconciliazione)
-                              FailureHandler (health, emergency)
-                                       |
-                  TradeLogger (journal.db) + SignalLog + PositionLog
-                  TelegramAlerts
-                                       |
-              DASHBOARD STREAMLIT (processo separato, sola lettura)
+```mermaid
+flowchart TB
+    subgraph BINANCE["📡 Binance Futures — dati (gratuiti)"]
+        WS["WebSocket<br/>aggTrade · depth · forceOrder"]
+        REST["REST<br/>klines 1h/1d · funding"]
+    end
+
+    WS --> DI[BinanceDataIngestion]
+    DI --> OBE[OrderBookEngine]
+    DI --> OFE[OrderflowEngine]
+    REST --> KP["KlineProvider<br/>(iniettabile: live = backtest)"]
+    OBE --> OFE
+    OFE --> RD[RegimeDetector]
+    RD --> SE[ScoringEngine]
+
+    KP --> STRAT["🎯 STRATEGIE<br/>TrendBreakdown · FundingSqueeze · MacroCore"]
+    SE -- "should_trade(strategia, regime)" --> STRAT
+
+    STRAT --> RM["🛡️ RiskManager<br/>sizing 3-factor · gross cap · kill switch"]
+    RM --> OM["OrderManager + OrderRegistry<br/>entry market · SL retry · emergency close"]
+    OM --> DERIBIT["🏦 Deribit<br/>REST privato"]
+    PM["PositionMonitor<br/>cleanup orfani 30s"] --> DERIBIT
+
+    OM --> TL["TradeLogger (journal.db)<br/>SignalLog · PositionLog"]
+    TL --> DASH["📊 Dashboard Streamlit<br/>processo separato, 6 pagine"]
+    DERIBIT -.->|REST read-only| DASH
 ```
 
 ## Processo principale: `src/async_trading_bot.py`

@@ -1,10 +1,12 @@
 # Configurazione — il file `.env`
 
-> Aggiornato: giugno 2026. Il `.env` è organizzato in tre blocchi:
-> **operativo** (API, rischio, monitoring), **STRATEGIE ATTIVE** (parametri
-> validati — non toccare senza rivalidare) e **STRATEGIE DISATTIVATE**
-> (bocciate coi dati, col verdetto in commento). Il bot legge il `.env`
-> SOLO all'avvio: ogni modifica richiede un riavvio.
+!!! info "Struttura"
+
+    Il `.env` è organizzato in tre blocchi: **operativo** (API, rischio,
+    monitoring), **STRATEGIE ATTIVE** (parametri validati — non toccare
+    senza rivalidare) e **STRATEGIE DISATTIVATE** (bocciate coi dati, col
+    verdetto in commento). Il bot legge il `.env` SOLO all'avvio: ogni
+    modifica richiede un riavvio.
 
 ## Blocco operativo
 
@@ -12,7 +14,7 @@
 # Deribit
 DERIBIT_API_KEY=...           # mai committare; la dashboard non li mostra
 DERIBIT_API_SECRET=...
-DERIBIT_ENV=test              # test | live
+DERIBIT_ENV=test              # test | prod
 
 # Risk management (vedi 05_risk_sizing.md)
 INITIAL_EQUITY=10000
@@ -46,11 +48,13 @@ fidarsi dei risultati.
 Deribit derivato (`ETHUSDT` → `ETH-PERPETUAL`). Ogni lato di ogni
 strategia è abilitato solo sui simboli dove la validazione è positiva.
 
-> 🔒 **Le tabelle complete dei parametri di strategia** (lookback, soglie,
-> moltiplicatori e relativi range validati) **sono riservate** —
-> disponibili con la licenza commerciale (contatto:
-> lantoniotrento@gmail.com). L'editor della dashboard le espone comunque
-> all'operatore con i range validati come bound.
+!!! warning "🔒 Parametri riservati"
+
+    **Le tabelle complete dei parametri di strategia** (lookback, soglie,
+    moltiplicatori e relativi range validati) **sono riservate** —
+    disponibili con la licenza commerciale (contatto:
+    lantoniotrento@gmail.com). L'editor della dashboard le espone
+    comunque all'operatore con i range validati come bound.
 
 ## Strategie disattivate
 
