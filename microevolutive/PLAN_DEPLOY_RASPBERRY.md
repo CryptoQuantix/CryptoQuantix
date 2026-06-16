@@ -285,9 +285,9 @@ docker compose logs bot | grep -i "macro core" | tail -20
 
 # Posizioni attive live (tramite il journal SQLite)
 docker compose exec bot python -c "
-import sqlite3, json
+import sqlite3
 c = sqlite3.connect('data/journal.db').cursor()
-c.execute(\"SELECT trade_id, strategy, symbol, side, entry_price, size_usd, ts_open FROM trades WHERE ts_close IS NULL ORDER BY ts_open DESC\")
+c.execute(\"SELECT trade_id, strategy, instrument, direction, entry_price, quantity, entry_time FROM trades WHERE status = 'open' ORDER BY entry_time DESC\")
 rows = c.fetchall()
 print(f'{len(rows)} posizioni aperte:') if rows else print('Nessuna posizione aperta')
 for r in rows: print(r)
@@ -297,7 +297,7 @@ for r in rows: print(r)
 docker compose exec bot python -c "
 import sqlite3
 c = sqlite3.connect('data/journal.db').cursor()
-c.execute(\"SELECT trade_id, strategy, symbol, side, pnl_usd, ts_close FROM trades WHERE ts_close IS NOT NULL ORDER BY ts_close DESC LIMIT 20\")
+c.execute(\"SELECT trade_id, strategy, instrument, direction, pnl_usd, exit_time FROM trades WHERE status = 'closed' ORDER BY exit_time DESC LIMIT 20\")
 for r in c.fetchall(): print(r)
 "
 ```
