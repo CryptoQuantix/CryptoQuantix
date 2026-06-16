@@ -18,7 +18,13 @@ from src.monitoring.dashboard_app.settings_registry import (
 )
 
 
+from src.monitoring.dashboard_app.auth import require_auth
+
+
 def render():
+    if not require_auth():
+        return
+
     st.header("Impostazioni (.env)")
     st.caption(
         "Il bot legge il .env SOLO all'avvio: ogni modifica richiede un "

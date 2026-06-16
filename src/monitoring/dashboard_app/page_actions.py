@@ -15,7 +15,13 @@ from src.monitoring.dashboard_app import data_access as da
 from src.monitoring.dashboard_app.audit import audit, read_audit
 
 
+from src.monitoring.dashboard_app.auth import require_auth
+
+
 def render():
+    if not require_auth():
+        return
+
     st.header("Azioni operative")
     st.caption(
         "Tutte le azioni richiedono conferma doppia e finiscono nell'audit "
