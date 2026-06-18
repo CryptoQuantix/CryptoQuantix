@@ -28,6 +28,27 @@ SCORING_STATE = os.getenv("SCORING_STATE_PATH", "data/scoring_state.json")
 # Fee taker Deribit perpetual (0.05%) — usata SOLO per la stima fees nello storico
 TAKER_FEE = 0.0005
 
+
+def _size_usd_from_row(row: pd.Series) -> float:
+    """Nozionale USD: il journal salva quantity in BTC; Deribit usa USD."""
+    try:
+        sig = json.loads(row.get("signal_data") or "{}")
+        q = sig.get("_qty_usd")
+        if q and float(q) > 0:
+            return float(q)
+    except (json.JSONDecodeError, TypeError, ValueError):
+        pass
+    qty = float(row.get("quantity") or 0)
+    ep = float(row.get("entry_price") or 0)
+    if qty <= 0:
+        return 0.0
+    # quantity > 100 → già USD (record futuri); altrimenti BTC → × prezzo
+    if qty >= 100:
+        return qty
+    if ep > 0:
+        return qty * ep
+    return qty
+
 # Prefissi label ordine -> strategia (label impostate in src/strategies/*)
 LABEL_PREFIX_TO_STRATEGY = [
     ("tb_", "TrendBreakdown"),
@@ -73,11 +94,11 @@ def load_trades(db_path: str = JOURNAL_DB) -> pd.DataFrame:
     for col in ("entry_time", "exit_time"):
         df[col] = pd.to_datetime(df[col], errors="coerce", utc=True, format="ISO8601")
 
-    # Su Deribit perpetual la size e' gia' nozionale in USD
-    df["size_usd"] = df["quantity"]
+    # Nozionale USD (Deribit inverse: quantity nel journal è in BTC)
+    df["size_usd"] = df.apply(_size_usd_from_row, axis=1)
     df["pnl_pct"] = 0.0
-    mask = df["quantity"] > 0
-    df.loc[mask, "pnl_pct"] = df.loc[mask, "pnl_usd"] / df.loc[mask, "quantity"] * 100
+    mask = df["size_usd"] > 0
+    df.loc[mask, "pnl_pct"] = df.loc[mask, "pnl_usd"] / df.loc[mask, "size_usd"] * 100
     # Stima fees: entry + exit a taker (entry market; SL stop_market; TP limit
     # sarebbe maker, quindi la stima e' prudenziale per eccesso)
     df["fees_est_usd"] = df["size_usd"] * TAKER_FEE * 2

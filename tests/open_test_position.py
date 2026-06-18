@@ -67,7 +67,7 @@ def open_test_position():
         
         # 1. Execute Generic Trade (Market Buy + SL + TP)
         logger.info(f"\n--- Executing Trade ---")
-        success, msg = manager.execute_generic_trade(
+        success, msg, _ = manager.execute_generic_trade(
             instrument_name=instrument,
             direction=direction,
             quantity=quantity,

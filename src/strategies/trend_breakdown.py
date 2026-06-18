@@ -172,7 +172,7 @@ class TrendBreakdownStrategy(BaseStrategy):
                 return False
             signal["_qty_usd"] = quantity
 
-            success, msg = self.order_manager.execute_generic_trade(
+            success, msg, entry_fill = self.order_manager.execute_generic_trade(
                 instrument_name=self.instrument,
                 direction=signal["direction"].lower(),
                 quantity=quantity,
@@ -185,11 +185,14 @@ class TrendBreakdownStrategy(BaseStrategy):
                 label=f"tb_{signal['direction'].lower()}",
             )
             if success:
+                if entry_fill and entry_fill > 0:
+                    signal["_fill_price"] = entry_fill
+                fill_price = signal.get("_fill_price") or signal["price"]
                 self._open_trade = {
                     "entry_ts_ms": self.kline_provider.now_ms(),
                     "direction": signal["direction"].lower(),
                     "quantity": quantity,
-                    "entry_price": signal["price"],
+                    "entry_price": fill_price,
                     "max_hold_min": signal.get("max_hold_min",
                                                self.max_hold_hours * 60),
                 }
@@ -250,15 +253,12 @@ class TrendBreakdownStrategy(BaseStrategy):
 
     def _venue_position_flat(self) -> bool:
         """True if the instrument has no open position on the venue."""
-        try:
-            if self.order_manager and hasattr(self.order_manager, "get_position_details"):
-                pos = self.order_manager.get_position_details(
-                    self.instrument, self.instrument.split("-")[0])
-                if pos is not None:
-                    return abs(pos.get("size", 0)) < 1e-9
-        except Exception:
-            pass
-        return False  # cannot verify -> assume still open
+        if not self.order_manager or not hasattr(self.order_manager, "is_instrument_flat"):
+            return False
+        flat = self.order_manager.is_instrument_flat(self.instrument)
+        if flat is None:
+            return False
+        return flat
 
     def _close_open_trade(self) -> bool:
         """Reduce-only market order netting out our quantity (time exit).

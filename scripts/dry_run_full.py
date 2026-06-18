@@ -85,7 +85,7 @@ class PaperOrderManager:
             "label": label,
             "timestamp": datetime.now(timezone.utc).isoformat(),
         })
-        return True, trade_id
+        return True, trade_id, price
 
     def cancel_all(self):
         logger.info("[PAPER] cancel_all() called")

@@ -668,13 +668,17 @@ class AsyncTradingBot:
         try:
             trade_id = f"{strategy_name}_{int(time.time())}"
             qty_usd = signal.get("_qty_usd", 0.0)
-            price = signal.get("price", 0.0)
+            price = signal.get("_fill_price") or signal.get("price", 0.0)
             qty_btc = qty_usd / price if price > 0 else 0.0
             equity = self.risk_manager.get_risk_summary().get("equity", 0.0) if self.risk_manager else 0.0
+            entry_ts_ms = int(time.time() * 1000)
+
+            journal_signal = dict(signal)
+            journal_signal["price"] = price
 
             self.trade_logger.log_entry_from_signal(
                 trade_id=trade_id,
-                signal=signal,
+                signal=journal_signal,
                 quantity=qty_btc,
                 regime=regime,
                 equity=equity,
@@ -688,62 +692,105 @@ class AsyncTradingBot:
                 "qty_btc": qty_btc,
                 "equity_at_entry": equity,
                 "strategy": strategy_name,
+                "entry_ts_ms": entry_ts_ms,
+                "_missing_count": 0,
             }
             logger.info(f"[PositionLog] OPEN logged: {trade_id}")
         except Exception as e:
             logger.debug(f"[PositionLog] _on_trade_open error: {e}")
 
+    def _get_open_instruments(self) -> set:
+        """All instruments with a non-zero futures/perp position (BTC + ETH accounts)."""
+        open_instruments = set()
+        for currency in ("BTC", "ETH"):
+            try:
+                for pos in self.client.get_futures_positions(currency):
+                    name = pos.get("instrument_name")
+                    if name and abs(pos.get("size", 0)) > 1e-9:
+                        open_instruments.add(name)
+            except Exception:
+                pass
+        return open_instruments
+
+    def _instrument_flat_on_venue(self, instrument: str) -> Optional[bool]:
+        """True=flat, False=open, None=venue check failed."""
+        if self.order_manager and hasattr(self.order_manager, "is_instrument_flat"):
+            return self.order_manager.is_instrument_flat(instrument)
+        return None
+
     def _check_closed_positions(self):
         """Detect positions closed since last check and log them.
 
-        Safety: only logs a close if the position was previously seen as open on
-        Deribit (_seen_open flag). This prevents false closes when a LIMIT entry
-        order is placed but never filled (position never existed on Deribit).
+        Safety:
+          - Only logs a close if the position was previously seen open (_seen_open).
+          - Confirms flat via is_instrument_flat (not just a missing list entry).
+          - Requires 2 consecutive flat reads to avoid transient API glitches.
+          - Never logs exit without a real closing fill from Deribit.
         """
         if not self._active_trades or not self.trade_logger:
             return
         try:
-            open_pos = self.client.get_futures_positions("BTC")
-            open_instruments = {
-                p.get("instrument_name") for p in open_pos
-                if p.get("instrument_name") and abs(p.get("size", 0)) > 0
-            }
+            open_instruments = self._get_open_instruments()
             for trade_id, info in list(self._active_trades.items()):
-                if info["instrument"] in open_instruments:
-                    info["_seen_open"] = True  # confirmed position exists on Deribit
-                elif info.get("_seen_open"):
-                    # Was open, now gone -> position closed (TP or SL hit)
-                    exit_price = self._get_last_fill_price(info["instrument"]) or info["entry_price"]
-                    direction = info["direction"].lower()
-                    pnl = (exit_price - info["entry_price"]) * info["qty_btc"] if direction == "buy" \
-                        else (info["entry_price"] - exit_price) * info["qty_btc"]
+                instrument = info["instrument"]
+                if instrument in open_instruments:
+                    info["_seen_open"] = True
+                    info["_missing_count"] = 0
+                    continue
 
-                    tp = info.get("take_profit", 0)
-                    sl = info.get("stop_loss", 0)
-                    if tp and sl:
-                        reason = "tp" if abs(exit_price - tp) < abs(exit_price - sl) else "sl"
-                    else:
-                        reason = "unknown"
+                if not info.get("_seen_open"):
+                    # Entry limit not yet filled on venue — keep waiting
+                    continue
 
-                    self.trade_logger.log_exit(trade_id, exit_price=exit_price, pnl_usd=pnl, exit_reason=reason)
-                    del self._active_trades[trade_id]
-                    logger.info(f"[PositionLog] CLOSE logged: {trade_id} pnl=${pnl:+.2f} ({reason})")
-                # else: entry limit not yet filled, wait
+                flat = self._instrument_flat_on_venue(instrument)
+                if flat is False:
+                    # Position list missed it but details say still open
+                    info["_missing_count"] = 0
+                    continue
+                if flat is None:
+                    logger.debug(
+                        f"[PositionLog] venue check failed for {instrument}, "
+                        f"skipping close detection"
+                    )
+                    continue
+
+                info["_missing_count"] = info.get("_missing_count", 0) + 1
+                if info["_missing_count"] < 2:
+                    continue
+
+                entry_ts_ms = info.get("entry_ts_ms", 0)
+                exit_price = None
+                if self.order_manager and hasattr(self.order_manager, "get_closing_fill_price"):
+                    exit_price = self.order_manager.get_closing_fill_price(
+                        instrument, entry_ts_ms, info["direction"]
+                    )
+                if exit_price is None:
+                    logger.warning(
+                        f"[PositionLog] {instrument} flat on venue but no closing "
+                        f"fill yet for {trade_id} — waiting"
+                    )
+                    continue
+
+                direction = info["direction"].lower()
+                pnl = (exit_price - info["entry_price"]) * info["qty_btc"] if direction == "buy" \
+                    else (info["entry_price"] - exit_price) * info["qty_btc"]
+
+                tp = info.get("take_profit", 0)
+                sl = info.get("stop_loss", 0)
+                if tp and sl:
+                    reason = "tp" if abs(exit_price - tp) < abs(exit_price - sl) else "sl"
+                else:
+                    reason = "unknown"
+
+                self.trade_logger.log_exit(
+                    trade_id, exit_price=exit_price, pnl_usd=pnl, exit_reason=reason
+                )
+                del self._active_trades[trade_id]
+                logger.info(
+                    f"[PositionLog] CLOSE logged: {trade_id} pnl=${pnl:+.2f} ({reason})"
+                )
         except Exception as e:
             logger.debug(f"[PositionLog] _check_closed_positions error: {e}")
-
-    def _get_last_fill_price(self, instrument: str) -> Optional[float]:
-        """Get price of last trade fill for an instrument from Deribit."""
-        try:
-            result = self.client._request(
-                "GET", "/private/get_user_trades_by_instrument",
-                params={"instrument_name": instrument, "count": 1, "sorting": "desc"},
-                private=True,
-            )
-            trades = result.get("result", {}).get("trades", [])
-            return float(trades[0]["price"]) if trades else None
-        except Exception:
-            return None
 
     async def _scan_once(self):
         """Async wrapper for initial scan."""

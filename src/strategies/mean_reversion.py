@@ -149,7 +149,7 @@ class MeanReversionStrategy(BaseStrategy):
             signal["_qty_usd"] = quantity  # expose for position log
             if quantity <= 0:
                 return False
-            success, msg = self.order_manager.execute_generic_trade(
+            success, msg, _ = self.order_manager.execute_generic_trade(
                 instrument_name=self.instrument,
                 direction=signal["direction"].lower(),
                 quantity=quantity,

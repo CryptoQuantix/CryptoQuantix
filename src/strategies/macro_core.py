@@ -133,7 +133,7 @@ class MacroCoreStrategy(BaseStrategy):
                 return False
             signal["_qty_usd"] = quantity
 
-            success, msg = self.order_manager.execute_generic_trade(
+            success, msg, entry_fill = self.order_manager.execute_generic_trade(
                 instrument_name=self.instrument,
                 direction="buy",
                 quantity=quantity,
@@ -145,17 +145,20 @@ class MacroCoreStrategy(BaseStrategy):
                 label="mc_buy",
             )
             if success:
+                if entry_fill and entry_fill > 0:
+                    signal["_fill_price"] = entry_fill
+                fill_price = signal.get("_fill_price") or signal["price"]
                 self._open_trade = {
                     "entry_ts_ms": self.kline_provider.now_ms(),
                     "entry_bar_ts_ms": signal["bar_ts_ms"],
                     "direction": "buy",
                     "quantity": quantity,
-                    "entry_price": signal["price"],
+                    "entry_price": fill_price,
                     "exposure": expo,
                 }
                 self._save_state()
-                self._log_executed("BUY", signal["price"], signal["stop_loss"],
-                                   signal["price"], signal.get("regime", "UNKNOWN"))
+                self._log_executed("BUY", fill_price, signal["stop_loss"],
+                                   fill_price, signal.get("regime", "UNKNOWN"))
             return success
         except Exception as e:
             self.logger.error(f"[MacroCore] execute error: {e}", exc_info=True)
@@ -247,15 +250,12 @@ class MacroCoreStrategy(BaseStrategy):
         return sum(trs) / len(trs)
 
     def _venue_position_flat(self) -> bool:
-        try:
-            if self.order_manager and hasattr(self.order_manager, "get_position_details"):
-                pos = self.order_manager.get_position_details(
-                    self.instrument, self.instrument.split("-")[0])
-                if pos is not None:
-                    return abs(pos.get("size", 0)) < 1e-9
-        except Exception:
-            pass
-        return False
+        if not self.order_manager or not hasattr(self.order_manager, "is_instrument_flat"):
+            return False
+        flat = self.order_manager.is_instrument_flat(self.instrument)
+        if flat is None:
+            return False
+        return flat
 
     def _close_open_trade(self) -> bool:
         t = self._open_trade

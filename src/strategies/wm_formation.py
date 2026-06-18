@@ -651,7 +651,7 @@ class WMFormationStrategy(BaseStrategy):
                 self.position_logger.log_error(datetime.now(), "Execution Error: OrderManager missing")
                 return False
                 
-            success, message = order_manager.execute_generic_trade(
+            success, message, _ = order_manager.execute_generic_trade(
                 instrument_name=signal['instrument'],
                 direction=signal['direction'],
                 quantity=signal['position_size'],

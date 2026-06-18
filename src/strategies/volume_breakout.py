@@ -198,7 +198,7 @@ class VolumeBreakoutStrategy(BaseStrategy):
                 self.logger.warning("Quantity too small — skipping")
                 return False
 
-            success, msg = self.order_manager.execute_generic_trade(
+            success, msg, _ = self.order_manager.execute_generic_trade(
                 instrument_name=self.instrument,
                 direction=signal["direction"].lower(),
                 quantity=quantity,

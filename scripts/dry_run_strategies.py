@@ -44,7 +44,7 @@ def build_mock_dependencies(with_orderflow=True):
     }
 
     mock_order_manager = MagicMock()
-    mock_order_manager.execute_generic_trade.return_value = (True, "MOCK-FILL-001")
+    mock_order_manager.execute_generic_trade.return_value = (True, "MOCK-FILL-001", 65000.0)
 
     mock_position_monitor = MagicMock()
     mock_position_monitor.get_open_futures_positions.return_value = []

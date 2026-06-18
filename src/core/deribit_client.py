@@ -504,6 +504,28 @@ class DeribitClient:
         response = self._request("GET", endpoint, {}, private=True)
         return response is not None
 
+    def get_user_trades_by_instrument(
+        self,
+        instrument_name: str,
+        count: int = 20,
+        sorting: str = "desc",
+    ) -> List[Dict]:
+        """Recent fills for an instrument (newest first when sorting=desc)."""
+        endpoint = "/private/get_user_trades_by_instrument"
+        params = {
+            "instrument_name": instrument_name,
+            "count": count,
+            "sorting": sorting,
+        }
+        response = self._request("GET", endpoint, params, private=True)
+        if response and "result" in response:
+            result = response["result"]
+            if isinstance(result, dict):
+                return result.get("trades", [])
+            if isinstance(result, list):
+                return result
+        return []
+
     def get_futures_positions(self, currency: str) -> List[Dict]:
         """
         Get open futures and perpetual positions for a currency.

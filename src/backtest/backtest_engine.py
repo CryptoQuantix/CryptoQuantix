@@ -118,7 +118,7 @@ class MockOrderManager:
         stop_loss: float = None,
         take_profit: float = None,
         label: str = "",
-    ) -> Tuple[bool, str]:
+    ) -> Tuple[bool, str, Optional[float]]:
         """Record a simulated fill."""
         fill_price = price or 0.0
         if entry_type == "market" and fill_price > 0:
@@ -137,7 +137,7 @@ class MockOrderManager:
         }
         self.fills.append(fill)
         trade_id = f"bt_{len(self.fills)}_{int(time.time() * 1000)}"
-        return True, trade_id
+        return True, trade_id, fill_price
 
     def cancel_all(self):
         pass

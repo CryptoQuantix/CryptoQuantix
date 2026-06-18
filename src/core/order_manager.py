@@ -408,24 +408,91 @@ class OrderManager:
         Get current position details for an instrument
 
         Args:
-            instrument_name: Option instrument name
+            instrument_name: Perpetual or option instrument name
             currency: BTC or ETH
 
         Returns:
-            Position dict or None
+            Position dict if open, None if flat or not found
         """
         try:
-            positions = self.client.get_positions(currency)
+            kind = "future" if "PERPETUAL" in instrument_name.upper() else "option"
+            positions = self.client.get_positions(currency, kind=kind)
 
             for pos in positions:
                 if pos.get("instrument_name") == instrument_name:
-                    return pos
+                    if abs(pos.get("size", 0)) > 1e-9:
+                        return pos
 
             return None
 
         except Exception as e:
             logger.error(f"Error getting position details: {e}")
             return None
+
+    def is_instrument_flat(self, instrument_name: str) -> Optional[bool]:
+        """
+        Check whether an instrument has no open position on the venue.
+
+        Returns:
+            True  — flat (no position)
+            False — position open
+            None  — venue check failed (caller must not assume flat)
+        """
+        currency = instrument_name.split("-")[0]
+        try:
+            pos = self.get_position_details(instrument_name, currency)
+            if pos is None:
+                return True
+            return abs(pos.get("size", 0)) < 1e-9
+        except Exception as e:
+            logger.debug(f"is_instrument_flat({instrument_name}) error: {e}")
+            return None
+
+    def get_order_fill_price(
+        self, order_id: str, instrument_name: str, max_wait: float = 2.0
+    ) -> Optional[float]:
+        """Average fill price for a filled order, polling briefly after placement."""
+        deadline = time.time() + max_wait
+        while time.time() < deadline:
+            state = self.client.get_order_state(order_id)
+            if state:
+                if state.get("order_state") == "filled":
+                    avg = state.get("average_price")
+                    if avg is not None and float(avg) > 0:
+                        return float(avg)
+                if state.get("order_state") in ("cancelled", "rejected"):
+                    break
+            time.sleep(0.2)
+        return None
+
+    def get_closing_fill_price(
+        self,
+        instrument_name: str,
+        entry_ts_ms: int,
+        entry_direction: str,
+    ) -> Optional[float]:
+        """
+        Price of the most recent closing fill after entry_ts_ms.
+
+        Closing = reduce-only fill or opposite direction to the entry.
+        """
+        close_dir = "buy" if entry_direction.lower() == "sell" else "sell"
+        try:
+            trades = self.client.get_user_trades_by_instrument(
+                instrument_name, count=50, sorting="desc"
+            )
+            for trade in trades:
+                ts = int(trade.get("timestamp", 0))
+                if ts <= entry_ts_ms:
+                    break
+                direction = (trade.get("direction") or "").lower()
+                if trade.get("reduce_only") or direction == close_dir:
+                    price = trade.get("price")
+                    if price is not None and float(price) > 0:
+                        return float(price)
+        except Exception as e:
+            logger.debug(f"get_closing_fill_price({instrument_name}) error: {e}")
+        return None
 
     def cancel_all_orders(self) -> bool:
         """Cancel all open orders"""
@@ -521,7 +588,7 @@ class OrderManager:
     def execute_generic_trade(self, instrument_name: str, direction: str, quantity: float,
                               entry_type: str = "market", price: float = None,
                               stop_loss: float = None, take_profit: float = None,
-                              label: str = "strategy_entry") -> Tuple[bool, str]:
+                              label: str = "strategy_entry") -> Tuple[bool, str, Optional[float]]:
         """
         Execute a generic trade with optional SL and TP.
         Registra automaticamente SL e TP nell'OrderRegistry per prevenire ordini orfani.
@@ -537,7 +604,7 @@ class OrderManager:
             label: Label for the entry order
 
         Returns:
-            Tuple[bool, str]: (Success, Message)
+            Tuple[bool, str, Optional[float]]: (Success, Message, entry_fill_price)
         """
         logger.info(
             f"Generic Execution: {direction.upper()} {quantity} {instrument_name} "
@@ -571,15 +638,21 @@ class OrderManager:
                 )
 
             if not order:
-                return False, "Entry API Call Failed (Network/Timeout)"
+                return False, "Entry API Call Failed (Network/Timeout)", None
 
             if "error" in order:
                 err_msg = order["error"].get("message", "Unknown API Error")
                 logger.error(f"Entry failed: {err_msg}")
-                return False, f"Entry Rejected: {err_msg}"
+                return False, f"Entry Rejected: {err_msg}", None
 
             order_id = order.get("order_id")
             logger.info(f"Entry order placed: {order_id}")
+
+            entry_fill_price = None
+            if order_id:
+                entry_fill_price = self.get_order_fill_price(order_id, instrument_name)
+            if entry_fill_price:
+                logger.info(f"Entry fill price: {entry_fill_price}")
 
             # Wait for Deribit to open the position before placing reduce_only SL/TP.
             # Without this delay, reduce_only orders fail with invalid_reduce_only_order
@@ -626,12 +699,12 @@ class OrderManager:
                         label=f"{label}_emergency_close", reduce_only=True
                     )
                     if close_order and "error" not in close_order:
-                        return False, "SL failed 3x — position emergency-closed"
+                        return False, "SL failed 3x — position emergency-closed", None
                     logger.critical(
                         f"EMERGENCY CLOSE FALLITA su {instrument_name}: {close_order} — "
                         f"INTERVENTO MANUALE RICHIESTO"
                     )
-                    return False, "SL failed AND emergency close failed — MANUAL ACTION"
+                    return False, "SL failed AND emergency close failed — MANUAL ACTION", None
 
             # 3. Place Take Profit if specified (Limit Reduce Only)
             if take_profit:
@@ -670,8 +743,8 @@ class OrderManager:
                     label=label
                 )
 
-            return True, f"Entry Placed: {order_id}"
+            return True, f"Entry Placed: {order_id}", entry_fill_price
 
         except Exception as e:
             logger.error(f"Error in execute_generic_trade: {e}")
-            return False, f"Exception: {str(e)}"
+            return False, f"Exception: {str(e)}", None

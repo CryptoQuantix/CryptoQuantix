@@ -72,7 +72,7 @@ def verify_live_execution():
         
         # 1. Execute Generic Trade (Market Buy + SL + TP)
         logger.info(f"\n--- STEP 1: Executing Trade (Buy {quantity} {instrument}) ---")
-        success, msg = manager.execute_generic_trade(
+        success, msg, _ = manager.execute_generic_trade(
             instrument_name=instrument,
             direction=direction,
             quantity=quantity,
