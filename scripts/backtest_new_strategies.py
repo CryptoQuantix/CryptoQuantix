@@ -74,7 +74,9 @@ def build_candles(frame: pd.DataFrame, interval_ms: int):
     return candles
 
 
-def run(strategy_cls, config, m1, provider, scan_every_min=60):
+def run(strategy_cls, config, m1, provider, scan_every_min=60, cost_mult=1.0):
+    fee = TAKER_FEE * cost_mult
+    slip = SLIPPAGE * cost_mult
     deps = {
         "order_manager": None, "position_monitor": None, "risk_manager": None,
         "orderflow_engine": None, "regime_detector": None, "scoring_engine": None,
@@ -114,9 +116,9 @@ def run(strategy_cls, config, m1, provider, scan_every_min=60):
                     bar_close_ms - open_tr["entry_ms"] >= open_tr["max_hold_min"] * 60_000:
                 exit_price, reason = closes[i], "time"
             if exit_price is not None:
-                exit_price *= (1 - d * SLIPPAGE)
+                exit_price *= (1 - d * slip)
                 gross = d * (exit_price - open_tr["entry"]) / open_tr["entry"]
-                net = gross - 2 * TAKER_FEE
+                net = gross - 2 * fee
                 risk = abs(open_tr["entry"] - open_tr["sl"])
                 trades.append({
                     "entry_ts": pd.Timestamp(open_tr["entry_ms"], unit="ms", tz="UTC"),
@@ -137,7 +139,7 @@ def run(strategy_cls, config, m1, provider, scan_every_min=60):
             if signals:
                 sig = signals[0]
                 d = -1 if sig["direction"] == "SELL" else 1
-                entry = opens[i + 1] * (1 + d * SLIPPAGE)
+                entry = opens[i + 1] * (1 + d * slip)
                 entry_ms = int(ts_arr[i + 1])
                 open_tr = {
                     "d": d, "entry": entry, "entry_ms": entry_ms,
@@ -157,6 +159,12 @@ def run(strategy_cls, config, m1, provider, scan_every_min=60):
 
 
 def main():
+    import argparse
+    parser = argparse.ArgumentParser(description="Event-driven backtest TB + FS")
+    parser.add_argument("--cost-mult", type=float, default=1.0,
+                        help="Scale TAKER_FEE+SLIPPAGE (default 1.0, stress-test e.g. 1.5)")
+    args = parser.parse_args()
+
     print("Loading 4y dataset...")
     m1 = load_4y()
     bull_daily = compute_phase(m1)
@@ -175,7 +183,7 @@ def main():
         (FundingSqueezeStrategy, FundingSqueezeConfig(name="Funding Squeeze")),
     ]:
         provider = HistoricalKlineProvider(h1_candles, d1_candles, funding)
-        trades = run(cls, cfg, m1, provider)
+        trades = run(cls, cfg, m1, provider, cost_mult=args.cost_mult)
         phase_report(trades, bull_daily, cfg.name)
         if len(trades):
             by_dir = trades.groupby("direction")["net_pct"].agg(["count", "mean", "sum"])

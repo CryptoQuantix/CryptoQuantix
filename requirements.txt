@@ -10,6 +10,7 @@ schedule>=1.2.0
 python-dateutil>=2.8.2
 pytz>=2024.1                # timezone support (dipendenza diretta — non più garantita transitivamente)
 scipy>=1.11.4
+statsmodels>=0.14.0
 ccxt>=4.1.0
 
 # ============================================================
